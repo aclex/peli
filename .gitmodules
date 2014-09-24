@@ -1,0 +1,3 @@
+[submodule "cmake/common"]
+	path = cmake/common
+	url = git://git.code.sf.net/u/aclex/common_cmake_modules
