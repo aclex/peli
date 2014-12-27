@@ -17,26 +17,25 @@
  *
  */
 
-#ifndef PELI_BAD_VALUE_CAST_H
-#define PELI_BAD_VALUE_CAST_H
+#ifndef PELI_DETAIL_VARIANT_VALUE_JSON_H
+#define PELI_DETAIL_VARIANT_VALUE_JSON_H
 
-#include <typeinfo>
 #include <string>
+
+#include <peli/json/object.h>
+#include <peli/json/array.h>
+
+#include <peli/detail/variant_value/value.h>
 
 namespace peli
 {
-	class bad_value_cast : public std::bad_cast
+	namespace detail
 	{
-	public:
-		bad_value_cast(const std::string& requested_type_name, const std::string& actual_type_name);
-		std::string requested_type_name() const;
-		std::string actual_type_name() const;
-		const char* what() const throw() override;
-
-	private:
-		const std::string m_requested_type_name, m_actual_type_name;
-		std::string m_msg;
-	};
+		namespace variant_value
+		{
+			typedef value<json::object, json::array, std::string, bool, long double> json_internal_value;
+		}
+	}
 }
 
-#endif // PELI_BAD_VALUE_CAST_H
+#endif // PELI_DETAIL_VARIANT_VALUE_JSON_H

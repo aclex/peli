@@ -17,26 +17,26 @@
  *
  */
 
-#ifndef PELI_BAD_VALUE_CAST_H
-#define PELI_BAD_VALUE_CAST_H
+#include "peli/detail/variant_value/value_factory.h"
 
-#include <typeinfo>
-#include <string>
+#include "detail/parser/tokenizer.h"
 
-namespace peli
+using namespace std;
+
+using namespace peli;
+
+using namespace peli::detail;
+
+using namespace peli::detail::variant_value;
+
+value_factory::value_type* value_factory::parse(istream& is)
 {
-	class bad_value_cast : public std::bad_cast
-	{
-	public:
-		bad_value_cast(const std::string& requested_type_name, const std::string& actual_type_name);
-		std::string requested_type_name() const;
-		std::string actual_type_name() const;
-		const char* what() const throw() override;
-
-	private:
-		const std::string m_requested_type_name, m_actual_type_name;
-		std::string m_msg;
-	};
+	return parser::tokenizer<value_factory>::tok(is);
 }
 
-#endif // PELI_BAD_VALUE_CAST_H
+value_factory::value_type* value_factory::parse(wistream& is)
+{
+// 	return parser::tokenizer<value_factory>::tok(is);
+	return nullptr;
+}
+

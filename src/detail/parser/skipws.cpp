@@ -17,36 +17,42 @@
  *
  */
 
-#ifndef PELI_DETAIL_VARIANT_VALUE_TEMPLATE_H
-#define PELI_DETAIL_VARIANT_VALUE_TEMPLATE_H
+#include "parser.h"
 
-#include <peli/detail/variant_value.h>
-#include <peli/detail/type_traits.h>
+using namespace std;
 
-namespace peli
+using namespace peli::detail::parser;
+
+namespace
 {
-	namespace detail
+	template<typename Ch> bool is_whitespace(Ch c)
 	{
-		template <typename T> class variant_value_template : public variant_value
+		switch (c)
 		{
-			typedef typename type_tag<T>::type inner_type_tag;
-			typedef typename type_tag<T>::tag tag;
+		case 0x09:
+		case 0x0a:
+		case 0x0d:
+		case 0x20:
+			return true;
 
-		public:
-			explicit variant_value_template(const T& v) : m_value(v) { }
-			T variant_as(inner_type_tag tag) const override
-			{
-				return m_value;
-			}
-			std::string type_name() const override
-			{
-				return tag::name;
-			}
+		default:
+			return false;
+		}
+	}
 
-		private:
-			T m_value;
-		};
+	template<typename Ch> void skip_whitespace_generic(std::basic_istream<Ch>& is)
+	{
+		while(is_whitespace(is.peek()))
+			is.get();
 	}
 }
 
-#endif // PELI_DETAIL_VARIANT_VALUE_TEMPLATE_H
+void peli::detail::parser::skip_whitespace(istream& is)
+{
+	skip_whitespace_generic(is);
+}
+
+void peli::detail::parser::skip_whitespace(wistream& is)
+{
+	skip_whitespace_generic(is);
+}

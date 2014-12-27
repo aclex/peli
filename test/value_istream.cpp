@@ -17,26 +17,21 @@
  *
  */
 
-#ifndef PELI_BAD_VALUE_CAST_H
-#define PELI_BAD_VALUE_CAST_H
+#include <sstream>
 
-#include <typeinfo>
-#include <string>
+#include "peli/detail/variant_value/value_factory.h"
+#include "peli/json/value.h"
 
-namespace peli
+using namespace std;
+
+using namespace peli;
+
+int main(int argc, char* argv[])
 {
-	class bad_value_cast : public std::bad_cast
-	{
-	public:
-		bad_value_cast(const std::string& requested_type_name, const std::string& actual_type_name);
-		std::string requested_type_name() const;
-		std::string actual_type_name() const;
-		const char* what() const throw() override;
+	const string test_json = "{ \"key\" : \"value\" }";
+	std::istringstream istr(test_json);
+	json::value v;
+	istr >> v;
 
-	private:
-		const std::string m_requested_type_name, m_actual_type_name;
-		std::string m_msg;
-	};
+	return 0;
 }
-
-#endif // PELI_BAD_VALUE_CAST_H

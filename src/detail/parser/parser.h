@@ -17,15 +17,34 @@
  *
  */
 
-#ifndef PELI_VALUE_H
-#define PELI_VALUE_H
+#ifndef PELI_DETAIL_PARSER_PARSER_H
+#define PELI_DETAIL_PARSER_PARSER_H
 
-#include <peli/detail/value_shell.h>
-#include <peli/detail/variant_value_template_factory.h>
+#include <istream>
 
 namespace peli
 {
-	typedef detail::value_shell<detail::variant_value_template_factory> value;
+	namespace detail
+	{
+		namespace parser
+		{
+
+			void skip_whitespace(std::istream& is);
+			void skip_whitespace(std::wistream& is);
+
+			template<class JsonType> class parser
+			{
+				template<class> struct fake_dependency : public std::false_type { };
+
+			public:
+				template<typename Ch, typename Alloc>
+				static JsonType parse(std::basic_istream<Ch, Alloc>& is)
+				{
+					static_assert(fake_dependency<JsonType>::value, "Type is not supported for parsing");
+				}
+			};
+		}
+	}
 }
 
-#endif // PELI_VALUE_H
+#endif // PELI_DETAIL_PARSER_PARSER_H

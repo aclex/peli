@@ -17,26 +17,32 @@
  *
  */
 
-#ifndef PELI_BAD_VALUE_CAST_H
-#define PELI_BAD_VALUE_CAST_H
+#ifndef PELI_JSON_VALUE_H
+#define PELI_JSON_VALUE_H
 
-#include <typeinfo>
-#include <string>
+#include <peli/detail/value_shell.h>
+#include <peli/detail/variant_value/value_factory.h>
 
 namespace peli
 {
-	class bad_value_cast : public std::bad_cast
+	namespace detail
 	{
-	public:
-		bad_value_cast(const std::string& requested_type_name, const std::string& actual_type_name);
-		std::string requested_type_name() const;
-		std::string actual_type_name() const;
-		const char* what() const throw() override;
+		namespace variant_value
+		{
+			struct value_factory;
+		}
+	}
 
-	private:
-		const std::string m_requested_type_name, m_actual_type_name;
-		std::string m_msg;
-	};
+	namespace json
+	{
+		class value : public detail::value_shell<detail::variant_value::value_factory>
+		{
+			template<typename T> friend value make_value()
+			{
+				return value(detail::type_tag<T>::tag());
+			}
+		};
+	}
 }
 
-#endif // PELI_BAD_VALUE_CAST_H
+#endif // PELI_JSON_VALUE_H

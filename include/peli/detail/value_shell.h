@@ -22,10 +22,9 @@
 
 #include <cstddef>
 #include <string>
-#include <memory>
 
-#include <peli/object.h>
-#include <peli/array.h>
+#include <peli/json/object.h>
+#include <peli/json/array.h>
 #include <peli/bad_value_cast.h>
 
 #include <peli/detail/type_traits.h>
@@ -34,48 +33,48 @@ namespace peli
 {
 	namespace detail
 	{
-		template <class VariantValueFactory> class value_shell
+		template <class InternalValueFactory> class value_shell
 		{
-			typedef typename VariantValueFactory::variant_value_type variant_value_type;
-
 		public:
-			value_shell() : m_variant_value(nullptr) { }
-			explicit value_shell(const object& obj) : m_variant_value(VariantValueFactory::create<object>(obj)) { }
-			explicit value_shell(const array& arr) : m_variant_value(VariantValueFactory::create<array>(arr)) { }
-			explicit value_shell(const std::string& str) : m_variant_value(VariantValueFactory::create<std::string>(str)) { }
-			explicit value_shell(bool b) : m_variant_value(VariantValueFactory::create<bool>(b)) { }
-			explicit value_shell(int i) : m_variant_value(VariantValueFactory::create<int>(i)) { }
+			value_shell() : m_internal_value(nullptr) { }
+			explicit value_shell(const peli::json::object& obj) : m_internal_value(InternalValueFactory::template create<peli::json::object>(obj)) { }
+			explicit value_shell(const peli::json::array& arr) : m_internal_value(InternalValueFactory::template create<peli::json::array>(arr)) { }
+			explicit value_shell(const std::string& str) : m_internal_value(InternalValueFactory::template create<std::string>(str)) { }
+			explicit value_shell(bool b) : m_internal_value(InternalValueFactory::template create<bool>(b)) { }
+			explicit value_shell(int i) : m_internal_value(InternalValueFactory::template create<int>(i)) { }
 
-			template<typename T> friend T value_cast(const value_shell& v)
+			bool valid() const
 			{
-				if (!v.m_variant_value)
+				return m_internal_value->valid();
+			}
+
+			template<typename T> explicit operator T()
+			{
+				if (!m_internal_value)
 					throw bad_value_cast(type_tag<T>::tag::name, "null");
 
-				return v.m_variant_value->as<T>();
+				return m_internal_value->template as<T>();
 			}
 
-			value_shell& operator[](const std::string& key)
+			friend std::istream& operator>>(std::istream& is, value_shell& v)
 			{
-				return m_variant_value->as<object&>()[key];
+				delete v.m_internal_value;
+				v.m_internal_value = InternalValueFactory::parse(is);
 			}
 
-			const value_shell& operator[](const std::string& key) const
+			friend std::wistream& operator>>(std::wistream& is, value_shell& v)
 			{
-				return m_variant_value->as<const object&>().at(key);
+				delete v.m_internal_value;
+				v.m_internal_value = InternalValueFactory::parse(is);
 			}
 
-			value_shell& operator[](std::size_t key)
-			{
-				return m_variant_value->as<array&>()[key];
-			}
+			~value_shell() { delete m_internal_value; }
 
-			const value_shell& operator[](std::size_t key) const
-			{
-				return m_variant_value->as<const array&>()[key];
-			}
+		protected:
+			template<typename T> value_shell(type_tag<T>&) : m_internal_value(InternalValueFactory::template create<T>()) { }
 
 		private:
-			std::shared_ptr<variant_value_type> m_variant_value;
+			typename InternalValueFactory::value_type* m_internal_value;
 		};
 	}
 }

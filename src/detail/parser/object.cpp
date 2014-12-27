@@ -17,17 +17,27 @@
  *
  */
 
-#ifndef PELI_OBJECT_H
-#define PELI_OBJECT_H
+#include "peli/detail/parser/object.h"
 
-#include <string>
-#include <map>
+#include <iostream>
+#include <stdexcept>
 
-namespace peli
+using namespace std;
+
+using namespace peli::detail::parser;
+
+object::object() :
+	m_current_state(state::q0)
 {
-	class value_shell;
 
-	typedef std::map<std::string, value_shell> object;
 }
 
-#endif // PELI_OBJECT_H
+void object::reset()
+{
+	m_current_state = state::q0;
+}
+
+void object::parse(char c)
+{
+
+}

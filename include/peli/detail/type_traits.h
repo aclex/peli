@@ -20,15 +20,14 @@
 #ifndef PELI_DETAIL_TYPE_TRAITS_H
 #define PELI_DETAIL_TYPE_TRAITS_H
 
-#include <map>
 #include <string>
-#include <vector>
 #include <type_traits>
+
+#include <peli/json/object.h>
+#include <peli/json/array.h>
 
 namespace peli
 {
-	class value_shell;
-
 	namespace detail
 	{
 		template <typename Ret> struct type_traits
@@ -48,10 +47,9 @@ namespace peli
 			typedef type_traits<const cleared_type&> cref_type;
 		};
 
-		struct object_type_tag : tag<object_type_tag, std::map<std::string, value_shell>> { static constexpr char name[] = "object"; };
-		struct array_type_tag : tag<array_type_tag, std::vector<value_shell>> { static constexpr char name[] = "array"; };
-		struct number_type_tag : tag<number_type_tag, int> { static constexpr char name[] = "number"; };
-		struct real_type_tag : tag<real_type_tag, double> { static constexpr char name[] = "number"; };
+		struct object_type_tag : tag<object_type_tag, json::object> { static constexpr char name[] = "object"; };
+		struct array_type_tag : tag<array_type_tag, json::array> { static constexpr char name[] = "array"; };
+		struct number_type_tag : tag<number_type_tag, long double> { static constexpr char name[] = "number"; };
 		struct string_type_tag : tag<string_type_tag, std::string> { static constexpr char name[] = "string"; };
 		struct boolean_type_tag : tag<boolean_type_tag, bool> { static constexpr char name[] = "boolean"; };
 
@@ -109,24 +107,6 @@ namespace peli
 		{
 			typedef number_type_tag tag;
 			typedef typename number_type_tag::cref_type type;
-		};
-
-		template<> struct type_tag<real_type_tag::type::return_type>
-		{
-			typedef real_type_tag tag;
-			typedef typename real_type_tag::type type;
-		};
-
-		template<> struct type_tag<real_type_tag::ref_type::return_type>
-		{
-			typedef real_type_tag tag;
-			typedef typename real_type_tag::ref_type type;
-		};
-
-		template<> struct type_tag<real_type_tag::cref_type::return_type>
-		{
-			typedef real_type_tag tag;
-			typedef typename real_type_tag::cref_type type;
 		};
 
 		template<> struct type_tag<string_type_tag::type::return_type>

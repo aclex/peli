@@ -17,27 +17,38 @@
  *
  */
 
-#ifndef PELI_DETAIL_VARIANT_VALUE_TEMPLATE_FACTORY_H
-#define PELI_DETAIL_VARIANT_VALUE_TEMPLATE_FACTORY_H
+#ifndef PELI_DETAIL_VARIANT_VALUE_COMPONENT_H
+#define PELI_DETAIL_VARIANT_VALUE_COMPONENT_H
 
-#include <memory>
-
-#include <peli/detail/variant_value_template.h>
+#include <peli/detail/type_traits.h>
+#include <peli/bad_value_cast.h>
 
 namespace peli
 {
 	namespace detail
 	{
-		struct variant_value_template_factory
+		namespace variant_value
 		{
-			typedef variant_value variant_value_type;
-
-			template <typename T> std::shared_ptr<variant_value_type> create(const T& op)
+			template<typename T> class component
 			{
-				return std::make_shared<variant_value_template<T>>(op);
-			}
-		};
+			public:
+				virtual T variant_as(typename type_tag<T>::tag::type tag) const
+				{
+					throw bad_value_cast(type_tag<T>::tag::name, "unknown");
+				}
+
+				virtual T& variant_as(typename type_tag<T>::tag::ref_type tag)
+				{
+					throw bad_value_cast(type_tag<T>::tag::name, "unknown");
+				}
+
+				virtual const T& variant_as(typename type_tag<T>::tag::cref_type tag) const
+				{
+					throw bad_value_cast(type_tag<T>::tag::name, "unknown");
+				}
+			};
+		}
 	}
 }
 
-#endif // PELI_DETAIL_VARIANT_VALUE_TEMPLATE_FACTORY_H
+#endif // PELI_DETAIL_VARIANT_VALUE_COMPONENT_H

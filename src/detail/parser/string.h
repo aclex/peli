@@ -17,16 +17,44 @@
  *
  */
 
-#ifndef PELI_ARRAY_H
-#define PELI_ARRAY_H
+#ifndef PELI_DETAIL_PARSER_STRING_H
+#define PELI_DETAIL_PARSER_STRING_H
 
-#include <vector>
+#include <string>
+#include <stdexcept>
+
+#include <peli/json/array.h>
+
+#include "detail/parser/parser.h"
 
 namespace peli
 {
-	class value_shell;
+	namespace detail
+	{
+		namespace parser
+		{
+			template<typename Ch> class parser<std::basic_string<Ch>>
+			{
+			public:
+				static typename std::basic_string<Ch> parse(std::basic_istream<Ch>& is)
+				{
+					std::basic_string<Ch> ret;
 
-	typedef std::vector<value_shell> array;
+					if (is.peek() != 0x22) // '"'
+						throw std::runtime_error("");
+
+					is.get();
+
+					while (is.peek() != 0x22)
+						ret += is.get();
+
+					is.get();
+
+					return ret;
+				}
+			};
+		}
+	}
 }
 
-#endif // PELI_ARRAY_H
+#endif // PELI_DETAIL_PARSER_STRING_H

@@ -17,7 +17,7 @@
  *
  */
 
-#include "peli/detail/variant_value.h"
+#include "peli/detail/variant_value/value.h"
 
 #include <stdexcept>
 
@@ -27,38 +27,5 @@ using namespace std;
 
 using namespace peli;
 using namespace peli::detail;
+using namespace peli::detail::variant_value;
 
-object variant_value::variant_as(typename object_type_tag::type tag) const
-{
-	bad_as(object_type_tag::name);
-}
-
-peli::array variant_value::variant_as(typename array_type_tag::type tag) const
-{
-	bad_as(array_type_tag::name);
-}
-
-int variant_value::variant_as(typename number_type_tag::type tag) const
-{
-	bad_as(number_type_tag::name);
-}
-
-double variant_value::variant_as(typename real_type_tag::type tag) const
-{
-	bad_as(real_type_tag::name);
-}
-
-bool variant_value::variant_as(typename boolean_type_tag::type tag) const
-{
-	bad_as(boolean_type_tag::name);
-}
-
-string variant_value::type_name() const
-{
-	return "unknown";
-}
-
-void variant_value::bad_as(const string& requested_type_name) const
-{
-	throw bad_value_cast(requested_type_name, type_name());
-}

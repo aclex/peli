@@ -17,26 +17,16 @@
  *
  */
 
-#ifndef PELI_BAD_VALUE_CAST_H
-#define PELI_BAD_VALUE_CAST_H
+#include "peli/detail/type_traits.h"
 
-#include <typeinfo>
-#include <string>
+using namespace std;
 
-namespace peli
-{
-	class bad_value_cast : public std::bad_cast
-	{
-	public:
-		bad_value_cast(const std::string& requested_type_name, const std::string& actual_type_name);
-		std::string requested_type_name() const;
-		std::string actual_type_name() const;
-		const char* what() const throw() override;
+using namespace peli;
+using namespace peli::detail;
 
-	private:
-		const std::string m_requested_type_name, m_actual_type_name;
-		std::string m_msg;
-	};
-}
-
-#endif // PELI_BAD_VALUE_CAST_H
+constexpr char object_type_tag::name[];
+constexpr char array_type_tag::name[];
+constexpr char number_type_tag::name[];
+// constexpr char real_type_tag::name[];
+constexpr char string_type_tag::name[];
+constexpr char boolean_type_tag::name[];
