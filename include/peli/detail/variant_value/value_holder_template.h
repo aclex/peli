@@ -17,12 +17,12 @@
  *
  */
 
-#ifndef PELI_DETAIL_VARIANT_VALUE_VALUE_TEMPLATE_H
-#define PELI_DETAIL_VARIANT_VALUE_VALUE_TEMPLATE_H
+#ifndef PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_TEMPLATE_H
+#define PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_TEMPLATE_H
 
-#include <peli/detail/type_traits.h>
+#include <type_traits>
 
-#include <peli/detail/variant_value/json.h>
+#include <peli/detail/variant_value/value_holder.h>
 
 namespace peli
 {
@@ -30,26 +30,30 @@ namespace peli
 	{
 		namespace variant_value
 		{
-			template <typename T> class value_template : public json_internal_value
+			template<typename T> class value_holder_template : public value_holder
 			{
-				typedef typename type_tag<T>::type inner_type_tag;
-				typedef typename type_tag<T>::tag tag;
-
 			public:
-				explicit value_template(const T& v) : m_value(v) { }
-				T variant_as(inner_type_tag tag) const override
+				explicit value_holder_template(const T& v) : m_value(v) { }
+
+				template<typename U,
+				typename Unref = typename std::remove_reference<U>::type,
+				typename V = typename std::enable_if<std::is_same<Unref, T>::value, U>::type>
+				V variant_as()
 				{
 					return m_value;
 				}
 
-				T& variant_as(typename type_tag<T>::tag::ref_type tag) override
+				template<typename U,
+				typename Unref = typename std::remove_reference<U>::type,
+				typename V = typename std::enable_if<std::is_same<Unref, T>::value, U>::type>
+				V variant_as() const
 				{
 					return m_value;
 				}
 
-				const T& variant_as(typename type_tag<T>::tag::cref_type tag) const override
+				const std::type_info& type_info() const override
 				{
-					return m_value;
+					return typeid(T);
 				}
 
 			private:
@@ -59,4 +63,4 @@ namespace peli
 	}
 }
 
-#endif // PELI_DETAIL_VARIANT_VALUE_VALUE_TEMPLATE_H
+#endif // PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_TEMPLATE_H

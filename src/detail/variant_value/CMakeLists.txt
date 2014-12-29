@@ -1,5 +1,4 @@
 set (PELI_DETAIL_VARIANT_VALUE_SOURCES
-	value.cpp
 	value_factory.cpp
 )
 

@@ -18,6 +18,7 @@
  */
 
 #include <sstream>
+#include <iostream>
 
 #include "peli/detail/variant_value/value_factory.h"
 #include "peli/json/value.h"
@@ -28,10 +29,18 @@ using namespace peli;
 
 int main(int argc, char* argv[])
 {
-	const string test_json = "{ \"key\" : \"value\" }";
+	const string test_json = "{ \"привет\" : \"мир\" }";
 	std::istringstream istr(test_json);
 	json::value v;
 	istr >> v;
+
+	const auto& obj = static_cast<peli::json::object>(v);
+
+	for (const auto& p : obj)
+	{
+		const auto& str = static_cast<const string>(p.second);
+		cout << "проверка: " << p.first << " : " << str << endl;
+	}
 
 	return 0;
 }

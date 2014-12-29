@@ -39,7 +39,9 @@ namespace peli
 		{
 			template<typename T> friend value make_value()
 			{
-				return value(detail::type_tag<T>::tag());
+				value v;
+				value::reset<T>(v);
+				return v;
 			}
 		};
 	}

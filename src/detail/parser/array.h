@@ -22,6 +22,7 @@
 
 #include <stdexcept>
 
+#include <peli/json/value.h>
 #include <peli/json/array.h>
 
 #include "detail/parser/parser.h"
@@ -55,10 +56,8 @@ namespace peli
 
 					while (true)
 					{
-						json::value v;
+						auto& v = *arr.emplace(std::end(arr));
 						is >> v;
-
-						arr.push_back(v);
 
 						if (is.peek() == 0x5d) // ']'
 						{
@@ -70,6 +69,8 @@ namespace peli
 						{
 							throw std::runtime_error("");
 						}
+
+						is.get();
 
 						skip_whitespace(is);
 					}

@@ -7,7 +7,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(detail)
 
 add_library(peli SHARED ${PELI_SOURCES}
-	$<TARGET_OBJECTS:peli_detail>
 	$<TARGET_OBJECTS:peli_detail_variant_value>
 	$<TARGET_OBJECTS:peli_detail_parser>
 )

@@ -34,13 +34,12 @@ namespace peli
 	{
 		namespace parser
 		{
-			template<> class parser<peli::json::object>
+			template<typename Ch> class parser<peli::json::basic_object<Ch>>
 			{
 			public:
-				template<typename Ch, typename Alloc>
-				static typename peli::json::object parse(std::basic_istream<Ch, Alloc>& is)
+				static typename peli::json::basic_object<Ch> parse(std::basic_istream<Ch>& is)
 				{
-					peli::json::object obj;
+					peli::json::basic_object<Ch> obj;
 
 					if (is.peek() != 0x7b) // '{'
 						throw std::runtime_error("");
@@ -56,7 +55,7 @@ namespace peli
 
 						while (true)
 						{
-							auto id = parser<std::basic_string<Ch>>::parse(is);
+							const auto& id = parser<std::basic_string<Ch>>::parse(is);
 
 							skip_whitespace(is);
 
@@ -67,9 +66,8 @@ namespace peli
 
 							skip_whitespace(is);
 
-							json::value v;
+							auto& v = obj[id];
 							is >> v;
-							obj[id] = v;
 
 							skip_whitespace(is);
 

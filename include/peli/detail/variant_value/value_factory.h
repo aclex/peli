@@ -20,7 +20,10 @@
 #ifndef PELI_DETAIL_VARIANT_VALUE_VALUE_FACTORY_H
 #define PELI_DETAIL_VARIANT_VALUE_VALUE_FACTORY_H
 
-#include <peli/detail/variant_value/value_template.h>
+#include <istream>
+#include <stdexcept>
+
+#include <peli/detail/variant_value/value_holder_template.h>
 
 namespace peli
 {
@@ -30,11 +33,37 @@ namespace peli
 		{
 			struct value_factory
 			{
-				typedef json_internal_value value_type;
+			private:
+				template<typename T> using template_holder_type = value_holder_template<T>;
+
+			public:
+				typedef value_holder value_type;
 
 				template<typename T> static value_type* create(const T& op)
 				{
-					return new value_template<T>(op);
+					return new template_holder_type<T>(op);
+				}
+
+				template <typename U> static U cast(const value_type* v)
+				{
+					if (!v)
+						throw std::invalid_argument("Value is not initialized");
+
+					if (typeid(U) != v->type_info())
+						throw std::runtime_error("Bad cast");
+
+					return static_cast<const template_holder_type<U>*>(v)->template variant_as<U>();
+				}
+
+				template <typename U> static U cast(value_type* v)
+				{
+					if (!v)
+						throw std::invalid_argument("Value is not initialized");
+
+					if (typeid(U) != v->type_info())
+						throw std::runtime_error("Bad cast");
+
+					return static_cast<template_holder_type<U>*>(v)->template variant_as<U>();
 				}
 
 				static value_type* parse(std::istream& is);

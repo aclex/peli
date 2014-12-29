@@ -36,7 +36,6 @@ value_factory::value_type* value_factory::parse(istream& is)
 
 value_factory::value_type* value_factory::parse(wistream& is)
 {
-// 	return parser::tokenizer<value_factory>::tok(is);
-	return nullptr;
+	return parser::tokenizer<value_factory>::tok(is);
 }
 

@@ -17,27 +17,25 @@
  *
  */
 
-#include "peli/detail/parser/object.h"
+#ifndef PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_H
+#define PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_H
 
-#include <iostream>
-#include <stdexcept>
+#include <typeinfo>
 
-using namespace std;
-
-using namespace peli::detail::parser;
-
-object::object() :
-	m_current_state(state::q0)
+namespace peli
 {
-
+	namespace detail
+	{
+		namespace variant_value
+		{
+			class value_holder
+			{
+			public:
+				virtual const std::type_info& type_info() const = 0;
+				virtual ~value_holder() { }
+			};
+		}
+	}
 }
 
-void object::reset()
-{
-	m_current_state = state::q0;
-}
-
-void object::parse(char c)
-{
-
-}
+#endif // PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_H

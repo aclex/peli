@@ -22,12 +22,13 @@
 
 #include <cstddef>
 #include <string>
+#include <type_traits>
 
 #include <peli/json/object.h>
 #include <peli/json/array.h>
 #include <peli/bad_value_cast.h>
 
-#include <peli/detail/type_traits.h>
+// #include <peli/detail/type_traits.h>
 
 namespace peli
 {
@@ -43,17 +44,21 @@ namespace peli
 			explicit value_shell(bool b) : m_internal_value(InternalValueFactory::template create<bool>(b)) { }
 			explicit value_shell(int i) : m_internal_value(InternalValueFactory::template create<int>(i)) { }
 
+			//TODO: copy constructor
+
 			bool valid() const
 			{
 				return m_internal_value->valid();
 			}
 
+			template<typename T> explicit operator const T() const
+			{
+				return InternalValueFactory::template cast<T>(static_cast<const typename InternalValueFactory::value_type*>(m_internal_value));
+			}
+
 			template<typename T> explicit operator T()
 			{
-				if (!m_internal_value)
-					throw bad_value_cast(type_tag<T>::tag::name, "null");
-
-				return m_internal_value->template as<T>();
+				return InternalValueFactory::template cast<T>(m_internal_value);
 			}
 
 			friend std::istream& operator>>(std::istream& is, value_shell& v)
@@ -68,10 +73,14 @@ namespace peli
 				v.m_internal_value = InternalValueFactory::parse(is);
 			}
 
-			~value_shell() { delete m_internal_value; }
+			~value_shell() {/* delete m_internal_value; */}
 
 		protected:
-			template<typename T> value_shell(type_tag<T>&) : m_internal_value(InternalValueFactory::template create<T>()) { }
+			template<typename T> static void reset(value_shell& v)
+			{
+				delete v.m_internal_value;
+				v.m_internal_value = InternalValueFactory::template create<T>();
+			}
 
 		private:
 			typename InternalValueFactory::value_type* m_internal_value;

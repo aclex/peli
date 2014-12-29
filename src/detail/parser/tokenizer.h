@@ -43,7 +43,7 @@ namespace peli
 					switch (next_char)
 					{
 					case '{':
-						return FactoryType::create(parser<peli::json::object>::parse(is));
+						return FactoryType::create(parser<peli::json::basic_object<Ch>>::parse(is));
 
 					case '[':
 						return FactoryType::create(parser<peli::json::array>::parse(is));
