@@ -33,6 +33,7 @@ namespace peli
 			template<typename T> class value_holder_template : public value_holder
 			{
 			public:
+				value_holder_template(const value_holder_template& v) : m_value(v.m_value) { }
 				explicit value_holder_template(const T& v) : m_value(v) { }
 
 				template<typename U,
@@ -49,6 +50,11 @@ namespace peli
 				V variant_as() const
 				{
 					return m_value;
+				}
+
+				value_holder* clone() const override
+				{
+					return new value_holder_template(*this);
 				}
 
 				const std::type_info& type_info() const override

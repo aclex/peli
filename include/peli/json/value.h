@@ -25,18 +25,12 @@
 
 namespace peli
 {
-	namespace detail
-	{
-		namespace variant_value
-		{
-			struct value_factory;
-		}
-	}
-
 	namespace json
 	{
 		class value : public detail::value_shell<detail::variant_value::value_factory>
 		{
+			using detail::value_shell<detail::variant_value::value_factory>::value_shell;
+
 			template<typename T> friend value make_value()
 			{
 				value v;

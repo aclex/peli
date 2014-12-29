@@ -39,6 +39,11 @@ namespace peli
 			public:
 				typedef value_holder value_type;
 
+				static value_type* clone(const value_type* v)
+				{
+					return v->clone();
+				}
+
 				template<typename T> static value_type* create(const T& op)
 				{
 					return new template_holder_type<T>(op);

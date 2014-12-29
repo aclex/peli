@@ -38,13 +38,37 @@ namespace peli
 		{
 		public:
 			value_shell() : m_internal_value(nullptr) { }
+			value_shell(const value_shell& v) : m_internal_value(InternalValueFactory::clone(v.m_internal_value)) { }
+			value_shell(value_shell&& v)
+			{
+				using std::swap;
+				swap(m_internal_value, v.m_internal_value);
+				v.m_internal_value = nullptr;
+			}
+
 			explicit value_shell(const peli::json::object& obj) : m_internal_value(InternalValueFactory::template create<peli::json::object>(obj)) { }
 			explicit value_shell(const peli::json::array& arr) : m_internal_value(InternalValueFactory::template create<peli::json::array>(arr)) { }
 			explicit value_shell(const std::string& str) : m_internal_value(InternalValueFactory::template create<std::string>(str)) { }
 			explicit value_shell(bool b) : m_internal_value(InternalValueFactory::template create<bool>(b)) { }
 			explicit value_shell(int i) : m_internal_value(InternalValueFactory::template create<int>(i)) { }
 
-			//TODO: copy constructor
+			value_shell& operator=(value_shell v)
+			{
+				using std::swap;
+				swap(m_internal_value, v.m_internal_value);
+
+				return *this;
+			}
+
+			value_shell& operator=(value_shell&& v)
+			{
+				delete m_internal_value;
+
+				m_internal_value = v.m_internal_value;
+				v.m_internal_value = nullptr;
+
+				return *this;
+			}
 
 			bool valid() const
 			{
@@ -73,7 +97,10 @@ namespace peli
 				v.m_internal_value = InternalValueFactory::parse(is);
 			}
 
-			~value_shell() {/* delete m_internal_value; */}
+			~value_shell()
+			{
+				delete m_internal_value;
+			}
 
 		protected:
 			template<typename T> static void reset(value_shell& v)

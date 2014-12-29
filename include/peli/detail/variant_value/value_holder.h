@@ -31,6 +31,7 @@ namespace peli
 			class value_holder
 			{
 			public:
+				virtual value_holder* clone() const = 0;
 				virtual const std::type_info& type_info() const = 0;
 				virtual ~value_holder() { }
 			};
