@@ -17,44 +17,24 @@
  *
  */
 
-#include "peli/detail/variant_value/value_factory.h"
+#ifndef PELI_DETAIL_PRINTER_HEAD_H
+#define PELI_DETAIL_PRINTER_HEAD_H
 
-#include "detail/parser/tokenizer.h"
+#include <ostream>
 
-#include "detail/printer/printer.h"
-
-using namespace std;
-
-using namespace peli;
-
-using namespace peli::detail;
-
-using namespace peli::detail::variant_value;
-
-value_factory::value_type* value_factory::parse(istream& is)
+namespace peli
 {
-	return parser::tokenizer<value_factory>::tok(is);
+	namespace detail
+	{
+		namespace printer
+		{
+			template<typename Ch, typename T> class head
+			{
+			public:
+				static void print(std::basic_ostream<Ch>& os, const T& v);
+			};
+		}
+	}
 }
 
-value_factory::value_type* value_factory::parse(wistream& is)
-{
-	return parser::tokenizer<value_factory>::tok(is);
-}
-
-void value_factory::print(ostream& os, const value_factory::value_type* v)
-{
-	if (!v)
-		return;
-
-	printer::printer p(os);
-	v->print(&p);
-}
-
-void value_factory::print(wostream& os, const value_factory::value_type* v)
-{
-	if (!v)
-		return;
-
-	printer::wprinter p(os);
-	v->print(&p);
-}
+#endif // PELI_DETAIL_PRINTER_HEAD_H

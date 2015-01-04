@@ -24,6 +24,8 @@
 
 #include <peli/detail/variant_value/value_holder.h>
 
+#include <peli/detail/printer/tray.h>
+
 namespace peli
 {
 	namespace detail
@@ -33,21 +35,21 @@ namespace peli
 			template<typename T> class value_holder_template : public value_holder
 			{
 			public:
+				value_holder_template() { }
 				value_holder_template(const value_holder_template& v) : m_value(v.m_value) { }
 				explicit value_holder_template(const T& v) : m_value(v) { }
 
 				template<typename U,
-				typename Unref = typename std::remove_reference<U>::type,
-				typename V = typename std::enable_if<std::is_same<Unref, T>::value, U>::type>
-				V variant_as()
+				typename = typename std::enable_if<!std::is_const<U>::value>::type,
+				typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
+				U variant_as()
 				{
 					return m_value;
 				}
 
 				template<typename U,
-				typename Unref = typename std::remove_reference<U>::type,
-				typename V = typename std::enable_if<std::is_same<Unref, T>::value, U>::type>
-				V variant_as() const
+				typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
+				U variant_as() const
 				{
 					return m_value;
 				}
@@ -55,6 +57,11 @@ namespace peli
 				value_holder* clone() const override
 				{
 					return new value_holder_template(*this);
+				}
+
+				void print(printer::tray* printer) const override
+				{
+					printer->put(m_value);
 				}
 
 				const std::type_info& type_info() const override

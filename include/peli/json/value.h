@@ -27,6 +27,9 @@ namespace peli
 {
 	namespace json
 	{
+		class value;
+		template<typename T> value make_value();
+
 		class value : public detail::value_shell<detail::variant_value::value_factory>
 		{
 			using detail::value_shell<detail::variant_value::value_factory>::value_shell;

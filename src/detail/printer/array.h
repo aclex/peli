@@ -17,44 +17,42 @@
  *
  */
 
-#include "peli/detail/variant_value/value_factory.h"
+#ifndef PELI_DETAIL_PRINTER_ARRAY_H
+#define PELI_DETAIL_PRINTER_ARRAY_H
 
-#include "detail/parser/tokenizer.h"
+#include <ostream>
 
-#include "detail/printer/printer.h"
+#include "peli/json/array.h"
+#include "peli/json/value.h"
 
-using namespace std;
-
-using namespace peli;
-
-using namespace peli::detail;
-
-using namespace peli::detail::variant_value;
-
-value_factory::value_type* value_factory::parse(istream& is)
+namespace peli
 {
-	return parser::tokenizer<value_factory>::tok(is);
+	namespace detail
+	{
+		namespace printer
+		{
+			template<typename Ch> class head<Ch, peli::json::array>
+			{
+			public:
+				static void print(std::basic_ostream<Ch>& os, const peli::json::array& arr)
+				{
+					os << s_left_square;
+
+					for (auto it = arr.cbegin(); it != arr.cend(); ++it)
+					{
+						os << (*it);
+						if (it != --arr.cend())
+							os << s_comma;
+					}
+				}
+
+			private:
+				static const Ch s_left_square = 0x5b; // '['
+				static const Ch s_right_square = 0x5d; // ']'
+				static const Ch s_comma = 0x2c; // ','
+			};
+		}
+	}
 }
 
-value_factory::value_type* value_factory::parse(wistream& is)
-{
-	return parser::tokenizer<value_factory>::tok(is);
-}
-
-void value_factory::print(ostream& os, const value_factory::value_type* v)
-{
-	if (!v)
-		return;
-
-	printer::printer p(os);
-	v->print(&p);
-}
-
-void value_factory::print(wostream& os, const value_factory::value_type* v)
-{
-	if (!v)
-		return;
-
-	printer::wprinter p(os);
-	v->print(&p);
-}
+#endif // PELI_DETAIL_PRINTER_ARRAY_H

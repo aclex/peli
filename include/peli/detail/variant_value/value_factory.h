@@ -44,6 +44,11 @@ namespace peli
 					return v->clone();
 				}
 
+				template<typename T> static value_type* create()
+				{
+					return new template_holder_type<T>();
+				}
+
 				template<typename T> static value_type* create(const T& op)
 				{
 					return new template_holder_type<T>(op);
@@ -51,28 +56,34 @@ namespace peli
 
 				template <typename U> static U cast(const value_type* v)
 				{
+					typedef typename std::decay<U>::type decayed_u;
+
 					if (!v)
 						throw std::invalid_argument("Value is not initialized");
 
-					if (typeid(U) != v->type_info())
+					if (typeid(decayed_u) != v->type_info())
 						throw std::runtime_error("Bad cast");
 
-					return static_cast<const template_holder_type<U>*>(v)->template variant_as<U>();
+					return static_cast<const template_holder_type<decayed_u>*>(v)->template variant_as<U>();
 				}
 
 				template <typename U> static U cast(value_type* v)
 				{
+					typedef typename std::decay<U>::type decayed_u;
 					if (!v)
 						throw std::invalid_argument("Value is not initialized");
 
-					if (typeid(U) != v->type_info())
+					if (typeid(decayed_u) != v->type_info())
 						throw std::runtime_error("Bad cast");
 
-					return static_cast<template_holder_type<U>*>(v)->template variant_as<U>();
+					return static_cast<template_holder_type<decayed_u>*>(v)->template variant_as<U>();
 				}
 
 				static value_type* parse(std::istream& is);
 				static value_type* parse(std::wistream& is);
+
+				static void print(std::ostream& os, const value_type* v);
+				static void print(std::wostream& os, const value_type* v);
 			};
 		}
 	}

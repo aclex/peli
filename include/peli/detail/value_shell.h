@@ -21,6 +21,7 @@
 #define PELI_DETAIL_VALUE_SHELL_H
 
 #include <cstddef>
+#include <iostream>
 #include <string>
 #include <type_traits>
 
@@ -37,9 +38,9 @@ namespace peli
 		template <class InternalValueFactory> class value_shell
 		{
 		public:
-			value_shell() : m_internal_value(nullptr) { }
+			value_shell() noexcept : m_internal_value(nullptr) { }
 			value_shell(const value_shell& v) : m_internal_value(InternalValueFactory::clone(v.m_internal_value)) { }
-			value_shell(value_shell&& v)
+			value_shell(value_shell&& v) noexcept
 			{
 				using std::swap;
 				swap(m_internal_value, v.m_internal_value);
@@ -48,11 +49,19 @@ namespace peli
 
 			explicit value_shell(const peli::json::object& obj) : m_internal_value(InternalValueFactory::template create<peli::json::object>(obj)) { }
 			explicit value_shell(const peli::json::array& arr) : m_internal_value(InternalValueFactory::template create<peli::json::array>(arr)) { }
-			explicit value_shell(const std::string& str) : m_internal_value(InternalValueFactory::template create<std::string>(str)) { }
+			template<typename Ch> explicit value_shell(const std::basic_string<Ch>& str) :
+				m_internal_value(InternalValueFactory::template create<std::basic_string<Ch>>(str))
+			{
+
+			}
+
+			explicit value_shell(const char* str) : value_shell(std::basic_string<char>(str)) { }
+			explicit value_shell(const wchar_t* str) : value_shell(std::basic_string<wchar_t>(str)) { }
+
 			explicit value_shell(bool b) : m_internal_value(InternalValueFactory::template create<bool>(b)) { }
 			explicit value_shell(int i) : m_internal_value(InternalValueFactory::template create<int>(i)) { }
 
-			value_shell& operator=(value_shell v)
+			value_shell& operator=(value_shell v) noexcept
 			{
 				using std::swap;
 				swap(m_internal_value, v.m_internal_value);
@@ -60,7 +69,7 @@ namespace peli
 				return *this;
 			}
 
-			value_shell& operator=(value_shell&& v)
+			value_shell& operator=(value_shell&& v) noexcept
 			{
 				delete m_internal_value;
 
@@ -70,34 +79,63 @@ namespace peli
 				return *this;
 			}
 
-			bool valid() const
+			bool valid() const noexcept
 			{
+				if (!m_internal_value)
+					return false;
+
 				return m_internal_value->valid();
 			}
 
-			template<typename T> explicit operator const T() const
+			template<typename T> explicit operator T() const
 			{
 				return InternalValueFactory::template cast<T>(static_cast<const typename InternalValueFactory::value_type*>(m_internal_value));
 			}
 
-			template<typename T> explicit operator T()
+			template<typename T,
+			typename = typename std::enable_if<!std::is_const<T>::value>::type> explicit operator T()
 			{
 				return InternalValueFactory::template cast<T>(m_internal_value);
+			}
+
+			template<typename T,
+			typename = typename std::enable_if<!std::is_const<T>::value>::type> explicit operator T&() const
+			{
+				return InternalValueFactory::template cast<T&>(static_cast<const typename InternalValueFactory::value_type*>(m_internal_value));
+			}
+
+			template<typename T> explicit operator T&()
+			{
+				return InternalValueFactory::template cast<T&>(m_internal_value);
 			}
 
 			friend std::istream& operator>>(std::istream& is, value_shell& v)
 			{
 				delete v.m_internal_value;
 				v.m_internal_value = InternalValueFactory::parse(is);
+				return is;
 			}
 
 			friend std::wistream& operator>>(std::wistream& is, value_shell& v)
 			{
 				delete v.m_internal_value;
 				v.m_internal_value = InternalValueFactory::parse(is);
+				return is;
 			}
 
-			~value_shell()
+			friend std::ostream& operator<<(std::ostream& os, const value_shell& v)
+			{
+				InternalValueFactory::print(os, v.m_internal_value);
+				return os;
+			}
+
+			friend std::wostream& operator<<(std::wostream& os, const value_shell& v)
+			{
+				InternalValueFactory::print(os, v.m_internal_value);
+				return os;
+			}
+
+			~value_shell() noexcept
 			{
 				delete m_internal_value;
 			}

@@ -17,44 +17,22 @@
  *
  */
 
-#include "peli/detail/variant_value/value_factory.h"
+#include <sstream>
+#include <iostream>
 
-#include "detail/parser/tokenizer.h"
-
-#include "detail/printer/printer.h"
+#include "peli/json/value.h"
 
 using namespace std;
 
 using namespace peli;
 
-using namespace peli::detail;
-
-using namespace peli::detail::variant_value;
-
-value_factory::value_type* value_factory::parse(istream& is)
+int main(int argc, char* argv[])
 {
-	return parser::tokenizer<value_factory>::tok(is);
-}
+	json::value v = json::make_value<json::object>();
+	json::object& obj = static_cast<json::object&>(v);
+	obj["привет"] = json::value("мир");
 
-value_factory::value_type* value_factory::parse(wistream& is)
-{
-	return parser::tokenizer<value_factory>::tok(is);
-}
+	cout << "проверка: " << v << endl;
 
-void value_factory::print(ostream& os, const value_factory::value_type* v)
-{
-	if (!v)
-		return;
-
-	printer::printer p(os);
-	v->print(&p);
-}
-
-void value_factory::print(wostream& os, const value_factory::value_type* v)
-{
-	if (!v)
-		return;
-
-	printer::wprinter p(os);
-	v->print(&p);
+	return 0;
 }

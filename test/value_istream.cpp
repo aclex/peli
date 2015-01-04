@@ -20,7 +20,6 @@
 #include <sstream>
 #include <iostream>
 
-#include "peli/detail/variant_value/value_factory.h"
 #include "peli/json/value.h"
 
 using namespace std;
@@ -38,7 +37,7 @@ int main(int argc, char* argv[])
 
 	for (const auto& p : obj)
 	{
-		const auto& str = static_cast<const string>(p.second);
+		const auto& str = p.second;
 		cout << "проверка: " << p.first << " : " << str << endl;
 	}
 
