@@ -17,22 +17,17 @@
  *
  */
 
-#include <sstream>
-#include <iostream>
+#include "detail/printer/util.h"
 
-#include "peli/json/value.h"
+#include <ios>
+
+using namespace peli::detail::printer;
 
 using namespace std;
 
-using namespace peli;
-
-int main(int argc, char* argv[])
+int peli::detail::printer::geti()
 {
-	json::value v = json::make_value<json::object>();
-	json::object& obj(v);
-	obj["привет"] = json::value("мир");
-
-	cout << "проверка: " << v << endl;
-
-	return 0;
+	static int i = ios_base::xalloc();
+	return i;
 }
+

@@ -24,7 +24,9 @@
 
 #include "peli/json/object.h"
 #include "peli/json/value.h"
+#include "peli/json/iomanip.h"
 
+#include "detail/printer/util.h"
 #include "detail/printer/string.h"
 
 namespace peli
@@ -38,17 +40,41 @@ namespace peli
 			public:
 				static void print(std::basic_ostream<Ch>& os, const peli::json::basic_object<Ch>& obj)
 				{
+					const bool we_are_pretty = os.iword(geti()) & flag::pretty;
+
 					os << s_left_curly;
+					if (we_are_pretty)
+					{
+						os << std::endl;
+					}
 
 					for (auto it = obj.cbegin(); it != obj.cend(); ++it)
 					{
+						if (we_are_pretty)
+							os << "\t";
+
 						printer::head<Ch, std::basic_string<Ch>>::print(os, it->first);
+
+						if (we_are_pretty)
+							os << " ";
+
 						os << s_colon;
+
+						if (we_are_pretty)
+							os << " ";
+
 						os << it->second;
-						os << s_right_curly;
+
 						if (it != --obj.cend())
 							os << s_comma;
+
+						if (we_are_pretty)
+						{
+							os << std::endl;
+						}
 					}
+
+					os << s_right_curly;
 				}
 
 			private:

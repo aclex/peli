@@ -17,22 +17,48 @@
  *
  */
 
-#include <sstream>
-#include <iostream>
+#include "peli/json/iomanip.h"
 
-#include "peli/json/value.h"
+#include "detail/printer/util.h"
+
+using namespace peli::json;
+using namespace peli::detail::printer;
 
 using namespace std;
 
-using namespace peli;
-
-int main(int argc, char* argv[])
+namespace
 {
-	json::value v = json::make_value<json::object>();
-	json::object& obj(v);
-	obj["привет"] = json::value("мир");
+	template<typename Ch> void pretty_template(basic_ostream<Ch>& os)
+	{
+		os.iword(geti()) |= flag::pretty;
+	}
 
-	cout << "проверка: " << v << endl;
+	template<typename Ch> void nopretty_template(basic_ostream<Ch>& os)
+	{
+		os.iword(geti()) &= !flag::pretty;
+	}
+}
 
-	return 0;
+ostream& peli::json::pretty(ostream& os)
+{
+	pretty_template(os);
+	return os;
+}
+
+wostream& peli::json::pretty(wostream& os)
+{
+	pretty_template(os);
+	return os;
+}
+
+ostream& peli::json::nopretty(ostream& os)
+{
+	nopretty_template(os);
+	return os;
+}
+
+wostream& peli::json::nopretty(wostream& os)
+{
+	nopretty_template(os);
+	return os;
 }

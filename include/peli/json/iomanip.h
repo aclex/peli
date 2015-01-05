@@ -17,22 +17,20 @@
  *
  */
 
-#include <sstream>
-#include <iostream>
+#ifndef PELI_JSON_IOMANIP_H
+#define PELI_JSON_IOMANIP_H
 
-#include "peli/json/value.h"
+#include <ostream>
 
-using namespace std;
-
-using namespace peli;
-
-int main(int argc, char* argv[])
+namespace peli
 {
-	json::value v = json::make_value<json::object>();
-	json::object& obj(v);
-	obj["привет"] = json::value("мир");
-
-	cout << "проверка: " << v << endl;
-
-	return 0;
+	namespace json
+	{
+		std::ostream& pretty(std::ostream& os);
+		std::wostream& pretty(std::wostream& os);
+		std::ostream& nopretty(std::ostream& os);
+		std::wostream& nopretty(std::wostream& os);
+	}
 }
+
+#endif // PELI_JSON_IOMANIP_H

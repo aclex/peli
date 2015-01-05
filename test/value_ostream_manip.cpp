@@ -21,6 +21,7 @@
 #include <iostream>
 
 #include "peli/json/value.h"
+#include "peli/json/iomanip.h"
 
 using namespace std;
 
@@ -31,8 +32,11 @@ int main(int argc, char* argv[])
 	json::value v = json::make_value<json::object>();
 	json::object& obj(v);
 	obj["привет"] = json::value("мир");
+	obj["ты"] = json::value("добр");
 
-	cout << "проверка: " << v << endl;
+	cout << "проверка:" << endl << v << endl;
+	cout << "проверка манипуляцией:" << endl << json::pretty << v << endl;
+	cout << "повторная проверка:" << endl << json::nopretty << v << endl;
 
 	return 0;
 }

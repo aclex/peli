@@ -17,22 +17,23 @@
  *
  */
 
-#include <sstream>
-#include <iostream>
+#ifndef PELI_DETAIL_PRINTER_UTIL_H
+#define PELI_DETAIL_PRINTER_UTIL_H
 
-#include "peli/json/value.h"
-
-using namespace std;
-
-using namespace peli;
-
-int main(int argc, char* argv[])
+namespace peli
 {
-	json::value v = json::make_value<json::object>();
-	json::object& obj(v);
-	obj["привет"] = json::value("мир");
+	namespace detail
+	{
+		namespace printer
+		{
+			int geti();
 
-	cout << "проверка: " << v << endl;
-
-	return 0;
+			namespace flag
+			{
+				const long pretty = 0x01;
+			}
+		}
+	}
 }
+
+#endif // PELI_DETAIL_PRINTER_UTIL_H
