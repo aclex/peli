@@ -59,9 +59,9 @@ namespace peli
 					return new value_holder_template(*this);
 				}
 
-				void print(printer::tray* printer) const override
+				void print(printer::tray* t) const override
 				{
-					printer->put(m_value);
+					t->put(m_value);
 				}
 
 				const std::type_info& type_info() const override
