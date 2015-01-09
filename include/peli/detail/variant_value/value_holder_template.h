@@ -35,23 +35,33 @@ namespace peli
 			template<typename T> class value_holder_template : public value_holder
 			{
 			public:
-				value_holder_template() { }
+				value_holder_template() noexcept { }
 				value_holder_template(const value_holder_template& v) : m_value(v.m_value) { }
 				explicit value_holder_template(const T& v) : m_value(v) { }
 
 				template<typename U,
 				typename = typename std::enable_if<!std::is_const<U>::value>::type,
 				typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
-				U variant_as()
+				U variant_as() noexcept
 				{
 					return m_value;
 				}
 
 				template<typename U,
 				typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
-				U variant_as() const
+				U variant_as() const noexcept
 				{
 					return m_value;
+				}
+
+				bool operator==(const value_holder_template& rhs) const noexcept
+				{
+					return m_value == rhs.m_value;
+				}
+
+				bool operator!=(const value_holder_template& rhs) const noexcept
+				{
+					return !operator==(rhs);
 				}
 
 				value_holder* clone() const override
@@ -64,7 +74,7 @@ namespace peli
 					t->put(m_value);
 				}
 
-				const std::type_info& type_info() const override
+				const std::type_info& type_info() const noexcept override
 				{
 					return typeid(T);
 				}

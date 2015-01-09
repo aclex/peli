@@ -31,9 +31,8 @@ namespace peli
 	{
 		namespace variant_value
 		{
-			struct value_factory
+			class value_factory
 			{
-			private:
 				template<typename T> using template_holder_type = value_holder_template<T>;
 
 			public:
@@ -54,29 +53,14 @@ namespace peli
 					return new template_holder_type<T>(op);
 				}
 
-				template <typename U> static U cast(const value_type* v)
+				template<typename U> static U cast(const value_type* v)
 				{
-					typedef typename std::decay<U>::type decayed_u;
-
-					if (!v)
-						throw std::invalid_argument("Value is not initialized");
-
-					if (typeid(decayed_u) != v->type_info())
-						throw std::runtime_error("Bad cast");
-
-					return static_cast<const template_holder_type<decayed_u>*>(v)->template variant_as<U>();
+					return call_cast<U>(v);
 				}
 
-				template <typename U> static U cast(value_type* v)
+				template<typename U> static U cast(value_type* v)
 				{
-					typedef typename std::decay<U>::type decayed_u;
-					if (!v)
-						throw std::invalid_argument("Value is not initialized");
-
-					if (typeid(decayed_u) != v->type_info())
-						throw std::runtime_error("Bad cast");
-
-					return static_cast<template_holder_type<decayed_u>*>(v)->template variant_as<U>();
+					return call_cast<U>(v);
 				}
 
 				static value_type* parse(std::istream& is);
@@ -84,6 +68,23 @@ namespace peli
 
 				static void print(std::ostream& os, const value_type* v);
 				static void print(std::wostream& os, const value_type* v);
+
+			private:
+				template<typename U, typename ValueTypePtr> static U call_cast(ValueTypePtr* v)
+				{
+					typedef typename std::decay<U>::type decayed_u;
+
+					if (!v)
+						throw std::invalid_argument("Value is not initialized");
+
+					if (typeid(decayed_u) != v->type_info())
+						throw std::bad_cast();
+
+					typedef typename std::conditional<std::is_const<ValueTypePtr>::value,
+							const template_holder_type<decayed_u>*, template_holder_type<decayed_u>*>::type holder_type;
+
+					return static_cast<holder_type>(v)->template variant_as<U>();
+				}
 			};
 		}
 	}

@@ -17,38 +17,15 @@
  *
  */
 
-#ifndef PELI_DETAIL_VARIANT_VALUE_COMPONENT_H
-#define PELI_DETAIL_VARIANT_VALUE_COMPONENT_H
-
-#include <peli/detail/type_traits.h>
-#include <peli/bad_value_cast.h>
+#ifndef PELI_JSON_NUMBER_H
+#define PELI_JSON_NUMBER_H
 
 namespace peli
 {
-	namespace detail
+	namespace json
 	{
-		namespace variant_value
-		{
-			template<typename T> class component
-			{
-			public:
-				virtual T variant_as(typename type_tag<T>::tag::type tag) const
-				{
-					throw bad_value_cast(type_tag<T>::tag::name, "unknown");
-				}
-
-				virtual T& variant_as(typename type_tag<T>::tag::ref_type tag)
-				{
-					throw bad_value_cast(type_tag<T>::tag::name, "unknown");
-				}
-
-				virtual const T& variant_as(typename type_tag<T>::tag::cref_type tag) const
-				{
-					throw bad_value_cast(type_tag<T>::tag::name, "unknown");
-				}
-			};
-		}
+		typedef long double number;
 	}
 }
 
-#endif // PELI_DETAIL_VARIANT_VALUE_COMPONENT_H
+#endif // PELI_JSON_NUMBER_H
