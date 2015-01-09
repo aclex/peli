@@ -29,6 +29,7 @@
 #include "detail/printer/object.h"
 #include "detail/printer/string.h"
 #include "detail/printer/array.h"
+#include "detail/printer/number.h"
 
 namespace peli
 {
@@ -47,6 +48,7 @@ namespace peli
 				void put(const json::array& v) override { dispatch(v); }
 				void put(const std::string& v) override { dispatch(v); }
 				void put(const std::wstring& v) override { dispatch(v); }
+				void put(json::number v) override { dispatch(v); }
 
 			private:
 				template<typename T> void dispatch(const T& v)

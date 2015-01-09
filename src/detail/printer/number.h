@@ -17,14 +17,15 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_VALUE_H
-#define PELI_DETAIL_PRINTER_VALUE_H
+#ifndef PELI_DETAIL_PRINTER_NUMBER_H
+#define PELI_DETAIL_PRINTER_NUMBER_H
 
-#include <stdexcept>
+#include <ostream>
+#include <string>
 
-#include <peli/json/object.h>
-#include <peli/json/array.h>
-#include <peli/json/number.h>
+#include "peli/json/number.h"
+
+#include "detail/printer/head.h"
 
 namespace peli
 {
@@ -32,18 +33,16 @@ namespace peli
 	{
 		namespace printer
 		{
-			class tray
+			template<typename Ch> class head<Ch, json::number>
 			{
 			public:
-				virtual void put(const peli::json::object& obj) = 0;
-				virtual void put(const peli::json::wobject& obj) = 0;
-				virtual void put(const peli::json::array& arr) = 0;
-				virtual void put(const std::string& str) = 0;
-				virtual void put(const std::wstring& str) = 0;
-				virtual void put(json::number n) = 0;
+				static void print(std::basic_ostream<Ch>& os, json::number n)
+				{
+					os << n;
+				}
 			};
 		}
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_VALUE_H
+#endif // PELI_DETAIL_PRINTER_NUMBER_H
