@@ -54,14 +54,9 @@ namespace peli
 					return m_value;
 				}
 
-				bool operator==(const value_holder_template& rhs) const noexcept
+				bool equals(const value_holder& rhs) const noexcept override
 				{
-					return m_value == rhs.m_value;
-				}
-
-				bool operator!=(const value_holder_template& rhs) const noexcept
-				{
-					return !operator==(rhs);
+					return m_value == static_cast<const value_holder_template&>(rhs).m_value;
 				}
 
 				value_holder* clone() const override

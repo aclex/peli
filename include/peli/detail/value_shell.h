@@ -35,6 +35,32 @@ namespace peli
 	{
 		template <class InternalValueFactory> class value_shell
 		{
+			struct deduction_helper
+			{
+				json::array operator()(json::array);
+				json::number operator()(json::number);
+				bool operator()(bool);
+
+				template<typename Ch> json::basic_object<Ch> operator()(json::basic_object<Ch>);
+				template<typename Ch> std::basic_string<Ch> operator()(std::basic_string<Ch>);
+
+				template<typename U,
+				class = typename std::enable_if<std::is_convertible<json::array, U>::value>::type>
+				json::array operator()(U);
+
+				template<typename U,
+				class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+				json::number operator()(U);
+
+				template<typename U, typename Ch,
+				class = typename std::enable_if<std::is_convertible<json::basic_object<Ch>, U>::value>::type>
+				json::basic_object<Ch> operator()(U);
+
+				template<typename U, typename Ch,
+				class = typename std::enable_if<std::is_convertible<std::basic_string<Ch>, U>::value>::type>
+				std::basic_string<Ch> operator()(U);
+			};
+
 		public:
 			constexpr value_shell() noexcept : m_internal_value(nullptr) { }
 			value_shell(const value_shell& v) : m_internal_value(InternalValueFactory::clone(v.m_internal_value)) { }
@@ -45,16 +71,21 @@ namespace peli
 				v.m_internal_value = nullptr;
 			}
 
-			explicit value_shell(const peli::json::object& obj) : m_internal_value(InternalValueFactory::template create<peli::json::object>(obj)) { }
+			template<typename Ch> explicit value_shell(const peli::json::basic_object<Ch>& obj) :
+				m_internal_value(InternalValueFactory::template create<peli::json::basic_object<Ch>>(obj)) { }
+
 			explicit value_shell(const peli::json::array& arr) : m_internal_value(InternalValueFactory::template create<peli::json::array>(arr)) { }
+
 			template<typename Ch> explicit value_shell(const std::basic_string<Ch>& str) :
 				m_internal_value(InternalValueFactory::template create<std::basic_string<Ch>>(str)) { }
 
-			explicit value_shell(const char* str) : value_shell(std::basic_string<char>(str)) { }
-			explicit value_shell(const wchar_t* str) : value_shell(std::basic_string<wchar_t>(str)) { }
+			template<typename Ch> explicit value_shell(const Ch* str) : value_shell(std::basic_string<Ch>(str)) { }
 
 			explicit value_shell(bool b) : m_internal_value(InternalValueFactory::template create<bool>(b)) { }
-			explicit value_shell(long double i) : m_internal_value(InternalValueFactory::template create<json::number>(i)) { }
+			explicit value_shell(json::number i) : m_internal_value(InternalValueFactory::template create<json::number>(i)) { }
+
+			template<typename U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type> explicit value_shell(U i) :
+				value_shell(static_cast<json::number>(i)) { }
 
 			value_shell& operator=(value_shell v) noexcept
 			{
@@ -81,7 +112,7 @@ namespace peli
 
 			bool operator==(const value_shell& rhs) const noexcept
 			{
-				return *m_internal_value == *rhs.m_internal_value;
+				return InternalValueFactory::equal(m_internal_value, rhs.m_internal_value);
 			}
 
 			bool operator!=(const value_shell& rhs) const noexcept
@@ -93,21 +124,23 @@ namespace peli
 			{
 				typedef typename std::result_of<deduction_helper(T)>::type json_type;
 				return static_cast<T>(
-					InternalValueFactory::template cast<json_type>(static_cast<const typename InternalValueFactory::value_type*>(m_internal_value)));
+					InternalValueFactory::template cast<json_type>(
+						static_cast<const typename InternalValueFactory::value_type*>(m_internal_value)));
 			}
 
 			template<typename T> explicit operator const T&() const
 			{
 				typedef typename std::result_of<deduction_helper(T)>::type json_type;
 				return static_cast<const T&>(
-					InternalValueFactory::template cast<const json_type&>(static_cast<const typename InternalValueFactory::value_type*>(m_internal_value)));
+					InternalValueFactory::template cast<const json_type&>(
+						static_cast<const typename InternalValueFactory::value_type*>(m_internal_value)));
 			}
 
-			template<typename T> explicit operator T&()
+			template<typename T,
+			class = typename std::enable_if<std::is_same<T, typename std::result_of<deduction_helper(T)>::type>::value>::type>
+			explicit operator T&()
 			{
-				typedef typename std::result_of<deduction_helper(T)>::type json_type;
-
-				return static_cast<T&>(InternalValueFactory::template cast<json_type&>(m_internal_value));
+				return InternalValueFactory::template cast<T&>(m_internal_value);
 			}
 
 			friend std::istream& operator>>(std::istream& is, value_shell& v)
@@ -149,32 +182,6 @@ namespace peli
 			}
 
 		private:
-			class deduction_helper
-			{
-			public:
-				json::array operator()(json::array);
-				json::number operator()(json::number);
-				bool operator()(bool);
-
-				template<typename Ch> json::basic_object<Ch> operator()(json::basic_object<Ch>);
-				template<typename Ch> std::basic_string<Ch> operator()(std::basic_string<Ch>);
-
-				template<typename U,
-				class = typename std::enable_if<std::is_convertible<json::array, U>::value>::type>
-				json::array operator()(U);
-
-				template<typename U,
-				class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
-				json::number operator()(U);
-
-				template<typename U, typename Ch,
-				class = typename std::enable_if<std::is_convertible<json::basic_object<Ch>, U>::value>::type>
-				json::basic_object<Ch> operator()(U);
-
-				template<typename U, typename Ch,
-				class = typename std::enable_if<std::is_convertible<std::basic_string<Ch>, U>::value>::type>
-				std::basic_string<Ch> operator()(U);
-			};
 
 			typename InternalValueFactory::value_type* m_internal_value;
 		};

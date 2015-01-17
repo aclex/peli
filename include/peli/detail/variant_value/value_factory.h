@@ -43,6 +43,14 @@ namespace peli
 					return v->clone();
 				}
 
+				static bool equal(const value_type* lhs, const value_type* rhs)
+				{
+					if (lhs->type_info() != rhs->type_info())
+						return false;
+
+					return lhs->equals(*rhs);
+				}
+
 				template<typename T> static value_type* create()
 				{
 					return new template_holder_type<T>();

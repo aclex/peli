@@ -39,6 +39,7 @@ namespace peli
 				virtual value_holder* clone() const = 0;
 				virtual void print(printer::tray* t) const = 0;
 				virtual const std::type_info& type_info() const noexcept = 0;
+				virtual bool equals(const value_holder& rhs) const noexcept = 0;
 				virtual ~value_holder() noexcept { }
 			};
 		}
