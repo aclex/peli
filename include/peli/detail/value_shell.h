@@ -95,16 +95,6 @@ namespace peli
 				return *this;
 			}
 
-			value_shell& operator=(value_shell&& v) noexcept
-			{
-				delete m_internal_value;
-
-				m_internal_value = v.m_internal_value;
-				v.m_internal_value = nullptr;
-
-				return *this;
-			}
-
 			constexpr bool null() const noexcept
 			{
 				return m_internal_value == nullptr;
