@@ -10,13 +10,29 @@ new_test(value_shell_expl_ctor_array.cpp peli)
 new_test(value_shell_expl_ctor_number.cpp peli)
 new_test(value_shell_expl_ctor_boolean.cpp peli)
 new_test(value_shell_expl_ctor_string.cpp peli)
+
 new_test(value_shell_copy_assign.cpp peli)
 new_test(value_shell_move_assign.cpp peli)
+
 new_test(value_shell_make_value_object.cpp peli)
 new_test(value_shell_make_value_array.cpp peli)
 new_test(value_shell_make_value_number.cpp peli)
 new_test(value_shell_make_value_string.cpp peli)
 new_test(value_shell_make_value_boolean.cpp peli)
+
+new_test(value_shell_cast_to_value.cpp peli)
+new_test(value_shell_cast_const_to_value.cpp peli)
+new_test(value_shell_cast_to_cref.cpp peli)
+new_test(value_shell_cast_to_ref.cpp peli)
+new_test(value_shell_cast_const_to_cref.cpp peli)
+new_compilation_fail_test(value_shell_cast_const_to_ref.cpp peli)
+
+new_test(value_factory_cast_to_value.cpp peli)
+new_test(value_factory_cast_to_ref.cpp peli)
+new_test(value_factory_cast_const_to_value.cpp peli)
+new_compilation_fail_test(value_factory_cast_const_to_ref.cpp peli)
+
+new_test(value_shell_api_test.cpp peli)
 
 new_test(value_istream.cpp peli)
 new_test(value_ostream.cpp peli)
