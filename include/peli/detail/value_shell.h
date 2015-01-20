@@ -33,33 +33,9 @@ namespace peli
 {
 	namespace detail
 	{
-		template <class InternalValueFactory> class value_shell
+		template <class InternalValueFactory, typename DeductionHelper> class value_shell
 		{
-			struct deduction_helper
-			{
-				json::array operator()(json::array);
-				json::number operator()(json::number);
-				bool operator()(bool);
-
-				template<typename Ch> json::basic_object<Ch> operator()(json::basic_object<Ch>);
-				template<typename Ch> std::basic_string<Ch> operator()(std::basic_string<Ch>);
-
-				template<typename U,
-				class = typename std::enable_if<std::is_convertible<json::array, U>::value>::type>
-				json::array operator()(U);
-
-				template<typename U,
-				class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
-				json::number operator()(U);
-
-				template<typename U, typename Ch,
-				class = typename std::enable_if<std::is_convertible<json::basic_object<Ch>, U>::value>::type>
-				json::basic_object<Ch> operator()(U);
-
-				template<typename U, typename Ch,
-				class = typename std::enable_if<std::is_convertible<std::basic_string<Ch>, U>::value>::type>
-				std::basic_string<Ch> operator()(U);
-			};
+			typedef DeductionHelper deduction_helper;
 
 		public:
 			constexpr value_shell() noexcept : m_internal_value(nullptr) { }
@@ -172,7 +148,6 @@ namespace peli
 			}
 
 		private:
-
 			typename InternalValueFactory::value_type* m_internal_value;
 		};
 	}
