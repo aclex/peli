@@ -59,12 +59,15 @@ namespace peli
 						auto& v = *arr.emplace(std::end(arr));
 						is >> v;
 
+						skip_whitespace(is);
+
 						if (is.peek() == 0x5d) // ']'
 						{
 							is.get();
 							break;
 						}
 
+						Ch test = is.peek();
 						if (is.peek() != 0x2c) // ','
 						{
 							throw std::runtime_error("");

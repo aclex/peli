@@ -42,7 +42,7 @@ namespace peli
 					peli::json::basic_object<Ch> obj;
 
 					if (is.peek() != 0x7b) // '{'
-						throw std::runtime_error("");
+						throw std::invalid_argument("");
 
 					is.get();
 
@@ -51,7 +51,7 @@ namespace peli
 					if (is.peek() != 0x7d) // '}'
 					{
 						if (is.peek() != 0x22) // '"'
-							throw std::runtime_error("");
+							throw std::invalid_argument("");
 
 						while (true)
 						{
@@ -60,7 +60,7 @@ namespace peli
 							skip_whitespace(is);
 
 							if (is.peek() != 0x3a) // ':'
-								throw std::runtime_error("");
+								throw std::invalid_argument("");
 
 							is.get();
 
@@ -79,7 +79,7 @@ namespace peli
 
 							if (is.peek() != 0x2c) // ','
 							{
-								throw std::runtime_error("");
+								throw std::invalid_argument("");
 							}
 
 							is.get();

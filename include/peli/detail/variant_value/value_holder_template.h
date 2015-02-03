@@ -37,7 +37,18 @@ namespace peli
 			public:
 				value_holder_template() noexcept { }
 				value_holder_template(const value_holder_template& v) : m_value(v.m_value) { }
+				value_holder_template(value_holder_template&& v) noexcept
+				{
+					using std::swap;
+					swap(m_value, v.m_value);
+				}
+
 				explicit value_holder_template(const T& v) : m_value(v) { }
+				value_holder_template(T&& v) noexcept
+				{
+					using std::swap;
+					swap(m_value, v);
+				}
 
 				template<typename U,
 				typename = typename std::enable_if<!std::is_const<U>::value>::type,

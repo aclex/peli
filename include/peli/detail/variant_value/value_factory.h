@@ -40,11 +40,20 @@ namespace peli
 
 				static value_type* clone(const value_type* v)
 				{
+					if (!v)
+						return nullptr;
+
 					return v->clone();
 				}
 
 				static bool equal(const value_type* lhs, const value_type* rhs)
 				{
+					if (lhs == rhs)
+						return true;
+
+					if (!lhs || !rhs)
+						return false;
+
 					if (lhs->type_info() != rhs->type_info())
 						return false;
 
@@ -53,12 +62,16 @@ namespace peli
 
 				template<typename T> static value_type* create()
 				{
-					return new template_holder_type<T>();
+					typedef typename std::decay<T>::type decayed_t;
+
+					return new template_holder_type<decayed_t>();
 				}
 
-				template<typename T> static value_type* create(const T& op)
+				template<typename T> static value_type* create(T&& op)
 				{
-					return new template_holder_type<T>(op);
+					typedef typename std::decay<T>::type decayed_t;
+
+					return new template_holder_type<decayed_t>(std::forward<T>(op));
 				}
 
 				template<typename U> static U cast(const value_type* v)

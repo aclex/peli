@@ -22,6 +22,7 @@
 #include "detail/parser/object.h"
 #include "detail/parser/array.h"
 #include "detail/parser/string.h"
+#include "detail/parser/null.h"
 
 #ifndef PELI_DETAIL_PARSER_TOKENIZER_H
 #define PELI_DETAIL_PARSER_TOKENIZER_H
@@ -38,21 +39,27 @@ namespace peli
 				template<typename Ch, typename Alloc> static
 				typename FactoryType::value_type* tok(std::basic_istream<Ch, Alloc>& is)
 				{
+					skip_whitespace(is);
+
 					Ch next_char = is.peek();
 
 					switch (next_char)
 					{
-					case '{':
-						return FactoryType::create(parser<peli::json::basic_object<Ch>>::parse(is));
+					case 0x7b: // '{'
+					{
+						auto&& test = parser<peli::json::basic_object<Ch>>::parse(is);
+						return FactoryType::create(std::move(test));
+// 						return FactoryType::create(parser<peli::json::basic_object<Ch>>::parse(is));
+					}
 
-					case '[':
+					case 0x5b: // '['
 						return FactoryType::create(parser<peli::json::array>::parse(is));
 
-					case '"':
+					case 0x22: // '"'
 						return FactoryType::create(parser<std::basic_string<Ch>>::parse(is));
 
-					case 'n':
-// 						return FactoryType::create(parser<void>::parse(is));
+					case 0x6e: // 'n'
+						parser<void>::parse(is);
 						break;
 
 					case 't':

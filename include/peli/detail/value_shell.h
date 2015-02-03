@@ -48,17 +48,17 @@ namespace peli
 			}
 
 			template<typename Ch> explicit value_shell(const peli::json::basic_object<Ch>& obj) :
-				m_internal_value(InternalValueFactory::template create<peli::json::basic_object<Ch>>(obj)) { }
+				m_internal_value(InternalValueFactory::template create(obj)) { }
 
-			explicit value_shell(const peli::json::array& arr) : m_internal_value(InternalValueFactory::template create<peli::json::array>(arr)) { }
+			explicit value_shell(const peli::json::array& arr) : m_internal_value(InternalValueFactory::template create(arr)) { }
 
 			template<typename Ch> explicit value_shell(const std::basic_string<Ch>& str) :
-				m_internal_value(InternalValueFactory::template create<std::basic_string<Ch>>(str)) { }
+				m_internal_value(InternalValueFactory::template create(str)) { }
 
 			template<typename Ch> explicit value_shell(const Ch* str) : value_shell(std::basic_string<Ch>(str)) { }
 
-			explicit value_shell(bool b) : m_internal_value(InternalValueFactory::template create<bool>(b)) { }
-			explicit value_shell(json::number i) : m_internal_value(InternalValueFactory::template create<json::number>(i)) { }
+			explicit value_shell(bool b) : m_internal_value(InternalValueFactory::template create(b)) { }
+			explicit value_shell(json::number i) : m_internal_value(InternalValueFactory::template create(i)) { }
 
 			template<typename U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type> explicit value_shell(U i) :
 				value_shell(static_cast<json::number>(i)) { }
