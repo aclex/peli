@@ -23,10 +23,14 @@
 #include <string>
 #include <stdexcept>
 #include <tuple>
+#include <array>
+#include <cstdint>
 
 #include <peli/json/array.h>
 
 #include "detail/parser/parser.h"
+#include "detail/parser/utf.h"
+#include "detail/parser/special_chars.h"
 
 namespace peli
 {
@@ -42,7 +46,7 @@ namespace peli
 					std::basic_string<Ch> ret;
 					ret.reserve(s_reserved_size);
 
-					if (is.peek() != s_quote)
+					if (is.peek() != special_chars::quote)
 						throw std::invalid_argument("");
 
 					is.get();
@@ -52,14 +56,14 @@ namespace peli
 
 					while (true)
 					{
-						std::getline(is, buf, s_quote);
+						std::getline(is, buf, static_cast<Ch>(special_chars::quote));
 
 						ret += buf;
 
-						if (buf.back() != s_backslash)
+						if (buf.back() != special_chars::backslash)
 							break;
 
-						ret += s_quote;
+						ret += special_chars::quote;
 					}
 
 					process_escapes(ret);
@@ -77,8 +81,6 @@ namespace peli
 					while (search_start < str.length())
 					{
 						search_start = parse_escape(str, str.find('\\', search_start));
-
-
 					}
 				}
 
@@ -96,32 +98,32 @@ namespace peli
 
 					switch (ptr_ch)
 					{
-					case s_quote:
-					case s_backslash:
-					case s_slash: // slash
+					case special_chars::quote:
+					case special_chars::backslash:
+					case special_chars::slash:
 						break;
 
-					case 0x62: // b
+					case special_chars::b:
 						str[pos + 1] = 0x08;
 						break;
 
-					case 0x66:
+					case special_chars::f:
 						str[pos + 1] = 0x0c;
 						break;
 
-					case 0x6e:
+					case special_chars::n:
 						str[pos + 1] = 0x0a;
 						break;
 
-					case 0x72:
+					case special_chars::r:
 						str[pos + 1] = 0x0d;
 						break;
 
-					case 0x74:
+					case special_chars::t:
 						str[pos + 1] = 0x09;
 						break;
 
-					case 0x75:
+					case special_chars::u:
 						std::tie(shift_npos, erase_npos) = parse_unicode_chain(str, pos);
 						break;
 
@@ -137,15 +139,54 @@ namespace peli
 				static std::tuple<typename std::basic_string<Ch>::size_type, typename std::basic_string<Ch>::size_type>
 				parse_unicode_chain(std::basic_string<Ch>& str, typename std::basic_string<Ch>::size_type& pos)
 				{
-					typename std::basic_string<Ch>::size_type encoding_pos = pos + 1;
+					typename std::basic_string<Ch>::size_type encoding_pos = pos + 2;
+					auto cp = extract_codepoint(str, encoding_pos);
 
+					if (utf::is_lead_surrogate(cp))
+					{
+						encoding_pos += 6;
+						auto trail_cp = extract_codepoint(str, encoding_pos);
+
+						const auto& sst = utf::convert<Ch>(cp, trail_cp);
+						auto replace_pos = pos + 12 - sst.length();
+
+						str.replace(replace_pos, sst.length(), sst);
+
+						return std::make_pair(sst.length(), replace_pos - pos);
+					}
+
+					const auto& sst = utf::convert<Ch>(cp);
+					auto replace_pos = pos + 6 - sst.length();
+
+					str.replace(replace_pos, sst.length(), sst);
+
+					return std::make_pair(sst.length(), replace_pos - pos);
 				}
 
-				static const std::size_t s_reserved_size = 4096;
-				static const Ch s_quote = 0x22; // '"'
-				static const Ch s_slash = 0x2f; // '/'
-				static const Ch s_backslash = 0x5c; // '\'
+				static constexpr std::uint_fast16_t extract_codepoint(std::basic_string<Ch>& str, typename std::basic_string<Ch>::size_type& encoding_pos)
+				{
+					return (s_ch_to_hex[str[encoding_pos + 0]] << 12) +
+							(s_ch_to_hex[str[encoding_pos + 1]] << 8) +
+							(s_ch_to_hex[str[encoding_pos + 2]] << 4) +
+							 s_ch_to_hex[str[encoding_pos + 3]];
+				}
+
+				static constexpr std::size_t s_reserved_size = 4096;
+
+
+				static constexpr std::array<unsigned int, special_chars::f + 1> s_ch_to_hex
+				{{
+					0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0, 0, 0, 0, 0, 0,
+					0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0, 0, 0, 0, 0, 0,
+					0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0, 0, 0, 0, 0, 0,
+					0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0, 0, 0, 0, 0, 0,
+					0, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x0, 0x0, 0, 0, 0, 0, 0, 0,
+					0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0, 0, 0, 0, 0, 0,
+					0, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf
+				}};
 			};
+
+			template<typename Ch> constexpr std::array<unsigned int, special_chars::f + 1> parser<std::basic_string<Ch>>::s_ch_to_hex;
 		}
 	}
 }

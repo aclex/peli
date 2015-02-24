@@ -17,17 +17,16 @@
  *
  */
 
-#ifndef PELI_DETAIL_PARSER_NULL_H
-#define PELI_DETAIL_PARSER_NULL_H
+#ifndef PELI_DETAIL_PARSER_NUMBER_H
+#define PELI_DETAIL_PARSER_NUMBER_H
 
-#include <string>
-#include <stdexcept>
-
-#include <peli/json/value.h>
-#include <peli/json/object.h>
+#include <cstdlib>
 
 #include "detail/parser/parser.h"
-#include "detail/parser/special_chars.h"
+
+#include "peli/json/number.h"
+
+#include "detail/parser/stream_routines.h"
 
 namespace peli
 {
@@ -35,34 +34,35 @@ namespace peli
 	{
 		namespace parser
 		{
-			template<> class parser<void>
+			template<> class parser<peli::json::number>
 			{
 			public:
-				template<typename Ch> static void parse(std::basic_istream<Ch>& is)
+				template<typename Ch, typename Alloc>
+				static peli::json::number parse(std::basic_istream<Ch, Alloc>& is)
 				{
-					if (is.peek() != special_chars::n)
+					const auto& buf = get_value(is);
+
+					auto ret = convert(buf);
+
+					if (errno)
 						throw std::invalid_argument("");
 
-					is.get();
+					return ret;
+				}
 
-					if (is.peek() != special_chars::u)
-						throw std::invalid_argument("");
+			private:
+				static peli::json::number convert(const std::string& str)
+				{
+					return std::strtold(str.c_str(), nullptr);
+				}
 
-					is.get();
-
-					if (is.peek() != special_chars::l)
-						throw std::invalid_argument("");
-
-					is.get();
-
-					if (is.peek() != special_chars::l)
-						throw std::invalid_argument("");
-
-					is.get();
+				static peli::json::number convert(const std::wstring& str)
+				{
+					return std::wcstold(str.c_str(), nullptr);
 				}
 			};
 		}
 	}
 }
 
-#endif // PELI_DETAIL_PARSER_NULL_H
+#endif // PELI_DETAIL_PARSER_NUMBER_H

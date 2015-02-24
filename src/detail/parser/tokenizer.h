@@ -22,7 +22,11 @@
 #include "detail/parser/object.h"
 #include "detail/parser/array.h"
 #include "detail/parser/string.h"
+#include "detail/parser/number.h"
 #include "detail/parser/null.h"
+
+#include "detail/parser/stream_routines.h"
+#include "detail/parser/special_chars.h"
 
 #ifndef PELI_DETAIL_PARSER_TOKENIZER_H
 #define PELI_DETAIL_PARSER_TOKENIZER_H
@@ -45,30 +49,28 @@ namespace peli
 
 					switch (next_char)
 					{
-					case 0x7b: // '{'
+					case special_chars::left_curly:
 					{
-						auto&& test = parser<peli::json::basic_object<Ch>>::parse(is);
-						return FactoryType::create(std::move(test));
-// 						return FactoryType::create(parser<peli::json::basic_object<Ch>>::parse(is));
+						return FactoryType::create(parser<peli::json::basic_object<Ch>>::parse(is));
 					}
 
-					case 0x5b: // '['
+					case special_chars::left_square:
 						return FactoryType::create(parser<peli::json::array>::parse(is));
 
-					case 0x22: // '"'
+					case special_chars::quote:
 						return FactoryType::create(parser<std::basic_string<Ch>>::parse(is));
 
 					case 0x6e: // 'n'
 						parser<void>::parse(is);
 						break;
 
-					case 't':
-					case 'f':
+					case 0x74: // 't'
+					case 0x66: // 'f'
 // 						return FactoryType::create(parser<bool>::parse(is));
 						break;
 
 					default:
-// 						return FactoryType::create(parser<peli::json::number>::parse(is));
+						return FactoryType::create(parser<peli::json::number>::parse(is));
 						break;
 					}
 

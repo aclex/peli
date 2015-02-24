@@ -21,6 +21,8 @@
 #include <cassert>
 #include <iostream>
 
+#include <cstdlib>
+
 #include "peli/json/value.h"
 
 using namespace std;
@@ -96,8 +98,8 @@ void check_verbal_escapes()
 
 void check_u_escapes()
 {
-	const string str1 = "   [\n\t\"check unicode escapes: \\u043f\\u0440\\u0438\\u0432\\u0435\\u0442, \\u043C\\u0438\\u0440! \"   ]\r\n  ";
-	const wstring str2 = L"[  \r\t\"check unicode escapes: \\u043f\\u0440\\u0438\\u0432\\u0435\\u0442, \\u043C\\u0438\\u0440!\"   ]\n\t  \n  \n\r  ";
+	const string str1 = "   [\n\t\"check unicode escapes: \\u043f\\u0440\\u0438\\u0432\\u0435\\u0442, \\ud800\\udd75 \\ud834\\udd1e \\u043C\\u0438\\u0440! \"   ]\r\n  ";
+	const wstring str2 = L"[  \r\t\"check unicode escapes: \\u043f\\u0440\\u0438\\u0432\\u0435\\u0442, \\ud800\\udd75 \\ud834\\udd1e \\u043C\\u0438\\u0440!\"   ]\n\t  \n  \n\r  ";
 
 	istringstream is1(str1);
 	json::value v1;
@@ -109,8 +111,8 @@ void check_u_escapes()
 
 	const json::array& arr1(v1);
 	const json::array& arr2(v2);
-	json::array ch1 { json::value("check unicode escapes: привет, мир! ") };
-	json::array ch2 { json::value(L"check unicode escapes: привет, мир! ") };
+	json::array ch1 { json::value("check unicode escapes: привет, 𐅵 𝄞 мир! ") };
+	json::array ch2 { json::value(L"check unicode escapes: привет, 𐅵 𝄞 мир!") };
 
 	assert(arr1 == ch1);
 	assert(arr2 == ch2);
@@ -121,7 +123,9 @@ int main(int argc, char* argv[])
 	check_empty();
 	check_plain();
 	check_verbal_escapes();
-// 	check_u_escapes();
+	check_u_escapes();
+
+	double d = strtod("0.5", nullptr);
 
 	return 0;
 }

@@ -28,6 +28,9 @@
 
 #include "detail/parser/parser.h"
 
+#include "detail/parser/special_chars.h"
+#include "detail/parser/stream_routines.h"
+
 namespace peli
 {
 	namespace detail
@@ -41,16 +44,16 @@ namespace peli
 				{
 					peli::json::basic_object<Ch> obj;
 
-					if (is.peek() != 0x7b) // '{'
+					if (is.peek() != special_chars::left_curly)
 						throw std::invalid_argument("");
 
 					is.get();
 
 					skip_whitespace(is);
 
-					if (is.peek() != 0x7d) // '}'
+					if (is.peek() != special_chars::right_curly)
 					{
-						if (is.peek() != 0x22) // '"'
+						if (is.peek() != special_chars::quote)
 							throw std::invalid_argument("");
 
 						while (true)
@@ -59,7 +62,7 @@ namespace peli
 
 							skip_whitespace(is);
 
-							if (is.peek() != 0x3a) // ':'
+							if (is.peek() != special_chars::colon)
 								throw std::invalid_argument("");
 
 							is.get();
@@ -71,13 +74,13 @@ namespace peli
 
 							skip_whitespace(is);
 
-							if (is.peek() == 0x7d) // '}'
+							if (is.peek() == special_chars::right_curly)
 							{
 								is.get();
 								break;
 							}
 
-							if (is.peek() != 0x2c) // ','
+							if (is.peek() != special_chars::comma)
 							{
 								throw std::invalid_argument("");
 							}

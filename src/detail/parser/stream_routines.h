@@ -17,42 +17,29 @@
  *
  */
 
-#include "parser.h"
+#ifndef PELI_DETAIL_PARSER_STREAM_ROUTINES_H
+#define PELI_DETAIL_PARSER_STREAM_ROUTINES_H
 
-using namespace std;
+#include <istream>
+#include <string>
 
-using namespace peli::detail::parser;
-
-namespace
+namespace peli
 {
-	template<typename Ch> bool is_whitespace(Ch c)
+	namespace detail
 	{
-		switch (c)
+		namespace parser
 		{
-		case 0x09:
-		case 0x0a:
-		case 0x0d:
-		case 0x20:
-			return true;
+			template<typename Ch> void skip_whitespace(std::basic_istream<Ch>& is);
 
-		default:
-			return false;
+			template<> void skip_whitespace<char>(std::istream& is);
+			template<> void skip_whitespace<wchar_t>(std::wistream& is);
+
+			template<typename Ch> std::basic_string<Ch> get_value(std::basic_istream<Ch>& is);
+
+			template<> std::string get_value<char>(std::istream& is);
+			template<> std::wstring get_value<wchar_t>(std::wistream& is);
 		}
 	}
-
-	template<typename Ch> void skip_whitespace_generic(std::basic_istream<Ch>& is)
-	{
-		while(is_whitespace(is.peek()))
-			is.get();
-	}
 }
 
-void peli::detail::parser::skip_whitespace(istream& is)
-{
-	skip_whitespace_generic(is);
-}
-
-void peli::detail::parser::skip_whitespace(wistream& is)
-{
-	skip_whitespace_generic(is);
-}
+#endif // PELI_DETAIL_PARSER_STREAM_ROUTINES_H

@@ -21,6 +21,7 @@
 #define PELI_DETAIL_PARSER_PARSER_H
 
 #include <istream>
+#include <array>
 
 namespace peli
 {
@@ -28,10 +29,6 @@ namespace peli
 	{
 		namespace parser
 		{
-
-			void skip_whitespace(std::istream& is);
-			void skip_whitespace(std::wistream& is);
-
 			template<class JsonType> class parser
 			{
 				template<class> struct fake_dependency : public std::false_type { };

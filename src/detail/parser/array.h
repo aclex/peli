@@ -26,6 +26,8 @@
 #include <peli/json/array.h>
 
 #include "detail/parser/parser.h"
+#include "detail/parser/special_chars.h"
+#include "detail/parser/stream_routines.h"
 
 namespace peli
 {
@@ -41,14 +43,15 @@ namespace peli
 				{
 					peli::json::array arr;
 
-					if (is.peek() != 0x5b) // '['
+					Ch t = is.peek();
+					if (is.peek() != special_chars::left_square)
 						throw std::runtime_error("");
 
 					is.get();
 
 					skip_whitespace(is);
 
-					if (is.peek() == 0x5d) // ']'
+					if (is.peek() == special_chars::right_square)
 					{
 						is.get();
 						return arr;
@@ -61,14 +64,14 @@ namespace peli
 
 						skip_whitespace(is);
 
-						if (is.peek() == 0x5d) // ']'
+						if (is.peek() == special_chars::right_square)
 						{
 							is.get();
 							break;
 						}
 
 						Ch test = is.peek();
-						if (is.peek() != 0x2c) // ','
+						if (is.peek() != special_chars::comma)
 						{
 							throw std::runtime_error("");
 						}
