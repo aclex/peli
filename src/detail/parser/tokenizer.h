@@ -23,6 +23,7 @@
 #include "detail/parser/array.h"
 #include "detail/parser/string.h"
 #include "detail/parser/number.h"
+#include "detail/parser/boolean.h"
 #include "detail/parser/null.h"
 
 #include "detail/parser/stream_routines.h"
@@ -60,13 +61,13 @@ namespace peli
 					case special_chars::quote:
 						return FactoryType::create(parser<std::basic_string<Ch>>::parse(is));
 
-					case 0x6e: // 'n'
+					case special_chars::n:
 						parser<void>::parse(is);
 						break;
 
-					case 0x74: // 't'
-					case 0x66: // 'f'
-// 						return FactoryType::create(parser<bool>::parse(is));
+					case special_chars::t:
+					case special_chars::f:
+						return FactoryType::create(parser<bool>::parse(is));
 						break;
 
 					default:

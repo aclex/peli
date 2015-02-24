@@ -44,11 +44,14 @@ namespace peli
 				constexpr const char slash = 0x2f; // '/'
 				constexpr const char backslash = 0x5c; // '\'
 
+				constexpr const char a = 0x61; // 'a'
 				constexpr const char b = 0x62; // 'b'
+				constexpr const char e = 0x65; // 'e'
 				constexpr const char f = 0x66; // 'f'
 				constexpr const char n = 0x6e; // 'n'
 				constexpr const char l = 0x6c; // 'l'
 				constexpr const char r = 0x72; // 'r'
+				constexpr const char s = 0x73; // 's'
 				constexpr const char t = 0x74; // 't'
 				constexpr const char u = 0x75; // 'u'
 			};
