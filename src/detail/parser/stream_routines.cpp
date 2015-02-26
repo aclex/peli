@@ -27,7 +27,6 @@ using namespace peli::detail::parser;
 
 namespace
 {
-	constexpr const size_t s_buffer_size = 40;
 	template<typename Ch> bool is_whitespace(Ch c)
 	{
 		switch (c)
@@ -66,17 +65,14 @@ namespace
 			is.get();
 	}
 
-	template<typename Ch> basic_string<Ch> get_value_generic(basic_istream<Ch>& is)
+	template<typename Ch> void get_value_generic(basic_istream<Ch>& is, basic_string<Ch>& buf)
 	{
-		basic_string<Ch> ret;
-		ret.reserve(s_buffer_size);
+		buf.clear();
 
 		while(!is_value_delimiter(is.peek()))
 		{
-			ret += is.get();
+			buf += is.get();
 		}
-
-		return ret;
 	}
 }
 
@@ -90,12 +86,12 @@ template<> void peli::detail::parser::skip_whitespace<wchar_t>(wistream& is)
 	skip_whitespace_generic(is);
 }
 
-template<> string peli::detail::parser::get_value<char>(istream& is)
+template<> void peli::detail::parser::get_value<char>(istream& is, string& buf)
 {
-	return get_value_generic(is);
+	get_value_generic(is, buf);
 }
 
-template<> wstring peli::detail::parser::get_value<wchar_t>(wistream& is)
+template<> void peli::detail::parser::get_value<wchar_t>(wistream& is, wstring& buf)
 {
-	return get_value_generic(is);
+	get_value_generic(is, buf);
 }

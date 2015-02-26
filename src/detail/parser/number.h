@@ -40,7 +40,10 @@ namespace peli
 				template<typename Ch, typename Alloc>
 				static peli::json::number parse(std::basic_istream<Ch, Alloc>& is)
 				{
-					const auto& buf = get_value(is);
+					std::basic_string<Ch> buf;
+					buf.reserve(s_buffer_size);
+
+					get_value(is, buf);
 
 					auto ret = convert(buf);
 
@@ -60,6 +63,8 @@ namespace peli
 				{
 					return std::wcstold(str.c_str(), nullptr);
 				}
+
+				static constexpr const size_t s_buffer_size = 40;
 			};
 		}
 	}
