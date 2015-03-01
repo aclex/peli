@@ -17,10 +17,12 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_HEAD_H
-#define PELI_DETAIL_PRINTER_HEAD_H
+#ifndef PELI_DETAIL_PRINTER_NULL_H
+#define PELI_DETAIL_PRINTER_NULL_H
 
-#include <ostream>
+#include "detail/printer/head.h"
+
+#include "detail/special_chars.h"
 
 namespace peli
 {
@@ -28,13 +30,17 @@ namespace peli
 	{
 		namespace printer
 		{
-			template<typename T> class head
+			template<> class head<void>
 			{
 			public:
-				template<typename Ch> static void print(std::basic_ostream<Ch>& os, const T& v);
+				template<typename Ch> static void print(std::basic_ostream<Ch>& os)
+				{
+					using namespace special_chars;
+					os << n << u << l << l;
+				}
 			};
 		}
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_HEAD_H
+#endif // PELI_DETAIL_PRINTER_NULL_H

@@ -31,6 +31,19 @@ using namespace peli::detail;
 
 using namespace peli::detail::variant_value;
 
+namespace
+{
+	template<typename Ch> void print_generic(basic_ostream<Ch>& os, const value_factory::value_type* v)
+	{
+		printer::basic_printer<Ch> p(os);
+
+		if (v)
+			v->print(&p);
+		else
+			p.put();
+	}
+}
+
 value_factory::value_type* value_factory::parse(istream& is)
 {
 	return parser::tokenizer<value_factory>::tok(is);
@@ -43,18 +56,10 @@ value_factory::value_type* value_factory::parse(wistream& is)
 
 void value_factory::print(ostream& os, const value_factory::value_type* v)
 {
-	if (!v)
-		return;
-
-	printer::printer p(os);
-	v->print(&p);
+	print_generic(os, v);
 }
 
 void value_factory::print(wostream& os, const value_factory::value_type* v)
 {
-	if (!v)
-		return;
-
-	printer::wprinter p(os);
-	v->print(&p);
+	print_generic(os, v);
 }

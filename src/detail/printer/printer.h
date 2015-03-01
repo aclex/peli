@@ -30,6 +30,7 @@
 #include "detail/printer/string.h"
 #include "detail/printer/array.h"
 #include "detail/printer/number.h"
+#include "detail/printer/null.h"
 
 namespace peli
 {
@@ -49,11 +50,17 @@ namespace peli
 				void put(const std::string& v) override { dispatch(v); }
 				void put(const std::wstring& v) override { dispatch(v); }
 				void put(json::number v) override { dispatch(v); }
+				void put() override { dispatch(); }
 
 			private:
 				template<typename T> void dispatch(const T& v)
 				{
 					static_cast<Derived*>(this)->print(v);
+				}
+
+				void dispatch()
+				{
+					static_cast<Derived*>(this)->print();
 				}
 
 			};
@@ -65,14 +72,14 @@ namespace peli
 					class = typename std::enable_if<!std::is_same<ChType, Ch>::value>::type>
 				void print(const peli::json::basic_object<ChType>&)
 				{
-					throw std::invalid_argument("Incompatible character types of stream and value stored");
+					throw std::invalid_argument("Incompatible character types of stream and stored value");
 				}
 
 				template<typename ChType,
 					class = typename std::enable_if<!std::is_same<ChType, Ch>::value>::type>
 				void print(const std::basic_string<ChType>&)
 				{
-					throw std::invalid_argument("Incompatible character types of stream and value stored");
+					throw std::invalid_argument("Incompatible character types of stream and stored value");
 				}
 			};
 
@@ -84,15 +91,17 @@ namespace peli
 				using throwing_printer<Ch>::print;
 				template<typename U> void print(const U& v)
 				{
-					printer::head<Ch, U>::print(m_os, v);
+					printer::head<U>::print(m_os, v);
+				}
+
+				void print()
+				{
+					printer::head<void>::print(m_os);
 				}
 
 			private:
 				std::basic_ostream<Ch>& m_os;
 			};
-
-			typedef basic_printer<char> printer;
-			typedef basic_printer<wchar_t> wprinter;
 		}
 	}
 }

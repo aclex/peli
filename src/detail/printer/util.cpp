@@ -25,7 +25,13 @@ using namespace peli::detail::printer;
 
 using namespace std;
 
-int peli::detail::printer::geti()
+int peli::detail::printer::flag_storage_index()
+{
+	static int i = ios_base::xalloc();
+	return i;
+}
+
+int peli::detail::printer::tab_level_storage_index()
 {
 	static int i = ios_base::xalloc();
 	return i;

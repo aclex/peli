@@ -33,10 +33,10 @@ namespace peli
 	{
 		namespace printer
 		{
-			template<typename Ch> class head<Ch, json::number>
+			template<> class head<json::number>
 			{
 			public:
-				static void print(std::basic_ostream<Ch>& os, json::number n)
+				template<typename Ch> static void print(std::basic_ostream<Ch>& os, json::number n)
 				{
 					os << n;
 				}

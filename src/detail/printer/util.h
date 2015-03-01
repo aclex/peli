@@ -26,7 +26,8 @@ namespace peli
 	{
 		namespace printer
 		{
-			int geti();
+			int flag_storage_index();
+			int tab_level_storage_index();
 
 			namespace flag
 			{

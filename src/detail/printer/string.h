@@ -25,22 +25,22 @@
 
 #include "detail/printer/head.h"
 
+#include "detail/special_chars.h"
+
 namespace peli
 {
 	namespace detail
 	{
 		namespace printer
 		{
-			template<typename Ch> class head<Ch, std::basic_string<Ch>>
+			template<typename Ch> class head<std::basic_string<Ch>>
 			{
 			public:
 				static void print(std::basic_ostream<Ch>& os, const std::basic_string<Ch>& str)
 				{
-					os << s_quote << str << s_quote;
+					using namespace special_chars;
+					os << quote << str << quote;
 				}
-
-			private:
-				static const Ch s_quote= 0x22; // '"'
 			};
 		}
 	}

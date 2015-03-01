@@ -30,12 +30,12 @@ namespace
 {
 	template<typename Ch> void pretty_template(basic_ostream<Ch>& os)
 	{
-		os.iword(geti()) |= flag::pretty;
+		os.iword(flag_storage_index()) |= flag::pretty;
 	}
 
 	template<typename Ch> void nopretty_template(basic_ostream<Ch>& os)
 	{
-		os.iword(geti()) &= !flag::pretty;
+		os.iword(flag_storage_index()) &= !flag::pretty;
 	}
 }
 

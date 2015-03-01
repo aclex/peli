@@ -24,7 +24,9 @@
 
 #include "peli/json/array.h"
 #include "peli/json/value.h"
+#include "peli/json/iomanip.h"
 
+#include "detail/printer/util.h"
 #include "detail/special_chars.h"
 
 namespace peli
@@ -33,21 +35,59 @@ namespace peli
 	{
 		namespace printer
 		{
-			template<typename Ch> class head<Ch, peli::json::array>
+			template<> class head<peli::json::array>
 			{
 			public:
-				static void print(std::basic_ostream<Ch>& os, const peli::json::array& arr)
+				template<typename Ch> static void print(std::basic_ostream<Ch>& os, const peli::json::array& arr)
 				{
-					os << special_chars::left_square;
+					const bool we_are_pretty = os.iword(flag_storage_index()) & flag::pretty;
+					long fake_tab_level = 0;
+					long& tab_level = we_are_pretty ? os.iword(tab_level_storage_index()) : fake_tab_level;
+
+					using namespace special_chars;
+
+					if (we_are_pretty)
+					{
+						for (long i = 0; i < tab_level; ++i)
+							os << "\t";
+					}
+
+					os << left_square;
+
+					if (we_are_pretty && !arr.empty())
+					{
+						os << std::endl;
+					}
+
+					++tab_level;
 
 					for (auto it = arr.cbegin(); it != arr.cend(); ++it)
 					{
+						if (we_are_pretty)
+						{
+							for (long i = 0; i < tab_level; ++i)
+								os << "\t";
+						}
+
 						os << (*it);
 						if (it != --arr.cend())
-							os << special_chars::comma;
+							os << comma;
+
+						if (we_are_pretty)
+						{
+							os << std::endl;
+						}
 					}
 
-					os << special_chars::right_square;
+					--tab_level;
+
+					if (we_are_pretty)
+					{
+						for (long i = 0; i < tab_level; ++i)
+							os << "\t";
+					}
+
+					os << right_square;
 				}
 			};
 		}

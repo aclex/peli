@@ -41,6 +41,7 @@ namespace peli
 				virtual void put(const std::string& str) = 0;
 				virtual void put(const std::wstring& str) = 0;
 				virtual void put(json::number n) = 0;
+				virtual void put() = 0;
 			};
 		}
 	}
