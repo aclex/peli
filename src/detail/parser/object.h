@@ -26,9 +26,9 @@
 #include <peli/json/value.h>
 #include <peli/json/object.h>
 
-#include "detail/parser/parser.h"
+#include "detail/special_chars.h"
 
-#include "detail/parser/special_chars.h"
+#include "detail/parser/parser.h"
 #include "detail/parser/stream_routines.h"
 
 namespace peli

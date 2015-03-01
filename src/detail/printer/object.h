@@ -29,6 +29,8 @@
 #include "detail/printer/util.h"
 #include "detail/printer/string.h"
 
+#include "detail/special_chars.h"
+
 namespace peli
 {
 	namespace detail
@@ -42,7 +44,7 @@ namespace peli
 				{
 					const bool we_are_pretty = os.iword(geti()) & flag::pretty;
 
-					os << s_left_curly;
+					os << special_chars::left_curly;
 					if (we_are_pretty)
 					{
 						os << std::endl;
@@ -56,17 +58,17 @@ namespace peli
 						printer::head<Ch, std::basic_string<Ch>>::print(os, it->first);
 
 						if (we_are_pretty)
-							os << " ";
+							os << special_chars::space;
 
-						os << s_colon;
+						os << special_chars::colon;
 
 						if (we_are_pretty)
-							os << " ";
+							os << special_chars::space;
 
 						os << it->second;
 
 						if (it != --obj.cend())
-							os << s_comma;
+							os << special_chars::comma;
 
 						if (we_are_pretty)
 						{
@@ -74,14 +76,8 @@ namespace peli
 						}
 					}
 
-					os << s_right_curly;
+					os << special_chars::right_curly;
 				}
-
-			private:
-				static const Ch s_left_curly = 0x7b; // '{'
-				static const Ch s_right_curly = 0x7d; // '}'
-				static const Ch s_colon = 0x3a; // ':'
-				static const Ch s_comma = 0x2c; // ','
 			};
 		}
 	}

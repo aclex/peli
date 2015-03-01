@@ -23,11 +23,12 @@
 #include <string>
 #include <stdexcept>
 
-#include <peli/json/value.h>
-#include <peli/json/object.h>
+#include "peli/json/value.h"
+#include "peli/json/object.h"
+
+#include "detail/special_chars.h"
 
 #include "detail/parser/parser.h"
-#include "detail/parser/special_chars.h"
 
 namespace peli
 {

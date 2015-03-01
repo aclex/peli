@@ -22,9 +22,10 @@
 
 #include <stdexcept>
 
+#include "detail/special_chars.h"
+
 #include "detail/parser/parser.h"
 
-#include "detail/parser/special_chars.h"
 
 namespace peli
 {

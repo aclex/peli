@@ -26,11 +26,12 @@
 #include <array>
 #include <cstdint>
 
-#include <peli/json/array.h>
+#include "peli/json/array.h"
+
+#include "detail/special_chars.h"
 
 #include "detail/parser/parser.h"
 #include "detail/parser/utf.h"
-#include "detail/parser/special_chars.h"
 
 namespace peli
 {

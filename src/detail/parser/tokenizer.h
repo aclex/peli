@@ -19,6 +19,8 @@
 
 #include <istream>
 
+#include "detail/special_chars.h"
+
 #include "detail/parser/object.h"
 #include "detail/parser/array.h"
 #include "detail/parser/string.h"
@@ -27,7 +29,6 @@
 #include "detail/parser/null.h"
 
 #include "detail/parser/stream_routines.h"
-#include "detail/parser/special_chars.h"
 
 #ifndef PELI_DETAIL_PARSER_TOKENIZER_H
 #define PELI_DETAIL_PARSER_TOKENIZER_H

@@ -25,6 +25,8 @@
 #include "peli/json/array.h"
 #include "peli/json/value.h"
 
+#include "detail/special_chars.h"
+
 namespace peli
 {
 	namespace detail
@@ -36,20 +38,17 @@ namespace peli
 			public:
 				static void print(std::basic_ostream<Ch>& os, const peli::json::array& arr)
 				{
-					os << s_left_square;
+					os << special_chars::left_square;
 
 					for (auto it = arr.cbegin(); it != arr.cend(); ++it)
 					{
 						os << (*it);
 						if (it != --arr.cend())
-							os << s_comma;
+							os << special_chars::comma;
 					}
-				}
 
-			private:
-				static const Ch s_left_square = 0x5b; // '['
-				static const Ch s_right_square = 0x5d; // ']'
-				static const Ch s_comma = 0x2c; // ','
+					os << special_chars::right_square;
+				}
 			};
 		}
 	}

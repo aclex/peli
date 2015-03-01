@@ -19,10 +19,11 @@
 
 #include "stream_routines.h"
 
-#include "special_chars.h"
+#include "detail/special_chars.h"
 
 using namespace std;
 
+using namespace peli::detail;
 using namespace peli::detail::parser;
 
 namespace
