@@ -32,6 +32,11 @@ namespace peli
 			namespace flag
 			{
 				const long pretty = 0x01;
+				const long structure_newline = 0x02;
+
+				bool get(const long& flag_word, long flag);
+				void set(long& flag_word, long flag);
+				void unset(long& flag_word, long flag);
 			}
 		}
 	}

@@ -28,6 +28,7 @@
 
 #include "detail/printer/util.h"
 #include "detail/printer/string.h"
+#include "detail/printer/stream_routines.h"
 
 #include "detail/special_chars.h"
 
@@ -37,12 +38,13 @@ namespace peli
 	{
 		namespace printer
 		{
-			template<typename Ch> class head<peli::json::basic_object<Ch>>
+			template<typename Ch> struct head<json::basic_object<Ch>> : pretty_head<head, json::basic_object<Ch>>, object_formatter
 			{
-			public:
-				static void print(std::basic_ostream<Ch>& os, const peli::json::basic_object<Ch>& obj)
+				static void bounce(std::basic_ostream<Ch>& os, const json::basic_object<Ch>& obj)
 				{
-					const bool we_are_pretty = os.iword(flag_storage_index()) & flag::pretty;
+					long& flag_word = os.iword(flag_storage_index());
+					const bool we_are_pretty = flag::get(flag_word, flag::pretty);
+
 					long fake_tab_level = 0;
 					long& tab_level = we_are_pretty ? os.iword(tab_level_storage_index()) : fake_tab_level;
 
@@ -82,9 +84,12 @@ namespace peli
 						os << colon;
 
 						if (we_are_pretty)
-							os << space;
+							flag::set(flag_word, flag::structure_newline);
 
 						os << it->second;
+
+						if (we_are_pretty)
+							flag::unset(flag_word, flag::structure_newline);
 
 						if (it != --obj.cend())
 							os << comma;

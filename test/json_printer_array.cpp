@@ -30,22 +30,20 @@ using namespace peli;
 
 void check_empty()
 {
-	const string str1 = "{}";
-	const wstring str2 = L"{}";
+	const string str1 = "[]";
+	const wstring str2 = L"[]";
 
-	const string str1_pretty = "{ }";
-	const wstring str2_pretty = L"{ }";
+	const string str1_pretty = "[]";
+	const wstring str2_pretty = L"[]";
 
 	ostringstream os1;
 	wostringstream os2;
 
-	const json::object ch1;
+	const json::array ch1;
 	json::value v1(ch1);
-	const json::wobject ch2;
-	json::value v2(ch2);
 
 	os1 << v1;
-	os2 << v2;
+	os2 << v1;
 
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);
@@ -56,7 +54,7 @@ void check_empty()
 	os2.seekp(0);
 
 	os1 << json::pretty << v1;
-	os2 << json::pretty << v2;
+	os2 << json::pretty << v1;
 
 	assert(os1.str() == str1_pretty);
 	assert(os2.str() == str2_pretty);
@@ -64,22 +62,20 @@ void check_empty()
 
 void check_one()
 {
-	const string str1 = "{\"a\":null}";
-	const wstring str2 = L"{\"a\":null}";
+	const string str1 = "[null]";
+	const wstring str2 = L"[null]";
 
-	const string str1_pretty = "{\n\t\"a\" : null\n}";
-	const wstring str2_pretty = L"{\n\t\"a\" : null\n}";
+	const string str1_pretty = "[\n\tnull\n]";
+	const wstring str2_pretty = L"[\n\tnull\n]";
 
 	ostringstream os1;
 	wostringstream os2;
 
-	const json::object ch1 { { "a", json::value() } };
+	const json::array ch1 { json::value() };
 	json::value v1(ch1);
-	const json::wobject ch2 { { L"a", json::value() } };
-	json::value v2(ch2);
 
 	os1 << v1;
-	os2 << v2;
+	os2 << v1;
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);
 
@@ -89,29 +85,30 @@ void check_one()
 	os2.seekp(0);
 
 	os1 << json::pretty << v1;
-	os2 << json::pretty << v2;
+	os2 << json::pretty << v1;
 
+
+	cout << "test:" << endl;
+	cout << os1.str() << endl;
 	assert(os1.str() == str1_pretty);
 	assert(os2.str() == str2_pretty);
 }
 
 void check_two()
 {
-	const string str1 = "{\"a\":null,\"b\":null}";
-	const wstring str2 = L"{\"a\":null,\"b\":null}";
-	const string str1_pretty = "{\n\t\"a\" : null,\n\t\"b\" : null\n}";
-	const wstring str2_pretty = L"{\n\t\"a\" : null,\n\t\"b\" : null\n}";
+	const string str1 = "[null,null]";
+	const wstring str2 = L"[null,null]";
+	const string str1_pretty = "[\n\tnull,\n\tnull\n]";
+	const wstring str2_pretty = L"[\n\tnull,\n\tnull\n]";
 
 	ostringstream os1;
 	wostringstream os2;
 
-	json::object ch1 { { "a", json::value() }, { "b", json::value() } };
+	json::array ch1 { json::value(), json::value() };
 	json::value v1(ch1);
-	json::wobject ch2 { { L"a", json::value() }, { L"b", json::value() } };
-	json::value v2(ch2);
 
 	os1 << v1;
-	os2 << v2;
+	os2 << v1;
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);
 
@@ -121,7 +118,7 @@ void check_two()
 	os2.seekp(0);
 
 	os1 << json::pretty << v1;
-	os2 << json::pretty << v2;
+	os2 << json::pretty << v1;
 
 	assert(os1.str() == str1_pretty);
 	assert(os2.str() == str2_pretty);
@@ -129,21 +126,19 @@ void check_two()
 
 void check_nested()
 {
-	const string str1 = "{\"a\":null,\"b\":{\"ba\":null},\"c\":null}";
-	const wstring str2 = L"{\"a\":null,\"b\":{\"ba\":null},\"c\":null}";
-	const string str1_pretty = "{\n\t\"a\" : null,\n\t\"b\" :\n\t{\n\t\t\"ba\" : null\n\t},\n\t\"c\" : null\n}";
-	const wstring str2_pretty = L"{\n\t\"a\" : null,\n\t\"b\" :\n\t{\n\t\t\"ba\" : null\n\t},\n\t\"c\" : null\n}";
+	const string str1 = "[null,[null],null]";
+	const wstring str2 = L"[null,[null],null]";
+	const string str1_pretty = "[\n\tnull,\n\t[\n\t\tnull\n\t],\n\tnull\n]";
+	const wstring str2_pretty = L"[\n\tnull,\n\t[\n\t\tnull\n\t],\n\tnull\n]";
 
 	ostringstream os1;
 	wostringstream os2;
 
-	json::object ch1 { { "a", json::value() }, { "b", json::value(json::object { { "ba", json::value() } }) }, { "c", json::value() } };
+	json::array ch1 { json::value(), json::value(json::array {json::value() }), json::value() };
 	json::value v1(ch1);
-	json::wobject ch2 { { L"a", json::value() }, { L"b", json::value(json::wobject { { L"ba", json::value() } }) }, { L"c", json::value() } };
-	json::value v2(ch2);
 
 	os1 << v1;
-	os2 << v2;
+	os2 << v1;
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);
 
@@ -153,8 +148,12 @@ void check_nested()
 	os2.seekp(0);
 
 	os1 << json::pretty << v1;
-	os2 << json::pretty << v2;
+	os2 << json::pretty << v1;
 
+	cout << "test:" << endl;
+	cout << os1.str() << endl;
+	cout << "str:" << endl;
+	cout << str1_pretty << endl;
 	assert(os1.str() == str1_pretty);
 	assert(os2.str() == str2_pretty);
 }

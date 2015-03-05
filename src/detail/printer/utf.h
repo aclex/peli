@@ -17,11 +17,10 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_NULL_H
-#define PELI_DETAIL_PRINTER_NULL_H
+#ifndef PELI_DETAIL_PRINTER_UTF_H
+#define PELI_DETAIL_PRINTER_UTF_H
 
-#include "detail/printer/head.h"
-#include "detail/printer/stream_routines.h"
+#include <string>
 
 #include "detail/special_chars.h"
 
@@ -31,17 +30,17 @@ namespace peli
 	{
 		namespace printer
 		{
-			template<> struct head<void> : pretty_head<head, void>, simple_formatter
+			namespace utf
 			{
-			public:
-				template<typename Ch> static void bounce(std::basic_ostream<Ch>& os)
+				template<typename Ch> std::basic_string<Ch> u_escape(char16_t c)
 				{
 					using namespace special_chars;
-					os << n << u << l << l;
+
+					return std::basic_string<Ch> { backslash, u };
 				}
-			};
+			}
 		}
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_NULL_H
+#endif // PELI_DETAIL_PRINTER_UTF_H

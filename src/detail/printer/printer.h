@@ -30,6 +30,7 @@
 #include "detail/printer/string.h"
 #include "detail/printer/array.h"
 #include "detail/printer/number.h"
+#include "detail/printer/boolean.h"
 #include "detail/printer/null.h"
 
 namespace peli
@@ -50,6 +51,7 @@ namespace peli
 				void put(const std::string& v) override { dispatch(v); }
 				void put(const std::wstring& v) override { dispatch(v); }
 				void put(json::number v) override { dispatch(v); }
+				void put(bool v) override { dispatch(v); }
 				void put() override { dispatch(); }
 
 			private:

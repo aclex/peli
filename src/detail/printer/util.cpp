@@ -37,3 +37,18 @@ int peli::detail::printer::tab_level_storage_index()
 	return i;
 }
 
+bool flag::get(const long& flag_word, long flag)
+{
+	return flag_word & flag;
+}
+
+void flag::set(long& flag_word, long flag)
+{
+	flag_word |= flag;
+}
+
+void flag::unset(long& flag_word, long flag)
+{
+	flag_word &= ~flag;
+}
+

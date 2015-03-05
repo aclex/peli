@@ -17,11 +17,12 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_NULL_H
-#define PELI_DETAIL_PRINTER_NULL_H
+#ifndef PELI_DETAIL_PRINTER_BOOLEAN_H
+#define PELI_DETAIL_PRINTER_BOOLEAN_H
+
+#include <ostream>
 
 #include "detail/printer/head.h"
-#include "detail/printer/stream_routines.h"
 
 #include "detail/special_chars.h"
 
@@ -31,17 +32,20 @@ namespace peli
 	{
 		namespace printer
 		{
-			template<> struct head<void> : pretty_head<head, void>, simple_formatter
+			template<> struct head<bool> : pretty_head<head, bool>, simple_formatter
 			{
 			public:
-				template<typename Ch> static void bounce(std::basic_ostream<Ch>& os)
+				template<typename Ch> static void bounce(std::basic_ostream<Ch>& os, bool b)
 				{
 					using namespace special_chars;
-					os << n << u << l << l;
+					if (b)
+						os << t << r << u << e;
+					else
+						os << f << a << l << s << e;
 				}
 			};
 		}
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_NULL_H
+#endif // PELI_DETAIL_PRINTER_BOOLEAN_H

@@ -17,31 +17,43 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_NULL_H
-#define PELI_DETAIL_PRINTER_NULL_H
+#include <sstream>
+#include <cassert>
+#include <iostream>
 
-#include "detail/printer/head.h"
-#include "detail/printer/stream_routines.h"
+#include "peli/json/value.h"
+#include "peli/json/iomanip.h"
 
-#include "detail/special_chars.h"
+using namespace std;
 
-namespace peli
+using namespace peli;
+
+void check_boolean()
 {
-	namespace detail
-	{
-		namespace printer
-		{
-			template<> struct head<void> : pretty_head<head, void>, simple_formatter
-			{
-			public:
-				template<typename Ch> static void bounce(std::basic_ostream<Ch>& os)
-				{
-					using namespace special_chars;
-					os << n << u << l << l;
-				}
-			};
-		}
-	}
+	const string str1 = "[true,false,true,true]";
+	const wstring str2 = L"[true,false,true,true]";
+
+	ostringstream os1;
+	wostringstream os2;
+
+	json::array ch1 { json::value(true), json::value(false), json::value(true), json::value(true) };
+	json::value v1(ch1);
+
+	os1 << v1;
+	os2 << v1;
+
+	assert(os1.str() == str1);
+	assert(os2.str() == str2);
+
+	os1.clear();
+	os1.seekp(0);
+	os2.clear();
+	os2.seekp(0);
 }
 
-#endif // PELI_DETAIL_PRINTER_NULL_H
+int main(int argc, char* argv[])
+{
+	check_boolean();
+
+	return 0;
+}

@@ -26,7 +26,10 @@
 #include "peli/json/value.h"
 #include "peli/json/iomanip.h"
 
+#include "detail/printer/head.h"
 #include "detail/printer/util.h"
+#include "detail/printer/stream_routines.h"
+
 #include "detail/special_chars.h"
 
 namespace peli
@@ -35,14 +38,13 @@ namespace peli
 	{
 		namespace printer
 		{
-			template<> class head<peli::json::array>
+			template<> struct head<json::array> : pretty_head<head, json::array>, object_formatter
 			{
-			public:
-				template<typename Ch> static void print(std::basic_ostream<Ch>& os, const peli::json::array& arr)
+				template<typename Ch> static void bounce(std::basic_ostream<Ch>& os, const peli::json::array& arr)
 				{
 					const bool we_are_pretty = os.iword(flag_storage_index()) & flag::pretty;
-					long fake_tab_level = 0;
-					long& tab_level = we_are_pretty ? os.iword(tab_level_storage_index()) : fake_tab_level;
+
+					long& tab_level = os.iword(tab_level_storage_index());
 
 					using namespace special_chars;
 
@@ -63,12 +65,6 @@ namespace peli
 
 					for (auto it = arr.cbegin(); it != arr.cend(); ++it)
 					{
-						if (we_are_pretty)
-						{
-							for (long i = 0; i < tab_level; ++i)
-								os << "\t";
-						}
-
 						os << (*it);
 						if (it != --arr.cend())
 							os << comma;

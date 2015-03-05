@@ -28,7 +28,7 @@ using namespace peli;
 
 int main(int argc, char* argv[])
 {
-	typedef unsigned long target_type;
+	typedef json::number target_type;
 
 	detail::variant_value::value_holder* holder = new detail::variant_value::value_holder_template<target_type>();
 	target_type& test1 = detail::variant_value::value_factory::cast<target_type&>(holder);

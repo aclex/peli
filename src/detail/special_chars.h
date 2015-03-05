@@ -26,8 +26,10 @@ namespace peli
 	{
 		namespace special_chars
 		{
+			constexpr const char backspace = 0x08; // '\b'
 			constexpr const char tab = 0x09; // '\t'
 			constexpr const char lf = 0x0a; // '\n'
+			constexpr const char ff = 0x0c; // '\f'
 			constexpr const char cr = 0x0d; // '\r'
 			constexpr const char space = 0x20; // ' '
 
@@ -52,6 +54,8 @@ namespace peli
 			constexpr const char s = 0x73; // 's'
 			constexpr const char t = 0x74; // 't'
 			constexpr const char u = 0x75; // 'u'
+
+			constexpr const char d0 = 0x30; // '0'
 		}
 	}
 }

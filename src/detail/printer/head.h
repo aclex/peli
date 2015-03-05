@@ -22,6 +22,11 @@
 
 #include <ostream>
 
+#include "detail/printer/util.h"
+#include "detail/printer/stream_routines.h"
+
+#include "detail/special_chars.h"
+
 namespace peli
 {
 	namespace detail
@@ -30,8 +35,47 @@ namespace peli
 		{
 			template<typename T> class head
 			{
+				template<class> struct fake_dependency : public std::false_type { };
+
 			public:
-				template<typename Ch> static void print(std::basic_ostream<Ch>& os, const T& v);
+				template<typename Ch> static void print(std::basic_ostream<Ch>& os, const T& v)
+				{
+					static_assert(fake_dependency<T>::value, "Type is not supported for printing");
+				}
+			};
+
+			template<template<class> class H, typename T> struct pretty_head
+			{
+				template<typename Ch> static void print(std::basic_ostream<Ch>& os, const T& v)
+				{
+					H<T>::preformat(os);
+					H<T>::bounce(os, v);
+				}
+			};
+
+			template<template<class> class H> struct pretty_head<H, void>
+			{
+				template<typename Ch> static void print(std::basic_ostream<Ch>& os)
+				{
+					H<void>::preformat(os);
+					H<void>::bounce(os);
+				}
+			};
+
+			struct simple_formatter
+			{
+				template<typename Ch> static void preformat(std::basic_ostream<Ch>& os)
+				{
+					put_structure_space(os);
+				}
+			};
+
+			struct object_formatter
+			{
+				template<typename Ch> static void preformat(std::basic_ostream<Ch>& os)
+				{
+					put_structure_newline(os);
+				}
 			};
 		}
 	}
