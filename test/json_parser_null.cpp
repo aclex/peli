@@ -27,7 +27,7 @@ using namespace std;
 
 using namespace peli;
 
-void check_null()
+void check()
 {
 	const string str1 = "   [\n\tnull   ]\r\n  ";
 	const wstring str2 = L"[  \r\tnull   ]\n\t  \n  \n\r  ";
@@ -51,7 +51,7 @@ void check_null()
 
 int main(int argc, char* argv[])
 {
-	check_null();
+	check();
 
 	return 0;
 }

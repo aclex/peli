@@ -94,7 +94,7 @@ void check_decimal_fraction()
 		json::value(json::number(-0.04))
 	};
 
-	json::number precision = pow(10, -1 * (numeric_limits<json::number>::digits10 - 1));
+	json::number precision = pow(10, -1 * (numeric_limits<json::number>::digits10 - 2));
 
 	if (fabs(static_cast<json::number>(arr1[2]) - static_cast<json::number>(ch1[2])) < precision)
 		ch1[2] = arr1[2];
@@ -131,7 +131,7 @@ void check_engineer_fraction()
 		json::value(json::number(-4e-2))
 	};
 
-	json::number precision = pow(10, -1 * (numeric_limits<json::number>::digits10 - 1));
+	json::number precision = pow(10, -1 * (numeric_limits<json::number>::digits10 - 2));
 
 	if (fabs(static_cast<json::number>(arr1[4]) - static_cast<json::number>(ch1[4])) < precision)
 		ch1[4] = arr1[4];

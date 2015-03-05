@@ -39,15 +39,13 @@ namespace peli
 					return std::basic_string<Ch> { static_cast<Ch>(cp) };
 				}
 
+				template<> std::basic_string<char> convert(std::uint_fast16_t cp);
+
 				template<typename Ch> std::basic_string<Ch> convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate);
 
-				template<> std::basic_string<char> convert(std::uint_fast16_t cp);
 				template<> std::basic_string<char> convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate);
-
 				template<> std::basic_string<wchar_t> convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate);
-
 				template<> std::basic_string<char16_t> convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate);
-
 				template<> std::basic_string<char32_t> convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate);
 			}
 		}

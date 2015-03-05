@@ -138,30 +138,32 @@ namespace peli
 				}
 
 				static std::tuple<typename std::basic_string<Ch>::size_type, typename std::basic_string<Ch>::size_type>
-				parse_unicode_chain(std::basic_string<Ch>& str, typename std::basic_string<Ch>::size_type& pos)
+				parse_unicode_chain(std::basic_string<Ch>& str, typename std::basic_string<Ch>::size_type pos)
 				{
-					typename std::basic_string<Ch>::size_type encoding_pos = pos + 2;
+					const typename std::basic_string<Ch>::size_type encoded_codepoint_width = 6;
+					const typename std::basic_string<Ch>::size_type escape_u_width = 2;
+
+					typename std::basic_string<Ch>::size_type encoding_pos = pos + escape_u_width;
+					auto processed_width = encoded_codepoint_width;
+
+					auto replacer = [&str, &pos, &processed_width](const std::basic_string<Ch>& sst)
+					{
+						auto replace_pos = pos + processed_width - sst.length();
+						str.replace(replace_pos, sst.length(), sst);
+						return std::make_pair(sst.length(), replace_pos - pos);
+					};
+
 					auto cp = extract_codepoint(str, encoding_pos);
 
 					if (utf::is_lead_surrogate(cp))
 					{
-						encoding_pos += 6;
+						encoding_pos += encoded_codepoint_width;
+						processed_width += encoded_codepoint_width;
 						auto trail_cp = extract_codepoint(str, encoding_pos);
-
-						const auto& sst = utf::convert<Ch>(cp, trail_cp);
-						auto replace_pos = pos + 12 - sst.length();
-
-						str.replace(replace_pos, sst.length(), sst);
-
-						return std::make_pair(sst.length(), replace_pos - pos);
+						return replacer(utf::convert<Ch>(cp, trail_cp));
 					}
 
-					const auto& sst = utf::convert<Ch>(cp);
-					auto replace_pos = pos + 6 - sst.length();
-
-					str.replace(replace_pos, sst.length(), sst);
-
-					return std::make_pair(sst.length(), replace_pos - pos);
+					return replacer(utf::convert<Ch>(cp));
 				}
 
 				static constexpr std::uint_fast16_t extract_codepoint(std::basic_string<Ch>& str, typename std::basic_string<Ch>::size_type& encoding_pos)
