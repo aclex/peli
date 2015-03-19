@@ -44,11 +44,12 @@ namespace peli
 				{
 					peli::json::array arr;
 
-					Ch t = is.peek();
-					if (is.peek() != special_chars::left_square)
+					Ch t = is.get();
+					if (t != special_chars::left_square)
+					{
+						is.unget();
 						throw std::runtime_error("");
-
-					is.get();
+					}
 
 					skip_whitespace(is);
 
@@ -65,19 +66,17 @@ namespace peli
 
 						skip_whitespace(is);
 
-						if (is.peek() == special_chars::right_square)
+						t = is.get();
+						if (t == special_chars::right_square)
 						{
-							is.get();
 							break;
 						}
 
-						Ch test = is.peek();
-						if (is.peek() != special_chars::comma)
+						if (t != special_chars::comma)
 						{
+							is.unget();
 							throw std::runtime_error("");
 						}
-
-						is.get();
 
 						skip_whitespace(is);
 					}

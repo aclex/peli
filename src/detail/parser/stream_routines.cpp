@@ -28,51 +28,34 @@ using namespace peli::detail::parser;
 
 namespace
 {
-	template<typename Ch> bool is_whitespace(Ch c)
+	template<typename Ch> inline void skip_whitespace_generic(basic_istream<Ch>& is)
 	{
-		switch (c)
-		{
-		case special_chars::tab:
-		case special_chars::lf:
-		case special_chars::cr:
-		case special_chars::space:
-			return true;
+		while(is_whitespace(is.get()));
 
-		default:
-			return false;
+		is.unget();
+	}
+
+	template<typename Ch> inline void get_number_value_generic(basic_istream<Ch>& is, basic_string<Ch>& buf)
+	{
+		Ch c = is.get();
+		while(!is_value_delimiter(c))
+		{
+			buf += c;
+			c = is.get();
 		}
+
+		is.unget();
 	}
 
-	template<typename Ch> bool is_value_delimiter(Ch c)
+	template<typename Ch> inline void get_string_generic(basic_istream<Ch>& is, basic_string<Ch>& buf)
 	{
-		if (is_whitespace(c))
-			return true;
-
-		switch (c)
+		Ch c = is.get();
+		Ch prev_c = 0;
+		while(!(c == special_chars::quote && prev_c != special_chars::backslash))
 		{
-		case special_chars::comma:
-		case special_chars::right_curly:
-		case special_chars::right_square:
-			return true;
-
-		default:
-			return false;
-		}
-	}
-
-	template<typename Ch> void skip_whitespace_generic(basic_istream<Ch>& is)
-	{
-		while(is_whitespace(is.peek()))
-			is.get();
-	}
-
-	template<typename Ch> void get_value_generic(basic_istream<Ch>& is, basic_string<Ch>& buf)
-	{
-		buf.clear();
-
-		while(!is_value_delimiter(is.peek()))
-		{
-			buf += is.get();
+			buf += c;
+			prev_c = c;
+			c = is.get();
 		}
 	}
 }
@@ -87,12 +70,22 @@ template<> void peli::detail::parser::skip_whitespace<wchar_t>(wistream& is)
 	skip_whitespace_generic(is);
 }
 
-template<> void peli::detail::parser::get_value<char>(istream& is, string& buf)
+template<> void peli::detail::parser::get_number_value<char>(istream& is, string& buf)
 {
-	get_value_generic(is, buf);
+	get_number_value_generic(is, buf);
 }
 
-template<> void peli::detail::parser::get_value<wchar_t>(wistream& is, wstring& buf)
+template<> void peli::detail::parser::get_number_value<wchar_t>(wistream& is, wstring& buf)
 {
-	get_value_generic(is, buf);
+	get_number_value_generic(is, buf);
+}
+
+template<> void peli::detail::parser::get_string<char>(istream& is, string& buf)
+{
+	get_string_generic(is, buf);
+}
+
+template<> void peli::detail::parser::get_string<wchar_t>(wistream& is, wstring& buf)
+{
+	get_string_generic(is, buf);
 }

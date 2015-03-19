@@ -22,8 +22,6 @@
 
 #include <stdexcept>
 
-#include "detail/special_chars.h"
-
 #include "detail/parser/parser.h"
 
 
@@ -39,51 +37,69 @@ namespace peli
 				template<typename Ch> static bool parse(std::basic_istream<Ch>& is)
 				{
 					bool ret = false;
-					switch (is.peek())
+					Ch c = is.get();
+					switch (c)
 					{
 					case special_chars::t:
-						is.get();
 
-						if (is.peek() != special_chars::r)
+						c = is.get();
+						if (c != special_chars::r)
+						{
+							is.unget();
 							throw std::invalid_argument("");
+						}
 
-						is.get();
+						c = is.get();
 
-						if (is.peek() != special_chars::u)
+						if (c != special_chars::u)
+						{
+							is.unget();
 							throw std::invalid_argument("");
+						}
 
-						is.get();
+						c = is.get();
 
-						if (is.peek() != special_chars::e)
+						if (c != special_chars::e)
+						{
+							is.unget();
 							throw std::invalid_argument("");
-
-						is.get();
+						}
 
 						ret = true;
 						break;
 
 					case special_chars::f:
-						is.get();
 
-						if (is.peek() != special_chars::a)
+						c = is.get();
+						if (c != special_chars::a)
+						{
+							is.unget();
 							throw std::invalid_argument("");
+						}
 
-						is.get();
+						c = is.get();
 
-						if (is.peek() != special_chars::l)
+						if (c != special_chars::l)
+						{
+							is.unget();
 							throw std::invalid_argument("");
+						}
 
-						is.get();
+						c = is.get();
 
-						if (is.peek() != special_chars::s)
+						if (c != special_chars::s)
+						{
+							is.unget();
 							throw std::invalid_argument("");
+						}
 
-						is.get();
+						c = is.get();
 
-						if (is.peek() != special_chars::e)
+						if (c != special_chars::e)
+						{
+							is.unget();
 							throw std::invalid_argument("");
-
-						is.get();
+						}
 
 						ret = false;
 						break;

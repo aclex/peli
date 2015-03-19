@@ -23,21 +23,60 @@
 #include <istream>
 #include <string>
 
+#include "detail/special_chars.h"
+
 namespace peli
 {
 	namespace detail
 	{
 		namespace parser
 		{
+				template<typename Ch> inline bool is_whitespace(Ch c)
+				{
+					switch (c)
+					{
+					case special_chars::tab:
+					case special_chars::lf:
+					case special_chars::cr:
+					case special_chars::space:
+						return true;
+
+					default:
+						return false;
+					}
+				}
+
+				template<typename Ch> inline bool is_value_delimiter(Ch c)
+				{
+					if (is_whitespace(c))
+						return true;
+
+					switch (c)
+					{
+					case special_chars::comma:
+					case special_chars::right_curly:
+					case special_chars::right_square:
+						return true;
+
+					default:
+						return false;
+					}
+				}
+
 			template<typename Ch> void skip_whitespace(std::basic_istream<Ch>& is);
 
 			template<> void skip_whitespace<char>(std::istream& is);
 			template<> void skip_whitespace<wchar_t>(std::wistream& is);
 
-			template<typename Ch> void get_value(std::basic_istream<Ch>& is, std::basic_string<Ch>& buf);
+			template<typename Ch> void get_number_value(std::basic_istream<Ch>& is, std::basic_string<Ch>& buf);
 
-			template<> void get_value<char>(std::istream& is, std::string& buf);
-			template<> void get_value<wchar_t>(std::wistream& is, std::wstring& buf);
+			template<> void get_number_value<char>(std::istream& is, std::string& buf);
+			template<> void get_number_value<wchar_t>(std::wistream& is, std::wstring& buf);
+
+			template<typename Ch> void get_string(std::basic_istream<Ch>& is, std::basic_string<Ch>& buf);
+
+			template<> void get_string<char>(std::istream& is, std::string& buf);
+			template<> void get_string<wchar_t>(std::wistream& is, std::wstring& buf);
 		}
 	}
 }

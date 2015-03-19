@@ -31,6 +31,7 @@
 #include "detail/special_chars.h"
 
 #include "detail/parser/parser.h"
+#include "detail/parser/stream_routines.h"
 #include "detail/parser/utf.h"
 
 namespace peli
@@ -47,27 +48,7 @@ namespace peli
 					std::basic_string<Ch> ret;
 					ret.reserve(s_reserved_size);
 
-					if (is.peek() != special_chars::quote)
-						throw std::invalid_argument("");
-
-					is.get();
-
-					std::basic_string<Ch> buf;
-					buf.reserve(s_reserved_size);
-
-					while (true)
-					{
-						std::getline(is, buf, static_cast<Ch>(special_chars::quote));
-
-						ret += buf;
-
-						if (buf.back() != special_chars::backslash)
-							break;
-
-						ret += special_chars::quote;
-					}
-
-					process_escapes(ret);
+					stream_string(is, ret);
 
 					ret.shrink_to_fit();
 
@@ -75,109 +56,106 @@ namespace peli
 				}
 
 			private:
-				static void process_escapes(std::basic_string<Ch>& str)
+				static inline void stream_string(std::basic_istream<Ch>& is, std::basic_string<Ch>& ret)
 				{
-					typename std::basic_string<Ch>::size_type search_start = 0;
-
-					while (search_start < str.length())
+					Ch c = is.get();
+					if (c != special_chars::quote)
 					{
-						search_start = parse_escape(str, str.find('\\', search_start));
+						is.unget();
+						throw std::invalid_argument("");
+					}
+
+					c = is.get();
+					while(true)
+					{
+						switch (c)
+						{
+						case special_chars::quote:
+							return;
+
+						case special_chars::backslash:
+							stream_char(is, ret);
+							break;
+
+						default:
+							ret += c;
+							break;
+						}
+
+						c = is.get();
 					}
 				}
-
-				static typename std::basic_string<Ch>::size_type parse_escape(std::basic_string<Ch>& str, typename std::basic_string<Ch>::size_type pos)
+				static inline void stream_char(std::basic_istream<Ch>& is, std::basic_string<Ch>& ret)
 				{
-					if (pos >= str.length())
-						return pos;
-
-					typename std::basic_string<Ch>::size_type ptr_pos = pos + 1;
-					Ch ptr_ch = str[ptr_pos];
-
-					typename std::basic_string<Ch>::difference_type erase_npos = 1;
-					typename std::basic_string<Ch>::difference_type shift_npos = 1;
-
-
-					switch (ptr_ch)
+					Ch c = is.get();
+					switch (c)
 					{
 					case special_chars::quote:
 					case special_chars::backslash:
 					case special_chars::slash:
+						ret += c;
 						break;
 
 					case special_chars::b:
-						str[pos + 1] = 0x08;
+						ret += 0x08;
 						break;
 
 					case special_chars::f:
-						str[pos + 1] = 0x0c;
+						ret += 0x0c;
 						break;
 
 					case special_chars::n:
-						str[pos + 1] = 0x0a;
+						ret += 0x0a;
 						break;
 
 					case special_chars::r:
-						str[pos + 1] = 0x0d;
+						ret += 0x0d;
 						break;
 
 					case special_chars::t:
-						str[pos + 1] = 0x09;
+						ret += 0x09;
 						break;
 
 					case special_chars::u:
-						std::tie(shift_npos, erase_npos) = parse_unicode_chain(str, pos);
+						stream_unicode_sequence(is, ret);
 						break;
 
 					default:
-						break;
+						throw std::invalid_argument("");
 					}
-
-					str.erase(pos, erase_npos);
-
-					return pos + shift_npos;
 				}
 
-				static std::tuple<typename std::basic_string<Ch>::size_type, typename std::basic_string<Ch>::size_type>
-				parse_unicode_chain(std::basic_string<Ch>& str, typename std::basic_string<Ch>::size_type pos)
+				static void stream_unicode_sequence(std::basic_istream<Ch>& is, std::basic_string<Ch>& ret)
 				{
-					const typename std::basic_string<Ch>::size_type encoded_codepoint_width = 6;
-					const typename std::basic_string<Ch>::size_type escape_u_width = 2;
-
-					typename std::basic_string<Ch>::size_type encoding_pos = pos + escape_u_width;
-					auto processed_width = encoded_codepoint_width;
-
-					auto replacer = [&str, &pos, &processed_width](const std::basic_string<Ch>& sst)
-					{
-						auto replace_pos = pos + processed_width - sst.length();
-						str.replace(replace_pos, sst.length(), sst);
-						return std::make_pair(sst.length(), replace_pos - pos);
-					};
-
-					auto cp = extract_codepoint(str, encoding_pos);
+					auto cp = extract_codepoint(is);
 
 					if (utf::is_lead_surrogate(cp))
 					{
-						encoding_pos += encoded_codepoint_width;
-						processed_width += encoded_codepoint_width;
-						auto trail_cp = extract_codepoint(str, encoding_pos);
-						return replacer(utf::convert<Ch>(cp, trail_cp));
+						if (!(is.get() == special_chars::backslash && is.get() == special_chars::u))
+							throw std::invalid_argument("");
+
+						auto trail_cp = extract_codepoint(is);
+						ret += utf::convert<Ch>(cp, trail_cp);
 					}
-
-					return replacer(utf::convert<Ch>(cp));
+					else
+					{
+						ret += utf::convert<Ch>(cp);
+					}
 				}
 
-				static constexpr std::uint_fast16_t extract_codepoint(std::basic_string<Ch>& str, typename std::basic_string<Ch>::size_type& encoding_pos)
+				static inline std::uint_fast16_t extract_codepoint(std::basic_istream<Ch>& is)
 				{
-					return (s_ch_to_hex[str[encoding_pos + 0]] << 12) +
-							(s_ch_to_hex[str[encoding_pos + 1]] << 8) +
-							(s_ch_to_hex[str[encoding_pos + 2]] << 4) +
-							 s_ch_to_hex[str[encoding_pos + 3]];
+					std::uint_fast16_t ret = s_ch_to_hex[is.get()] << 12;
+					ret += s_ch_to_hex[is.get()] << 8;
+					ret += s_ch_to_hex[is.get()] << 4;
+					ret += s_ch_to_hex[is.get()];
+
+					return ret;
 				}
 
-				static constexpr std::size_t s_reserved_size = 4096;
+				static constexpr std::size_t s_reserved_size = 256;
 
-
-				static constexpr std::array<unsigned int, special_chars::f + 1> s_ch_to_hex
+				static constexpr std::array<char, special_chars::f + 1> s_ch_to_hex
 				{{
 					0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0, 0, 0, 0, 0, 0,
 					0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0, 0, 0, 0, 0, 0,
@@ -189,7 +167,7 @@ namespace peli
 				}};
 			};
 
-			template<typename Ch> constexpr std::array<unsigned int, special_chars::f + 1> parser<std::basic_string<Ch>>::s_ch_to_hex;
+			template<typename Ch> constexpr std::array<char, special_chars::f + 1> parser<std::basic_string<Ch>>::s_ch_to_hex;
 		}
 	}
 }

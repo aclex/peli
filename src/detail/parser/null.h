@@ -41,25 +41,36 @@ namespace peli
 			public:
 				template<typename Ch> static void parse(std::basic_istream<Ch>& is)
 				{
-					if (is.peek() != special_chars::n)
+					Ch c = is.get();
+					if (c != special_chars::n)
+					{
+						is.unget();
 						throw std::invalid_argument("");
+					}
 
-					is.get();
+					c = is.get();
 
-					if (is.peek() != special_chars::u)
+					if (c != special_chars::u)
+					{
+						is.unget();
 						throw std::invalid_argument("");
+					}
 
-					is.get();
+					c = is.get();
 
-					if (is.peek() != special_chars::l)
+					if (c != special_chars::l)
+					{
+						is.unget();
 						throw std::invalid_argument("");
+					}
 
-					is.get();
+					c = is.get();
 
-					if (is.peek() != special_chars::l)
+					if (c != special_chars::l)
+					{
+						is.unget();
 						throw std::invalid_argument("");
-
-					is.get();
+					}
 				}
 			};
 		}

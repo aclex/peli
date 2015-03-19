@@ -21,6 +21,11 @@
 #define PELI_DETAIL_PARSER_NUMBER_H
 
 #include <cstdlib>
+#include <cstring>
+#include <cerrno>
+#include <limits>
+#include <iostream>
+#include <array>
 
 #include "detail/parser/parser.h"
 
@@ -36,35 +41,50 @@ namespace peli
 		{
 			template<> class parser<peli::json::number>
 			{
+				static constexpr const std::size_t s_buf_size = std::numeric_limits<json::number>::max_digits10 + 1;
+				template<typename Ch> using buffer_type = std::array<Ch, s_buf_size>;
+
 			public:
 				template<typename Ch, typename Alloc>
 				static peli::json::number parse(std::basic_istream<Ch, Alloc>& is)
 				{
-					std::basic_string<Ch> buf;
-					buf.reserve(s_buffer_size);
+					static buffer_type<Ch> buf;
+					buf.fill(0);
 
-					get_value(is, buf);
+					extract(is, buf);
 
 					auto ret = convert(buf);
 
-					if (errno)
-						throw std::invalid_argument("");
+					if (errno == ERANGE)
+						throw std::invalid_argument(std::strerror(errno));
 
 					return ret;
 				}
 
 			private:
-				static peli::json::number convert(const std::string& str)
+				template<typename Ch, typename Alloc>
+				static void extract(std::basic_istream<Ch, Alloc>& is, buffer_type<Ch>& buf)
 				{
-					return std::strtold(str.c_str(), nullptr);
+					Ch c = is.get();
+					auto it = std::begin(buf);
+					while(!is_value_delimiter(c) && it < std::end(buf) - 1)
+					{
+						(*it++) = c;
+						c = is.get();
+					}
+
+					is.unget();
 				}
 
-				static peli::json::number convert(const std::wstring& str)
+				static peli::json::number convert(const buffer_type<char>& buf)
 				{
-					return std::wcstold(str.c_str(), nullptr);
+					return std::strtold(buf.data(), nullptr);
 				}
 
-				static constexpr const size_t s_buffer_size = 40;
+				static peli::json::number convert(const buffer_type<wchar_t>& buf)
+				{
+					return std::wcstold(buf.data(), nullptr);
+				}
 			};
 		}
 	}

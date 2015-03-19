@@ -44,48 +44,51 @@ namespace peli
 				{
 					peli::json::basic_object<Ch> obj;
 
-					if (is.peek() != special_chars::left_curly)
+					Ch t = is.get();
+					if (t != special_chars::left_curly)
+					{
+						is.unget();
 						throw std::invalid_argument("");
-
-					is.get();
+					}
 
 					skip_whitespace(is);
 
-					if (is.peek() != special_chars::right_curly)
+					t = is.peek();
+					if (t != special_chars::right_curly)
 					{
-						if (is.peek() != special_chars::quote)
+						if (t != special_chars::quote)
 							throw std::invalid_argument("");
 
 						while (true)
 						{
-							const auto& id = parser<std::basic_string<Ch>>::parse(is);
+							auto&& id = parser<std::basic_string<Ch>>::parse(is);
 
 							skip_whitespace(is);
 
-							if (is.peek() != special_chars::colon)
-								throw std::invalid_argument("");
-
-							is.get();
-
-							skip_whitespace(is);
-
-							auto& v = obj[id];
-							is >> v;
-
-							skip_whitespace(is);
-
-							if (is.peek() == special_chars::right_curly)
+							t = is.get();
+							if (t != special_chars::colon)
 							{
-								is.get();
+								is.unget();
+								throw std::invalid_argument("");
+							}
+
+							skip_whitespace(is);
+
+							is >> obj[std::move(id)];
+
+							skip_whitespace(is);
+
+							t = is.get();
+							if (t == special_chars::right_curly)
+							{
 								break;
 							}
 
-							if (is.peek() != special_chars::comma)
+							if (t != special_chars::comma)
 							{
+								is.unget();
 								throw std::invalid_argument("");
 							}
-
-							is.get();
 
 							skip_whitespace(is);
 						}
