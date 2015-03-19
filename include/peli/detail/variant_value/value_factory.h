@@ -22,6 +22,7 @@
 
 #include <istream>
 #include <stdexcept>
+#include <type_traits>
 
 #include <peli/detail/variant_value/value_holder_template.h>
 

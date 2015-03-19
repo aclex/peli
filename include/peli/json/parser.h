@@ -17,35 +17,24 @@
  *
  */
 
-#ifndef PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_H
-#define PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_H
+#ifndef PELI_JSON_PARSER_H
+#define PELI_JSON_PARSER_H
 
-#include <typeinfo>
+#include <istream>
 
 namespace peli
 {
-	namespace detail
+	namespace json
 	{
-		namespace printer
-		{
-			class tray;
-		}
+		class value;
 
-		namespace variant_value
+		class parser
 		{
-			class value_holder
-			{
-			public:
-				virtual value_holder* clone() const = 0;
-				virtual void placement_copy(void* dest) const = 0;
-				virtual void placement_move(void* dest) noexcept = 0;
-				virtual void print(printer::tray* t) const = 0;
-				virtual const std::type_info& type_info() const noexcept = 0;
-				virtual bool equals(const value_holder& rhs) const noexcept = 0;
-				virtual ~value_holder() noexcept { }
-			};
-		}
+		public:
+			static value parse(std::istream& is);
+			static value parse(std::wistream& is);
+		};
 	}
 }
 
-#endif // PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_H
+#endif // PELI_JSON_PARSER_H

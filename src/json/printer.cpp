@@ -17,35 +17,17 @@
  *
  */
 
-#ifndef PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_H
-#define PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_H
+#include "peli/json/printer.h"
 
-#include <typeinfo>
+using namespace peli::json;
 
-namespace peli
+void printer::print(std::ostream& os, const peli::json::value& v)
 {
-	namespace detail
-	{
-		namespace printer
-		{
-			class tray;
-		}
 
-		namespace variant_value
-		{
-			class value_holder
-			{
-			public:
-				virtual value_holder* clone() const = 0;
-				virtual void placement_copy(void* dest) const = 0;
-				virtual void placement_move(void* dest) noexcept = 0;
-				virtual void print(printer::tray* t) const = 0;
-				virtual const std::type_info& type_info() const noexcept = 0;
-				virtual bool equals(const value_holder& rhs) const noexcept = 0;
-				virtual ~value_holder() noexcept { }
-			};
-		}
-	}
 }
 
-#endif // PELI_DETAIL_VARIANT_VALUE_VALUE_HOLDER_H
+void printer::print(std::wostream& os, const peli::json::value& v)
+{
+
+}
+

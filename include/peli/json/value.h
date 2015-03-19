@@ -20,16 +20,23 @@
 #ifndef PELI_JSON_VALUE_H
 #define PELI_JSON_VALUE_H
 
+#include <string>
 #include <type_traits>
 
-#include <peli/detail/value_shell.h>
-#include <peli/detail/variant_value/value_factory.h>
+#include <peli/detail/variant_value/inline.h>
+
+#include <peli/json/object.h>
+#include <peli/json/array.h>
+#include <peli/json/number.h>
 
 namespace peli
 {
 	namespace json
 	{
-		namespace detail
+		class value;
+		template<typename T> value make_value();
+
+		class value
 		{
 			struct deduction_helper
 			{
@@ -56,22 +63,92 @@ namespace peli
 				class = typename std::enable_if<std::is_convertible<std::basic_string<Ch>, U>::value>::type>
 				std::basic_string<Ch> operator()(U);
 			};
-		}
 
-		class value;
-		template<typename T> value make_value();
+			typedef deduction_helper deduction_helper_type;
+			typedef void default_parser_type;
+			typedef void default_printer_type;
 
-		class value : public peli::detail::value_shell<peli::detail::variant_value::value_factory, detail::deduction_helper>
-		{
-			using peli::detail::value_shell<peli::detail::variant_value::value_factory, detail::deduction_helper>::value_shell;
+		public:
+			value() = default;
+
+			template<typename Ch> explicit value(const peli::json::basic_object<Ch>& obj) : m_variant(obj) { }
+			explicit value(const peli::json::array& arr) : m_variant(arr) { }
+			template<typename Ch> explicit value(const std::basic_string<Ch>& str) : m_variant(str) { }
+			template<typename Ch> explicit value(const Ch* str) : value(std::basic_string<Ch>(str)) { }
+			explicit value(bool b) : m_variant(b) { }
+			explicit value(json::number i) : m_variant(i) { }
+
+			template<typename U,
+			class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+			explicit value(U i) : value(static_cast<json::number>(i)) { }
+
+			bool null() const noexcept
+			{
+				return m_variant.valid();
+			}
+
+			bool operator==(const value& rhs) const noexcept
+			{
+				return m_variant == rhs.m_variant;
+			}
+
+			bool operator!=(const value& rhs) const noexcept
+			{
+				return m_variant != rhs.m_variant;
+			}
+
+			template<typename T,
+			typename DeductedType = typename std::result_of<deduction_helper_type(T)>::type>
+			explicit operator T() const
+			{
+				return static_cast<T>(m_variant.cast<DeductedType>());
+			}
+
+			template<typename T,
+			typename DeductedType = typename std::result_of<deduction_helper_type(T)>::type>
+			explicit operator const T&() const
+			{
+				return static_cast<const T&>(m_variant.cast<const DeductedType&>());
+			}
+
+			template<typename T,
+			typename DeductedType = typename std::result_of<deduction_helper_type(T)>::type,
+			class = typename std::enable_if<std::is_same<T, DeductedType>::value>::type>
+			explicit operator T&()
+			{
+				return static_cast<T&>(m_variant.cast<DeductedType&>());
+			}
+
+			friend std::istream& operator>>(std::istream& is, value& v);
+			friend std::wistream& operator>>(std::wistream& is, value& v);
+
+			friend std::ostream& operator<<(std::ostream& os, const value& v);
+			friend std::wostream& operator<<(std::wostream& os, const value& v);
 
 			template<typename T> friend value make_value()
 			{
 				value v;
-				value::reset<T>(v);
+				v.m_variant.emplace<T>();
 				return v;
 			}
+
+		private:
+			detail::variant_value::inline_variant::variant
+			<
+				bool,
+				json::number,
+				std::string, std::wstring,
+				json::array,
+				json::object, json::wobject
+			>
+			m_variant;
 		};
+
+		std::istream& operator>>(std::istream& is, value& v);
+		std::wistream& operator>>(std::wistream& is, value& v);
+
+		std::ostream& operator<<(std::ostream& os, const value& v);
+		std::wostream& operator<<(std::wostream& os, const value& v);
 	}
 }
 

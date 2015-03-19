@@ -75,6 +75,16 @@ namespace peli
 					return new value_holder_template(*this);
 				}
 
+				void placement_copy(void* dest) const override
+				{
+					new (dest) value_holder_template(*this);
+				}
+
+				void placement_move(void* dest) noexcept override
+				{
+					new (dest) value_holder_template(std::move(*this));
+				}
+
 				void print(printer::tray* t) const override
 				{
 					t->put(m_value);
