@@ -17,38 +17,34 @@
  *
  */
 
-#include "detail/printer/util.h"
+#ifndef PELI_DETAIL_PARSER_PARSER_H
+#define PELI_DETAIL_PARSER_PARSER_H
 
-#include <ios>
+#include <istream>
+#include <array>
 
-using namespace peli::detail::printer;
-
-using namespace std;
-
-int peli::detail::printer::flag_storage_index()
+namespace peli
 {
-	static int i = ios_base::xalloc();
-	return i;
+	namespace json
+	{
+		namespace detail
+		{
+			namespace parser
+			{
+				template<class JsonType> class parser
+				{
+					template<class> struct fake_dependency : public std::false_type { };
+
+				public:
+					template<typename Ch, typename Alloc>
+					static JsonType parse(std::basic_istream<Ch, Alloc>& is)
+					{
+						static_assert(fake_dependency<JsonType>::value, "Type is not supported for parsing");
+					}
+				};
+			}
+		}
+	}
 }
 
-int peli::detail::printer::tab_level_storage_index()
-{
-	static int i = ios_base::xalloc();
-	return i;
-}
-
-bool flag::get(const long& flag_word, long flag)
-{
-	return flag_word & flag;
-}
-
-void flag::set(long& flag_word, long flag)
-{
-	flag_word |= flag;
-}
-
-void flag::unset(long& flag_word, long flag)
-{
-	flag_word &= ~flag;
-}
-
+#endif // PELI_DETAIL_PARSER_PARSER_H

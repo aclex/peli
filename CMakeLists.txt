@@ -9,6 +9,7 @@ include(AddUninstallTarget)
 include(GNUInstallDirs)
 include(GeneratePcFile)
 include(VersionRoutines)
+include(PrefixSuffix)
 
 git_version(PROJECT_VERSION)
 three_part_version_to_vars(${PROJECT_VERSION} PROJECT_VERSION_MAJOR PROJECT_VERSION_MINOR PROJECT_VERSION_PATCH)

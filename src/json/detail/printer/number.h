@@ -25,29 +25,32 @@
 
 #include "peli/json/number.h"
 
-#include "detail/printer/head.h"
-#include "detail/printer/stream_routines.h"
+#include "json/detail/printer/head.h"
+#include "json/detail/printer/stream_routines.h"
 
 namespace peli
 {
-	namespace detail
+	namespace json
 	{
-		namespace printer
+		namespace detail
 		{
-			template<> struct head<json::number> : pretty_head<head, json::number>, simple_formatter
+			namespace printer
 			{
-			public:
-				template<typename Ch> static void bounce(std::basic_ostream<Ch>& os, json::number n)
+				template<> struct head<json::number> : pretty_head<head, json::number>, simple_formatter
 				{
-					const auto default_precision = os.precision();
-					os.precision(std::numeric_limits<json::number>::digits10 - 2);
+				public:
+					template<typename Ch> static void bounce(std::basic_ostream<Ch>& os, json::number n)
+					{
+						const auto default_precision = os.precision();
+						os.precision(std::numeric_limits<json::number>::digits10 - 2);
 
-					os << n;
+						os << n;
 
-					os.precision(default_precision);
+						os.precision(default_precision);
 
-				}
-			};
+					}
+				};
+			}
 		}
 	}
 }

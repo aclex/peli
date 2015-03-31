@@ -19,12 +19,12 @@
 
 #include "stream_routines.h"
 
-#include "detail/special_chars.h"
+#include "json/detail/special_chars.h"
 
 using namespace std;
 
-using namespace peli::detail;
-using namespace peli::detail::parser;
+using namespace peli::json::detail;
+using namespace peli::json::detail::parser;
 
 namespace
 {
@@ -60,32 +60,32 @@ namespace
 	}
 }
 
-template<> void peli::detail::parser::skip_whitespace<char>(istream& is)
+template<> void peli::json::detail::parser::skip_whitespace<char>(istream& is)
 {
 	skip_whitespace_generic(is);
 }
 
-template<> void peli::detail::parser::skip_whitespace<wchar_t>(wistream& is)
+template<> void peli::json::detail::parser::skip_whitespace<wchar_t>(wistream& is)
 {
 	skip_whitespace_generic(is);
 }
 
-template<> void peli::detail::parser::get_number_value<char>(istream& is, string& buf)
+template<> void peli::json::detail::parser::get_number_value<char>(istream& is, string& buf)
 {
 	get_number_value_generic(is, buf);
 }
 
-template<> void peli::detail::parser::get_number_value<wchar_t>(wistream& is, wstring& buf)
+template<> void peli::json::detail::parser::get_number_value<wchar_t>(wistream& is, wstring& buf)
 {
 	get_number_value_generic(is, buf);
 }
 
-template<> void peli::detail::parser::get_string<char>(istream& is, string& buf)
+template<> void peli::json::detail::parser::get_string<char>(istream& is, string& buf)
 {
 	get_string_generic(is, buf);
 }
 
-template<> void peli::detail::parser::get_string<wchar_t>(wistream& is, wstring& buf)
+template<> void peli::json::detail::parser::get_string<wchar_t>(wistream& is, wstring& buf)
 {
 	get_string_generic(is, buf);
 }

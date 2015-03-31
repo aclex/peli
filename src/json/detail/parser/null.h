@@ -26,53 +26,56 @@
 #include "peli/json/value.h"
 #include "peli/json/object.h"
 
-#include "detail/special_chars.h"
+#include "json/detail/special_chars.h"
 
-#include "detail/parser/parser.h"
+#include "json/detail/parser/parser.h"
 
 namespace peli
 {
-	namespace detail
+	namespace json
 	{
-		namespace parser
+		namespace detail
 		{
-			template<> class parser<void>
+			namespace parser
 			{
-			public:
-				template<typename Ch> static void parse(std::basic_istream<Ch>& is)
+				template<> class parser<void>
 				{
-					Ch c = is.get();
-					if (c != special_chars::n)
+				public:
+					template<typename Ch> static void parse(std::basic_istream<Ch>& is)
 					{
-						is.unget();
-						throw std::invalid_argument("");
+						Ch c = is.get();
+						if (c != special_chars::n)
+						{
+							is.unget();
+							throw std::invalid_argument("");
+						}
+
+						c = is.get();
+
+						if (c != special_chars::u)
+						{
+							is.unget();
+							throw std::invalid_argument("");
+						}
+
+						c = is.get();
+
+						if (c != special_chars::l)
+						{
+							is.unget();
+							throw std::invalid_argument("");
+						}
+
+						c = is.get();
+
+						if (c != special_chars::l)
+						{
+							is.unget();
+							throw std::invalid_argument("");
+						}
 					}
-
-					c = is.get();
-
-					if (c != special_chars::u)
-					{
-						is.unget();
-						throw std::invalid_argument("");
-					}
-
-					c = is.get();
-
-					if (c != special_chars::l)
-					{
-						is.unget();
-						throw std::invalid_argument("");
-					}
-
-					c = is.get();
-
-					if (c != special_chars::l)
-					{
-						is.unget();
-						throw std::invalid_argument("");
-					}
-				}
-			};
+				};
+			}
 		}
 	}
 }

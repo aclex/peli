@@ -36,7 +36,7 @@ namespace peli
 			class value_holder
 			{
 			public:
-				virtual value_holder* clone() const = 0;
+// 				virtual value_holder* clone() const = 0;
 				virtual void placement_copy(void* dest) const = 0;
 				virtual void placement_move(void* dest) noexcept = 0;
 				virtual void print(printer::tray* t) const = 0;

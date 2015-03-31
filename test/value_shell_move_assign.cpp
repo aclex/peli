@@ -33,11 +33,12 @@ int main(int argc, char* argv[])
 
 	json::value v2;
 
+	static_assert(noexcept(v2 = std::move(v2)), "Move assignment isn't noexcept");
+
 	v2 = std::move(v1);
 
 	json::object& obj2(v2);
-
-	assert(&obj1 == &obj2);
+	obj2["tost"] = json::value(false);
 
 	return 0;
 }

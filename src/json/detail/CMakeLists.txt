@@ -1,0 +1,13 @@
+add_subdirectory(parser)
+add_subdirectory(printer)
+
+prefix(PELI_JSON_DETAIL_PARSER_SOURCES "parser/")
+prefix(PELI_JSON_DETAIL_PRINTER_SOURCES "printer/")
+
+message("test: ${PELI_JSON_DETAIL_PARSER_SOURCES}")
+message("test2: ${PELI_JSON_DETAIL_PRINTER_SOURCES}")
+
+set(PELI_JSON_DETAIL_SOURCES
+	${PELI_JSON_DETAIL_PARSER_SOURCES}
+	${PELI_JSON_DETAIL_PRINTER_SOURCES}
+PARENT_SCOPE)

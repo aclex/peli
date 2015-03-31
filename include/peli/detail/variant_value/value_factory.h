@@ -39,13 +39,13 @@ namespace peli
 			public:
 				typedef value_holder value_type;
 
-				static value_type* clone(const value_type* v)
-				{
-					if (!v)
-						return nullptr;
-
-					return v->clone();
-				}
+// 				static value_type* clone(const value_type* v)
+// 				{
+// 					if (!v)
+// 						return nullptr;
+//
+// 					return v->clone();
+// 				}
 
 				static bool equal(const value_type* lhs, const value_type* rhs)
 				{

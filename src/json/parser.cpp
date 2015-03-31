@@ -17,17 +17,21 @@
  *
  */
 
-#include "peli/json/parser.h"
+#include "json/parser.h"
+
 #include "peli/json/value.h"
+
+#include "json/detail/parser/tokenizer.h"
 
 using namespace peli::json;
 
+
 value parser::parse(std::istream& is)
 {
-
+	return detail::parser::tokenizer::tok(is);
 }
 
 value parser::parse(std::wistream& is)
 {
-
+	return detail::parser::tokenizer::tok(is);
 }

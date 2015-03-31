@@ -22,21 +22,24 @@
 
 namespace peli
 {
-	namespace detail
+	namespace json
 	{
-		namespace printer
+		namespace detail
 		{
-			int flag_storage_index();
-			int tab_level_storage_index();
-
-			namespace flag
+			namespace printer
 			{
-				const long pretty = 0x01;
-				const long structure_newline = 0x02;
+				int flag_storage_index();
+				int tab_level_storage_index();
 
-				bool get(const long& flag_word, long flag);
-				void set(long& flag_word, long flag);
-				void unset(long& flag_word, long flag);
+				namespace flag
+				{
+					const long pretty = 0x01;
+					const long structure_newline = 0x02;
+
+					bool get(const long& flag_word, long flag);
+					void set(long& flag_word, long flag);
+					void unset(long& flag_word, long flag);
+				}
 			}
 		}
 	}

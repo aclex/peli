@@ -19,10 +19,10 @@
 
 #include "peli/json/iomanip.h"
 
-#include "detail/printer/util.h"
+#include "json/detail/printer/util.h"
 
 using namespace peli::json;
-using namespace peli::detail::printer;
+using namespace peli::json::detail::printer;
 
 using namespace std;
 

@@ -18,8 +18,11 @@
  */
 
 #include "peli/json/value.h"
-#include "peli/json/parser.h"
-#include "peli/json/printer.h"
+#include "json/parser.h"
+#include "json/printer.h"
+
+#include "json/detail/parser/tokenizer.h"
+#include "json/detail/printer/printer.h"
 
 using namespace peli::json;
 
@@ -31,9 +34,55 @@ namespace
 		return is;
 	}
 
-	template<typename Ch> std::basic_ostream<Ch>& generic_stream_out(std::basic_ostream<Ch>& os, const value& v)
+	template<typename Derived> class printing_dispatcher
 	{
-		printer::print(os, v);
+	protected:
+		template<class> struct fake_dependency : std::false_type { };
+
+		template<typename T> void dispatch(const T& v)
+		{
+			static_cast<Derived*>(this)->print(v);
+		}
+
+		void dispatch()
+		{
+			static_cast<Derived*>(this)->print();
+		}
+	};
+
+	template<class Visitor, typename Ch> class printing_visitor_template :
+			public Visitor,
+			public peli::json::detail::printer::basic_printer<Ch>,
+			public printing_dispatcher<printing_visitor_template<Visitor, Ch>>
+	{
+	public:
+		using peli::json::detail::printer::basic_printer<Ch>::basic_printer;
+
+		void visit(const peli::json::object& v) override { this->template dispatch(v); }
+		void visit(const peli::json::wobject& v) override { this->template dispatch(v); }
+		void visit(const peli::json::array& v) override { this->template dispatch(v); }
+		void visit(const std::string& v) override { this->template dispatch(v); }
+		void visit(const std::wstring& v) override { this->template dispatch(v); }
+		void visit(peli::json::number v) override { this->template dispatch(v); }
+		void visit(bool v) override { this->template dispatch(v); }
+		void visit() { this->dispatch(); }
+	};
+
+	template<typename Visitor, typename Ch> printing_visitor_template<Visitor, Ch> printing_visitor(std::basic_ostream<Ch>& os)
+	{
+		return printing_visitor_template<Visitor, Ch>(os);
+	}
+
+	template<typename Visitor, typename Variant, typename Ch>
+	std::basic_ostream<Ch>& generic_stream_out(std::basic_ostream<Ch>& os, const Variant& v)
+	{
+		auto visitor(printing_visitor<Visitor>(os));
+
+		if (v.valid())
+			v.accept(&visitor);
+		else
+			visitor.visit();
+
 		return os;
 	}
 }
@@ -50,11 +99,11 @@ std::wistream& peli::json::operator>>(std::wistream& is, value& v)
 
 std::ostream& peli::json::operator<<(std::ostream& os, const value& v)
 {
-	return generic_stream_out(os, v);
+	return generic_stream_out<value::variant_type::visitor>(os, v.m_variant);
 }
 
 std::wostream& peli::json::operator<<(std::wostream& os, const value& v)
 {
-	return generic_stream_out(os, v);
+	return generic_stream_out<value::variant_type::visitor>(os, v.m_variant);
 }
 

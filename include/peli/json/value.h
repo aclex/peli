@@ -64,6 +64,16 @@ namespace peli
 				std::basic_string<Ch> operator()(U);
 			};
 
+			typedef detail::variant_value::inline_variant::variant
+			<
+				bool,
+				json::number,
+				std::string, std::wstring,
+				json::array,
+				json::object, json::wobject
+			>
+			variant_type;
+
 			typedef deduction_helper deduction_helper_type;
 			typedef void default_parser_type;
 			typedef void default_printer_type;
@@ -72,8 +82,11 @@ namespace peli
 			value() = default;
 
 			template<typename Ch> explicit value(const peli::json::basic_object<Ch>& obj) : m_variant(obj) { }
+			template<typename Ch> explicit value(peli::json::basic_object<Ch>&& obj) noexcept : m_variant(std::move(obj)) { }
 			explicit value(const peli::json::array& arr) : m_variant(arr) { }
+			explicit value(peli::json::array&& arr) noexcept : m_variant(std::move(arr)) { }
 			template<typename Ch> explicit value(const std::basic_string<Ch>& str) : m_variant(str) { }
+			template<typename Ch> explicit value(std::basic_string<Ch>&& str) noexcept : m_variant(std::move(str)) { }
 			template<typename Ch> explicit value(const Ch* str) : value(std::basic_string<Ch>(str)) { }
 			explicit value(bool b) : m_variant(b) { }
 			explicit value(json::number i) : m_variant(i) { }
@@ -84,7 +97,7 @@ namespace peli
 
 			bool null() const noexcept
 			{
-				return m_variant.valid();
+				return !m_variant.valid();
 			}
 
 			bool operator==(const value& rhs) const noexcept
@@ -116,11 +129,8 @@ namespace peli
 			class = typename std::enable_if<std::is_same<T, DeductedType>::value>::type>
 			explicit operator T&()
 			{
-				return static_cast<T&>(m_variant.cast<DeductedType&>());
+				return m_variant.cast<T&>();
 			}
-
-			friend std::istream& operator>>(std::istream& is, value& v);
-			friend std::wistream& operator>>(std::wistream& is, value& v);
 
 			friend std::ostream& operator<<(std::ostream& os, const value& v);
 			friend std::wostream& operator<<(std::wostream& os, const value& v);
@@ -133,15 +143,7 @@ namespace peli
 			}
 
 		private:
-			detail::variant_value::inline_variant::variant
-			<
-				bool,
-				json::number,
-				std::string, std::wstring,
-				json::array,
-				json::object, json::wobject
-			>
-			m_variant;
+			variant_type m_variant;
 		};
 
 		std::istream& operator>>(std::istream& is, value& v);

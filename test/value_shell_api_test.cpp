@@ -18,6 +18,7 @@
  */
 
 #include <cassert>
+#include <iostream>
 
 #include "peli/json/value.h"
 

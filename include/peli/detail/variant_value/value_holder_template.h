@@ -70,10 +70,10 @@ namespace peli
 					return m_value == static_cast<const value_holder_template&>(rhs).m_value;
 				}
 
-				value_holder* clone() const override
-				{
-					return new value_holder_template(*this);
-				}
+// 				value_holder* clone() const override
+// 				{
+// 					return new value_holder_template(*this);
+// 				}
 
 				void placement_copy(void* dest) const override
 				{

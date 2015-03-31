@@ -52,8 +52,8 @@
 #include <type_traits>
 #include <stdexcept>
 
-namespace utf = peli::detail::parser::utf;
-using namespace peli::detail::parser::utf;
+namespace utf = peli::json::detail::parser::utf;
+using namespace peli::json::detail::parser::utf;
 
 using namespace std;
 
