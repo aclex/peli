@@ -65,7 +65,7 @@ namespace peli
 
 						while (true)
 						{
-							arr.push_back(peli::json::parser::parse(is));
+							arr.emplace_back(peli::json::parser::parse(is));
 
 							skip_whitespace(is);
 

@@ -56,12 +56,12 @@ namespace peli
 
 				template<typename... Ts> struct variant_helper;
 
-				template<typename T> T safe_cast(void* ptr)
+				template<typename T> inline T safe_cast(void* ptr)
 				{
 					return static_cast<T>(ptr);
 				}
 
-				template<typename T> T safe_cast(const void* ptr)
+				template<typename T> inline T safe_cast(const void* ptr)
 				{
 					return static_cast<T>(ptr);
 				}
@@ -115,70 +115,24 @@ namespace peli
 						virtual ~value_holder() noexcept { }
 					};
 
-					template<typename T> struct swap_constructible_kernel
-					{
-						swap_constructible_kernel() = default;
-						swap_constructible_kernel(swap_constructible_kernel&& v) noexcept
-						{
-							using std::swap;
-							swap(m_value, v.m_value);
-						}
-
-						explicit swap_constructible_kernel(const T& v) : m_value(v) { }
-
-						explicit swap_constructible_kernel(T&& v) noexcept
-						{
-							using std::swap;
-							swap(m_value, v);
-						}
-
-					protected:
-						T m_value;
-					};
-
-					template<typename T> struct move_constructible_kernel
-					{
-						move_constructible_kernel() = default;
-						move_constructible_kernel(move_constructible_kernel&& v) noexcept : m_value(std::move(v.m_value)) { }
-						explicit move_constructible_kernel(const T& v) : m_value(v) { }
-						explicit move_constructible_kernel(T&& v) noexcept : m_value(std::move(v)) { }
-
-					protected:
-						T m_value;
-					};
-
-					template<typename T> using value_holder_template_kernel =
-						typename std::conditional<noexcept(T(std::declval<T>())), move_constructible_kernel<T>, swap_constructible_kernel<T>>::type;
-
-					template<typename T> class value_holder_template : public value_holder, public value_holder_template_kernel<T>
+					template<typename T> class value_holder_template : public value_holder
 					{
 					public:
 						value_holder_template() = default;
-// 						value_holder_template(const value_holder_template& v) : m_value(v.m_value) { }
-						value_holder_template(const value_holder_template& v) : value_holder_template_kernel<T>(v.m_value) { }
-// 						using value_holder_template_kernel<T>::value_holder_template_kernel;
-// 						template<class = typename std::enable_if<!noexcept(T(std::move(T())))>::type>
-// 						value_holder_template(value_holder_template&& v) noexcept
-// 						{
-// 							using std::swap;
-// 							swap(this->m_value, v.m_value);
-// 						}
+						value_holder_template(const value_holder_template& v) : m_value(v.m_value) { }
+						value_holder_template(value_holder_template&& v) noexcept
+						{
+							using std::swap;
+							swap(this->m_value, v.m_value);
+						}
 
-// 						value_holder_template(value_holder_template&& v) noexcept : value_holder_template_kernel<T>(std::move(v)) { }
-						value_holder_template(value_holder_template&& v) = default;
+						explicit value_holder_template(const T& v) : m_value(v) { }
+						explicit value_holder_template(T&& v) noexcept
+						{
+							using std::swap;
+							swap(this->m_value, v);
+						}
 
-// 						template<class = typename std::enable_if<noexcept(T(std::move(T())))>::type>
-// 						value_holder_template(value_holder_template&& v) noexcept : m_value(std::move(v.m_value)) { }
-
-// 						explicit value_holder_template(const T& v) : m_value(v) { }
-						explicit value_holder_template(const T& v) : value_holder_template_kernel<T>(v) { }
-// 						explicit value_holder_template(T&& v) noexcept
-// 						{
-// 							using std::swap;
-// 							swap(this->m_value, v);
-// 						}
-
-						explicit value_holder_template(T&& v) noexcept : value_holder_template_kernel<T>(std::move(v)) { }
 
 						template<typename U,
 						typename = typename std::enable_if<!std::is_const<U>::value>::type,
@@ -225,8 +179,8 @@ namespace peli
 							return typeid(T);
 						}
 
-// 					private:
-// 						T m_value;
+					private:
+						T m_value;
 					};
 
 					using data_t = typename std::aligned_union<0, value_holder_template<typename std::decay<Ts>::type>...>::type;
@@ -247,7 +201,7 @@ namespace peli
 
 					template<typename T,
 					class = typename std::enable_if<(sizeof(T) > sizeof(T*))>::type>
-					explicit variant(const T& v)
+					explicit variant(const T& v) : m_valid(false)
 					{
 						static_type_check<T>();
 
@@ -257,22 +211,20 @@ namespace peli
 
 					template<typename T,
 					class = typename std::enable_if<(sizeof(T) > sizeof(T*))>::type>
-					explicit variant(T&& v) noexcept
+					explicit variant(T&& v) noexcept : m_valid(true)
 					{
 						static_type_check<T>();
 
 						new (&m_data) value_holder_template<typename std::decay<T>::type>(std::move(v));
-						m_valid = true;
 					}
 
 					template<typename T,
 					class = typename std::enable_if<(sizeof(T) <= sizeof(T*))>::type>
-					explicit variant(T v) noexcept
+					explicit variant(T v) noexcept : m_valid(true)
 					{
 						static_type_check<T>();
 
 						new (&m_data) value_holder_template<typename std::decay<T>::type>(std::move(v));
-						m_valid = true;
 					}
 
 					variant& operator=(const variant& v)
