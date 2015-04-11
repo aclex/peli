@@ -32,9 +32,11 @@
 #define PELI_DETAIL_VARIANT_VALUE_INLINE_H
 
 #include <typeinfo>
+#include <typeindex>
 #include <type_traits>
 #include <utility>
 #include <memory>
+#include <cstring>
 
 namespace peli
 {
@@ -44,18 +46,6 @@ namespace peli
 		{
 			namespace inline_variant
 			{
-				template<typename Tp, typename... List> struct contains;
-
-				template<typename Tp, typename Head, typename... Rest> struct contains<Tp, Head, Rest...>
-					: std::conditional<std::is_same<Tp, Head>::value, std::true_type, contains<Tp, Rest...>>::type
-				{
-
-				};
-
-				template<typename Tp> struct contains<Tp> : std::false_type { };
-
-				template<typename... Ts> struct variant_helper;
-
 				template<typename T> inline T safe_cast(void* ptr)
 				{
 					return static_cast<T>(ptr);
@@ -66,8 +56,258 @@ namespace peli
 					return static_cast<T>(ptr);
 				}
 
+				template<typename Tp, typename... List> struct contains;
+
+				template<typename Tp, typename Head, typename... Rest> struct contains<Tp, Head, Rest...>
+					: std::conditional<std::is_same<Tp, Head>::value, std::true_type, contains<Tp, Rest...>>::type
+				{
+
+				};
+
+				template<typename Tp> struct contains<Tp> : std::false_type { };
+
+				template<typename T, bool is_trivial = std::is_trivial<T>::value> struct helper_operations;
+
+				template<typename T> struct helper_operations<T, false>
+				{
+					template<typename... Args> inline static void create(void* dest, Args&&... args)
+					{
+						*safe_cast<T**>(dest) = new T(std::forward<Args>(args)...);
+					}
+
+					inline static void copy(const void* src, void* dest)
+					{
+						*safe_cast<T**>(dest) = new T(**safe_cast<T* const *>(src));
+					}
+
+					inline static void move(void* src, void* dest)
+					{
+						*safe_cast<T**>(dest) = new T(std::move(**safe_cast<T**>(src)));
+					}
+
+					inline static bool equals(const void* lhs, const void* rhs)
+					{
+						return **safe_cast<T* const *>(lhs) == **safe_cast<T* const *>(rhs);
+					}
+
+					template<typename U,
+					typename = typename std::enable_if<!std::is_const<U>::value>::type,
+					typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
+					inline static U cast(void* data) noexcept
+					{
+						using decayed_u = typename std::decay<U>::type;
+						return **safe_cast<decayed_u**>(data);
+					}
+
+					template<typename U,
+					typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
+					inline static U cast(const void* data) noexcept
+					{
+						using decayed_u = typename std::decay<U>::type;
+						return **safe_cast<decayed_u* const *>(data);
+					}
+
+
+					template<typename Visitor> inline static void accept(const void* src, Visitor* v)
+					{
+						v->visit(**safe_cast<T* const *>(src));
+					}
+
+					template<typename Visitor> inline static void accept(void* src, Visitor* v)
+					{
+						v->visit(**safe_cast<T**>(src));
+					}
+
+					inline static void destroy(void* ptr)
+					{
+						(*safe_cast<T**>(ptr))->~T();
+					}
+				};
+
+				template<typename T> struct helper_operations<T, true>
+				{
+					template<typename... Args> inline static void create(void* dest, Args&&... args)
+					{
+						new (dest) T(std::forward<Args>(args)...);
+					}
+
+					inline static void copy(const void* src, void* dest)
+					{
+						std::memcpy(dest, src, sizeof(T));
+					}
+
+					inline static void move(const void* src, void* dest)
+					{
+						helper_operations::copy(src, dest);
+					}
+
+					inline static bool equals(const void* lhs, const void* rhs)
+					{
+						return *safe_cast<const T*>(lhs) == *safe_cast<const T*>(rhs);
+					}
+
+					template<typename U,
+					typename = typename std::enable_if<!std::is_const<U>::value>::type,
+					typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
+					inline static U cast(void* data) noexcept
+					{
+						using decayed_u = typename std::decay<U>::type;
+						return *safe_cast<decayed_u*>(data);
+					}
+
+					template<typename U,
+					typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
+					inline static U cast(const void* data) noexcept
+					{
+						using decayed_u = typename std::decay<U>::type;
+						return *safe_cast<const decayed_u*>(data);
+					}
+
+					template<typename Visitor> inline static void accept(const void* src, Visitor* v)
+					{
+						v->visit(*safe_cast<const T*>(src));
+					}
+
+					template<typename Visitor> inline static void accept(void* src, Visitor* v)
+					{
+						v->visit(*safe_cast<T*>(src));
+					}
+
+					inline static void destroy(void*)
+					{
+
+					}
+				};
+
+				const std::type_index void_type_index(typeid(void));
+
+				template<typename... Ts> struct variant_helper;
+
+				template<typename F, typename... Ts> struct variant_helper<F, Ts...> : private helper_operations<F>
+				{
+					template<typename T, typename... Args,
+					typename std::enable_if<std::is_same<T, F>::value, int>::type = 0>
+					inline static void create(void* dest, Args&&... args)
+					{
+						helper_operations<F>::create(dest, std::forward<Args>(args)...);
+					}
+
+					template<typename T, typename... Args,
+					typename std::enable_if<!std::is_same<T, F>::value, int>::type = 0>
+					inline static void create(void* dest, Args&&... args)
+					{
+						variant_helper<Ts...>::template create<T>(dest, std::forward<Args>(args)...);
+					}
+
+					inline static void copy(const std::type_index& tag, const void* src, void* dest)
+					{
+						if (tag == void_type_index)
+							return;
+
+						if (tag == std::type_index(typeid(F)))
+						{
+							helper_operations<F>::copy(src, dest);
+						}
+						else
+						{
+							variant_helper<Ts...>::copy(tag, src, dest);
+						}
+					}
+
+					inline static void move(const std::type_index& tag, void* src, void* dest)
+					{
+						if (tag == void_type_index)
+							return;
+
+						if (tag == std::type_index(typeid(F)))
+						{
+							helper_operations<F>::move(src, dest);
+						}
+						else
+						{
+							variant_helper<Ts...>::move(tag, src, dest);
+						}
+					}
+
+					inline static bool equals(const std::type_index& tag, const void* lhs, const void* rhs)
+					{
+						if (tag == void_type_index)
+							return true;
+
+						if (tag == std::type_index(typeid(F)))
+						{
+							return helper_operations<F>::equals(lhs, rhs);
+						}
+						else
+						{
+							return variant_helper<Ts...>::equals(tag, lhs, rhs);
+						}
+					}
+
+					template<typename Visitor> inline static void accept(const std::type_index& tag, void* src, Visitor* v)
+					{
+						if (tag == void_type_index)
+							return;
+
+						if (tag == std::type_index(typeid(F)))
+						{
+							helper_operations<F>::accept(src, v);
+						}
+						else
+						{
+							variant_helper<Ts...>::accept(tag, src, v);
+						}
+					}
+
+					template<typename Visitor> inline static void accept(const std::type_index& tag, const void* src, Visitor* v)
+					{
+						if (tag == void_type_index)
+							return;
+
+						if (tag == std::type_index(typeid(F)))
+						{
+							helper_operations<F>::accept(src, v);
+						}
+						else
+						{
+							variant_helper<Ts...>::accept(tag, src, v);
+						}
+					}
+
+					inline static void destroy(const std::type_index& tag, void* data)
+					{
+						if (tag == void_type_index)
+							return;
+
+						if (tag == std::type_index(typeid(F)))
+						{
+							helper_operations<F>::destroy(data);
+						}
+						else
+						{
+							variant_helper<Ts...>::destroy(tag, data);
+						}
+					}
+				};
+
+				template<> struct variant_helper<>
+				{
+					template<typename T, typename... Args> inline static void create(void* dest, Args&&... args) { }
+					inline static void copy(const std::type_index& tag, const void* src, void* dest) { }
+					inline static void move(const std::type_index& tag, void* src, void* dest) { }
+					inline static bool equals(const std::type_index& tag, const void* lhs, const void* rhs) { }
+					template<typename Visitor> inline static void accept(const std::type_index& tag, void* src, Visitor* v) { }
+					template<typename Visitor> inline static void accept(const std::type_index& tag, const void* src, Visitor* v) { }
+					inline static void destroy(const std::type_index& tag, void* data) { }
+				};
+
 				template<typename... Ts> class variant
 				{
+					template<typename T> using value_or_ptr = typename std::conditional<std::is_trivial<T>::value, T, T*>::type;
+
+					using data_t = typename std::aligned_union<0, value_or_ptr<Ts>...>::type;
+					using helper_t = variant_helper<Ts...>;
+
 				public:
 					template<typename Arg> struct object_argument_visitor
 					{
@@ -102,190 +342,80 @@ namespace peli
 
 					struct visitor : using_unfolder<Ts...> { };
 
-				private:
-					class value_holder
+					variant() noexcept : m_type_index(void_type_index) { }
+					variant(const variant& v) : m_type_index(v.m_type_index)
 					{
-					public:
-						virtual void placement_copy(void* dest) const = 0;
-						virtual void placement_move(void* dest) noexcept = 0;
-						virtual void accept(visitor* v) = 0;
-						virtual void accept(visitor* v) const = 0;
-						virtual const std::type_info& type_info() const noexcept = 0;
-						virtual bool equals(const value_holder& rhs) const noexcept = 0;
-						virtual ~value_holder() noexcept { }
-					};
-
-					template<typename T> class value_holder_template : public value_holder
-					{
-					public:
-						value_holder_template() = default;
-						value_holder_template(const value_holder_template& v) : m_value(v.m_value) { }
-						value_holder_template(value_holder_template&& v) noexcept
-						{
-							using std::swap;
-							swap(this->m_value, v.m_value);
-						}
-
-						explicit value_holder_template(const T& v) : m_value(v) { }
-						explicit value_holder_template(T&& v) noexcept
-						{
-							using std::swap;
-							swap(this->m_value, v);
-						}
-
-
-						template<typename U,
-						typename = typename std::enable_if<!std::is_const<U>::value>::type,
-						typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
-						U variant_as() noexcept
-						{
-							return this->m_value;
-						}
-
-						template<typename U,
-						typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
-						U variant_as() const noexcept
-						{
-							return this->m_value;
-						}
-
-						bool equals(const value_holder& rhs) const noexcept override
-						{
-							return this->m_value == static_cast<const value_holder_template&>(rhs).m_value;
-						}
-
-						void placement_copy(void* dest) const override
-						{
-							new (dest) value_holder_template(*this);
-						}
-
-						void placement_move(void* dest) noexcept override
-						{
-							new (dest) value_holder_template(std::move(*this));
-						}
-
-						void accept(visitor* v) override
-						{
-							v->visit(this->m_value);
-						}
-
-						void accept(visitor* v) const override
-						{
-							v->visit(this->m_value);
-						}
-
-						const std::type_info& type_info() const noexcept override
-						{
-							return typeid(T);
-						}
-
-					private:
-						T m_value;
-					};
-
-					using data_t = typename std::aligned_union<0, value_holder_template<typename std::decay<Ts>::type>...>::type;
-
-				public:
-					variant() noexcept : m_valid(false) { }
-					variant(const variant& v) : m_valid(v.m_valid)
-					{
-						if (v.m_valid)
-							v.holder()->placement_copy(&m_data);
+						helper_t::copy(v.m_type_index, &v.m_data, &m_data);
 					}
 
-					variant(variant&& v) noexcept : m_valid(v.m_valid)
+					variant(variant&& v) noexcept : m_type_index(v.m_type_index)
 					{
-						if (v.m_valid)
-							v.holder()->placement_move(&m_data);
+						helper_t::move(v.m_type_index, &v.m_data, &m_data);
 					}
 
 					template<typename T,
 					class = typename std::enable_if<(sizeof(T) > sizeof(T*))>::type>
-					explicit variant(const T& v) : m_valid(false)
+					explicit variant(const T& v) : m_type_index(std::type_index(typeid(T)))
 					{
 						static_type_check<T>();
 
-						new (&m_data) value_holder_template<typename std::decay<T>::type>(v);
-						m_valid = true;
+						helper_t::template create<T>(&m_data, v);
 					}
 
 					template<typename T,
 					class = typename std::enable_if<(sizeof(T) > sizeof(T*))>::type>
-					explicit variant(T&& v) noexcept : m_valid(true)
+					explicit variant(T&& v) noexcept : m_type_index(std::type_index(typeid(T)))
 					{
 						static_type_check<T>();
 
-						new (&m_data) value_holder_template<typename std::decay<T>::type>(std::move(v));
+						helper_t::template create<T>(&m_data, std::move(v));
 					}
 
 					template<typename T,
 					class = typename std::enable_if<(sizeof(T) <= sizeof(T*))>::type>
-					explicit variant(T v) noexcept : m_valid(true)
+					explicit variant(T v) noexcept : m_type_index(std::type_index(typeid(T)))
 					{
 						static_type_check<T>();
 
-						new (&m_data) value_holder_template<typename std::decay<T>::type>(std::move(v));
+						helper_t::template create<T>(&m_data, v);
 					}
 
 					variant& operator=(const variant& v)
 					{
-						if (m_valid)
-							holder()->~value_holder();
+						helper_t::destroy(m_type_index, &m_data);
 
-						if (v.m_valid)
-							v.holder()->placement_copy(&m_data);
+						helper_t::copy(v.m_type_index, &v.m_data, &m_data);
 
-						m_valid = v.m_valid;
+						m_type_index = v.m_type_index;
 
 						return *this;
 					}
 
 					variant& operator=(variant&& v) noexcept
 					{
-						if (m_valid)
-							holder()->~value_holder();
+						helper_t::destroy(m_type_index, &m_data);
 
-						if (v.m_valid)
-						{
-							v.holder()->placement_move(&m_data);
-						}
+						helper_t::move(v.m_type_index, &v.m_data, &m_data);
 
-						m_valid = v.m_valid;
+						m_type_index = v.m_type_index;
 
 						return *this;
 					}
 
-					template<typename T, typename... Args> void emplace(Args&&... args)
-					{
-						static_type_check<T>();
-
-						if (m_valid)
-							holder()->~value_holder();
-
-						new (&m_data) value_holder_template<typename std::decay<T>::type>(std::forward<Args>(args)...);
-						m_valid = true;
-					}
-
 					constexpr bool valid() const noexcept
 					{
-						return m_valid;
+						return m_type_index == void_type_index;
 					}
 
 					bool operator==(const variant& rhs) const noexcept
 					{
-						if (m_valid != rhs.m_valid)
+						if (m_type_index != rhs.m_type_index)
 							return false;
-
-						if (!m_valid)
-							return true;
 
 						if (&m_data == &(rhs.m_data))
 							return true;
 
-						if (holder()->type_info() != rhs.holder()->type_info())
-							return false;
-
-						return holder()->equals(*rhs.holder());
+						return helper_t::equals(m_type_index, &m_data, &rhs.m_data);
 					}
 
 					bool operator!=(const variant& rhs) const noexcept
@@ -297,38 +427,39 @@ namespace peli
 					{
 						static_type_check<T>();
 
-						if (!m_valid)
+						if (!valid())
 							throw std::invalid_argument("");
 
-						return call_cast<T>();
+						runtime_type_check<T>();
+
+						return helper_operations<typename std::decay<T>::type>::template cast<T>(&m_data);
 					}
 
 					template<typename T> T cast()
 					{
 						static_type_check<T>();
 
-						if (!m_valid)
+						if (!valid())
 							throw std::invalid_argument("");
 
-						return call_cast<T>();
+						runtime_type_check<T>();
+
+						return helper_operations<typename std::decay<T>::type>::template cast<T>(&m_data);
 					}
 
 					void accept(visitor* v)
 					{
-						if (m_valid)
-							holder()->accept(v);
+						helper_t::accept(m_type_index, &m_data, v);
 					}
 
 					void accept(visitor* v) const
 					{
-						if (m_valid)
-							holder()->accept(v);
+						helper_t::accept(m_type_index, &m_data, v);
 					}
 
 					~variant() noexcept
 					{
-						if (m_valid)
-							holder()->~value_holder();
+						helper_t::destroy(m_type_index, &m_data);
 					}
 
 				private:
@@ -339,51 +470,14 @@ namespace peli
 
 					template<typename T> void runtime_type_check() const
 					{
-						if (!m_valid)
+						if (!valid())
 							throw std::invalid_argument("Not initialized.");
 
-						if (typeid(typename std::decay<T>::type) != holder()->type_info())
+						if (std::type_index(typeid(typename std::decay<T>::type)) != m_type_index)
 							throw std::bad_cast();
 					}
 
-					template<typename T> T call_cast() const
-					{
-						runtime_type_check<T>();
-						return holder<T>()->template variant_as<T>();
-					}
-
-					template<typename T> T call_cast()
-					{
-						runtime_type_check<T>();
-
-						return holder<T>()->template variant_as<T>();
-					}
-
-					const value_holder* holder() const
-					{
-						return safe_cast<const value_holder*>(&m_data);
-					}
-
-					value_holder* holder()
-					{
-						return safe_cast<value_holder*>(&m_data);
-					}
-
-					template<typename T,
-					typename DecayedT = typename std::decay<T>::type>
-					const value_holder_template<DecayedT>* holder() const
-					{
-						return safe_cast<const value_holder_template<DecayedT>*>(&m_data);
-					}
-
-					template<typename T,
-					typename DecayedT = typename std::decay<T>::type>
-					value_holder_template<DecayedT>* holder()
-					{
-						return safe_cast<value_holder_template<DecayedT>*>(&m_data);
-					}
-
-					bool m_valid;
+					std::type_index m_type_index;
 					data_t m_data;
 				};
 			}

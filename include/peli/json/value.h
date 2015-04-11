@@ -135,11 +135,9 @@ namespace peli
 			friend std::ostream& operator<<(std::ostream& os, const value& v);
 			friend std::wostream& operator<<(std::wostream& os, const value& v);
 
-			template<typename T> friend value make_value()
+			template<typename T> friend inline value make_value()
 			{
-				value v;
-				v.m_variant.emplace<T>();
-				return v;
+				return value(T());
 			}
 
 		private:
