@@ -80,9 +80,9 @@ namespace peli
 						*safe_cast<T**>(dest) = new T(**safe_cast<T* const *>(src));
 					}
 
-					inline static void move(void* src, void* dest)
+					inline static void move(void* src, void* dest) noexcept
 					{
-						*safe_cast<T**>(dest) = new T(std::move(**safe_cast<T**>(src)));
+						std::memcpy(dest, src, sizeof(T*));
 					}
 
 					inline static bool equals(const void* lhs, const void* rhs)
@@ -118,9 +118,9 @@ namespace peli
 						v->visit(**safe_cast<T**>(src));
 					}
 
-					inline static void destroy(void* ptr)
+					inline static void destroy(void* ptr) noexcept
 					{
-						(*safe_cast<T**>(ptr))->~T();
+						delete *safe_cast<T**>(ptr);
 					}
 				};
 
@@ -131,17 +131,17 @@ namespace peli
 						new (dest) T(std::forward<Args>(args)...);
 					}
 
-					inline static void copy(const void* src, void* dest)
+					inline static void copy(const void* src, void* dest) noexcept
 					{
 						std::memcpy(dest, src, sizeof(T));
 					}
 
-					inline static void move(const void* src, void* dest)
+					inline static void move(const void* src, void* dest) noexcept
 					{
 						helper_operations::copy(src, dest);
 					}
 
-					inline static bool equals(const void* lhs, const void* rhs)
+					inline static bool equals(const void* lhs, const void* rhs) noexcept
 					{
 						return *safe_cast<const T*>(lhs) == *safe_cast<const T*>(rhs);
 					}
@@ -173,7 +173,7 @@ namespace peli
 						v->visit(*safe_cast<T*>(src));
 					}
 
-					inline static void destroy(void*)
+					inline static void destroy(void*) noexcept
 					{
 
 					}
@@ -214,7 +214,7 @@ namespace peli
 						}
 					}
 
-					inline static void move(const std::type_index& tag, void* src, void* dest)
+					inline static void move(const std::type_index& tag, void* src, void* dest) noexcept
 					{
 						if (tag == void_type_index)
 							return;
@@ -348,9 +348,10 @@ namespace peli
 						helper_t::copy(v.m_type_index, &v.m_data, &m_data);
 					}
 
-					variant(variant&& v) noexcept : m_type_index(v.m_type_index)
+					variant(variant&& v) noexcept : m_type_index(void_type_index)
 					{
 						helper_t::move(v.m_type_index, &v.m_data, &m_data);
+						std::swap(m_type_index, v.m_type_index);
 					}
 
 					template<typename T,
@@ -394,17 +395,18 @@ namespace peli
 					variant& operator=(variant&& v) noexcept
 					{
 						helper_t::destroy(m_type_index, &m_data);
+						m_type_index = void_type_index;
 
 						helper_t::move(v.m_type_index, &v.m_data, &m_data);
 
-						m_type_index = v.m_type_index;
+						std::swap(m_type_index, v.m_type_index);
 
 						return *this;
 					}
 
 					constexpr bool valid() const noexcept
 					{
-						return m_type_index == void_type_index;
+						return m_type_index != void_type_index;
 					}
 
 					bool operator==(const variant& rhs) const noexcept
