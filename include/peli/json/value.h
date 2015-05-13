@@ -75,8 +75,6 @@ namespace peli
 			variant_type;
 
 			typedef deduction_helper deduction_helper_type;
-			typedef void default_parser_type;
-			typedef void default_printer_type;
 
 		public:
 			value() = default;

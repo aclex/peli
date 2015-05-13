@@ -27,11 +27,6 @@ new_test(value_shell_cast_to_ref.cpp peli)
 new_test(value_shell_cast_const_to_cref.cpp peli)
 new_compilation_fail_test(value_shell_cast_const_to_ref.cpp peli)
 
-new_test(value_factory_cast_to_value.cpp peli)
-new_test(value_factory_cast_to_ref.cpp peli)
-new_test(value_factory_cast_const_to_value.cpp peli)
-new_compilation_fail_test(value_factory_cast_const_to_ref.cpp peli)
-
 new_test(value_shell_api_test.cpp peli)
 
 new_test(value_istream.cpp peli)
