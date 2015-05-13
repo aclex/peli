@@ -56,12 +56,12 @@ namespace peli
 
 				template<typename... Ts> struct variant_helper;
 
-				template<typename T> inline T safe_cast(void* ptr)
+				template<typename T> constexpr T safe_cast(void* ptr)
 				{
 					return static_cast<T>(ptr);
 				}
 
-				template<typename T> inline T safe_cast(const void* ptr)
+				template<typename T> constexpr T safe_cast(const void* ptr)
 				{
 					return static_cast<T>(ptr);
 				}
@@ -119,42 +119,15 @@ namespace peli
 					{
 					public:
 						value_holder_template() = default;
-						value_holder_template(const value_holder_template& v) : m_value(v.m_value) { }
+						value_holder_template(const value_holder_template& v) = default;
+
 						value_holder_template(value_holder_template&& v) noexcept
 						{
 							using std::swap;
-							swap(this->m_value, v.m_value);
+							swap(m_value, v.m_value);
 						}
 
-						explicit value_holder_template(const T& v) : m_value(v) { }
-						explicit value_holder_template(T&& v) noexcept
-						{
-							using std::swap;
-							swap(this->m_value, v);
-						}
-
-
-						template<typename U,
-						typename = typename std::enable_if<!std::is_const<U>::value>::type,
-						typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
-						U variant_as() noexcept
-						{
-							return this->m_value;
-						}
-
-						template<typename U,
-						typename = typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value>::type>
-						U variant_as() const noexcept
-						{
-							return this->m_value;
-						}
-
-						bool equals(const value_holder& rhs) const noexcept override
-						{
-							return this->m_value == static_cast<const value_holder_template&>(rhs).m_value;
-						}
-
-						void placement_copy(void* dest) const override
+						void placement_copy(void* dest) const noexcept(std::is_nothrow_copy_constructible<value_holder_template>::value) override
 						{
 							new (dest) value_holder_template(*this);
 						}
@@ -164,14 +137,29 @@ namespace peli
 							new (dest) value_holder_template(std::move(*this));
 						}
 
+						constexpr const T& value() const noexcept
+						{
+							return m_value;
+						}
+
+						inline T& value() noexcept // constexpr in C++14
+						{
+							return m_value;
+						}
+
+						bool equals(const value_holder& rhs) const noexcept override
+						{
+							return m_value == static_cast<const value_holder_template&>(rhs).m_value;
+						}
+
 						void accept(visitor* v) override
 						{
-							v->visit(this->m_value);
+							v->visit(m_value);
 						}
 
 						void accept(visitor* v) const override
 						{
-							v->visit(this->m_value);
+							v->visit(m_value);
 						}
 
 						const std::type_info& type_info() const noexcept override
@@ -179,11 +167,49 @@ namespace peli
 							return typeid(T);
 						}
 
+					protected:
+						template<typename U,
+						bool Cond = std::is_trivial<U>::value,
+						typename std::enable_if<Cond, int>::type = 0>
+						explicit value_holder_template(U v) noexcept : m_value(v) { }
+
+						template<typename U,
+						bool Cond = !std::is_trivial<typename std::decay<U>::type>::value,
+						typename std::enable_if<Cond, int>::type = 0>
+						explicit value_holder_template(const U& v) noexcept(std::is_nothrow_copy_constructible<U>::value) : m_value(v) { }
+
+						template<typename U,
+						bool Cond = !std::is_trivial<typename std::decay<U>::type>::value,
+						typename std::enable_if<Cond, int>::type = 0>
+						explicit value_holder_template(U&& v) noexcept
+						{
+							using std::swap;
+							swap(this->m_value, v);
+						}
+
 					private:
 						T m_value;
 					};
 
-					using data_t = typename std::aligned_union<0, value_holder_template<typename std::decay<Ts>::type>...>::type;
+					template<typename T> class trivial_value_holder : public value_holder_template<T>
+					{
+					public:
+						using value_holder_template<T>::value_holder_template;
+						explicit trivial_value_holder(T v) : value_holder_template<T>(v) { }
+					};
+
+					template<class T> class complex_value_holder : public value_holder_template<T>
+					{
+					public:
+						using value_holder_template<T>::value_holder_template;
+						explicit complex_value_holder(const T& v) : value_holder_template<T>(v) { }
+						explicit complex_value_holder(T&& v) noexcept : value_holder_template<T>(std::move(v)) { }
+					};
+
+					template<typename T> using proper_value_holder =
+						typename std::conditional<std::is_trivial<T>::value, trivial_value_holder<T>, complex_value_holder<T>>::type;
+
+					using data_t = typename std::aligned_union<0, proper_value_holder<typename std::decay<Ts>::type>...>::type;
 
 				public:
 					variant() noexcept : m_valid(false) { }
@@ -199,32 +225,25 @@ namespace peli
 							v.holder()->placement_move(&m_data);
 					}
 
-					template<typename T,
-					class = typename std::enable_if<(sizeof(T) > sizeof(T*))>::type>
-					explicit variant(const T& v) : m_valid(false)
+					template<typename U,
+					bool Cond = std::is_trivial<U>::value,
+					typename std::enable_if<Cond, int>::type = 0>
+					explicit variant(U v) noexcept : m_valid(true)
 					{
-						static_type_check<T>();
+						static_type_check<U>();
 
-						new (&m_data) value_holder_template<typename std::decay<T>::type>(v);
-						m_valid = true;
+						new (&m_data) proper_value_holder<U>(v);
 					}
 
-					template<typename T,
-					class = typename std::enable_if<(sizeof(T) > sizeof(T*))>::type>
-					explicit variant(T&& v) noexcept : m_valid(true)
+					template<typename U,
+					typename DecayedU = typename std::decay<U>::type,
+					bool Cond = !std::is_trivial<DecayedU>::value,
+					typename std::enable_if<Cond, int>::type = 0>
+					explicit variant(U&& v) noexcept(noexcept(proper_value_holder<DecayedU>(v))) : m_valid(true)
 					{
-						static_type_check<T>();
+						static_type_check<U>();
 
-						new (&m_data) value_holder_template<typename std::decay<T>::type>(std::move(v));
-					}
-
-					template<typename T,
-					class = typename std::enable_if<(sizeof(T) <= sizeof(T*))>::type>
-					explicit variant(T v) noexcept : m_valid(true)
-					{
-						static_type_check<T>();
-
-						new (&m_data) value_holder_template<typename std::decay<T>::type>(std::move(v));
+						new (&m_data) proper_value_holder<DecayedU>(std::forward<U>(v));
 					}
 
 					variant& operator=(const variant& v)
@@ -253,17 +272,6 @@ namespace peli
 						m_valid = v.m_valid;
 
 						return *this;
-					}
-
-					template<typename T, typename... Args> void emplace(Args&&... args)
-					{
-						static_type_check<T>();
-
-						if (m_valid)
-							holder()->~value_holder();
-
-						new (&m_data) value_holder_template<typename std::decay<T>::type>(std::forward<Args>(args)...);
-						m_valid = true;
 					}
 
 					constexpr bool valid() const noexcept
@@ -296,21 +304,17 @@ namespace peli
 					template<typename T> T cast() const
 					{
 						static_type_check<T>();
+						runtime_type_check<T>();
 
-						if (!m_valid)
-							throw std::invalid_argument("");
-
-						return call_cast<T>();
+						return holder<T>()->value();
 					}
 
 					template<typename T> T cast()
 					{
 						static_type_check<T>();
+						runtime_type_check<T>();
 
-						if (!m_valid)
-							throw std::invalid_argument("");
-
-						return call_cast<T>();
+						return holder<T>()->value();
 					}
 
 					void accept(visitor* v)
@@ -332,7 +336,7 @@ namespace peli
 					}
 
 				private:
-					template<typename T> void static_type_check() const
+					template<typename T> constexpr void static_type_check() const
 					{
 						static_assert(contains<typename std::decay<T>::type, Ts...>::value, "Type is not supported by this variant specialization");
 					}
@@ -346,41 +350,28 @@ namespace peli
 							throw std::bad_cast();
 					}
 
-					template<typename T> T call_cast() const
-					{
-						runtime_type_check<T>();
-						return holder<T>()->template variant_as<T>();
-					}
-
-					template<typename T> T call_cast()
-					{
-						runtime_type_check<T>();
-
-						return holder<T>()->template variant_as<T>();
-					}
-
-					const value_holder* holder() const
+					constexpr const value_holder* holder() const
 					{
 						return safe_cast<const value_holder*>(&m_data);
 					}
 
-					value_holder* holder()
+					inline value_holder* holder()
 					{
 						return safe_cast<value_holder*>(&m_data);
 					}
 
 					template<typename T,
 					typename DecayedT = typename std::decay<T>::type>
-					const value_holder_template<DecayedT>* holder() const
+					constexpr const proper_value_holder<DecayedT>* holder() const
 					{
-						return safe_cast<const value_holder_template<DecayedT>*>(&m_data);
+						return safe_cast<const proper_value_holder<DecayedT>*>(&m_data);
 					}
 
 					template<typename T,
 					typename DecayedT = typename std::decay<T>::type>
-					value_holder_template<DecayedT>* holder()
+					inline proper_value_holder<DecayedT>* holder()
 					{
-						return safe_cast<value_holder_template<DecayedT>*>(&m_data);
+						return safe_cast<proper_value_holder<DecayedT>*>(&m_data);
 					}
 
 					bool m_valid;
