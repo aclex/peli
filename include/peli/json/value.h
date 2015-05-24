@@ -23,7 +23,7 @@
 #include <string>
 #include <type_traits>
 
-#include <peli/detail/variant_value/inline.h>
+#include <peli/detail/variant/variant.h>
 
 #include <peli/json/object.h>
 #include <peli/json/array.h>
@@ -64,7 +64,7 @@ namespace peli
 				std::basic_string<Ch> operator()(U);
 			};
 
-			typedef detail::variant_value::inline_variant::variant
+			typedef detail::variant::variant
 			<
 				bool,
 				json::number,
