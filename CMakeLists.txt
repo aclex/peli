@@ -19,6 +19,7 @@ add_definitions(-std=c++11)
 include_directories(include)
 
 add_subdirectory(src)
+add_subdirectory(example)
 
 if (BUILD_TESTS)
 	enable_testing()
