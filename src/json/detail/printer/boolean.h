@@ -17,48 +17,38 @@
  *
  */
 
-#include "peli/json/iomanip.h"
+#ifndef PELI_DETAIL_PRINTER_BOOLEAN_H
+#define PELI_DETAIL_PRINTER_BOOLEAN_H
 
-#include "json/detail/printer/util.h"
+#include <ostream>
 
-using namespace peli::json;
-using namespace peli::json::detail::printer;
+#include "json/detail/printer/head.h"
 
-using namespace std;
+#include "json/detail/special_chars.h"
 
-namespace
+namespace peli
 {
-	template<typename Ch> void pretty_template(basic_ostream<Ch>& os)
+	namespace json
 	{
-		os.iword(flag_storage_index()) |= flag::pretty;
+		namespace detail
+		{
+			namespace printer
+			{
+				template<> struct head<bool> : pretty_head<head, bool>, simple_formatter
+				{
+				public:
+					template<typename Ch> static void bounce(std::basic_ostream<Ch>& os, bool b)
+					{
+						using namespace special_chars;
+						if (b)
+							os << t << r << u << e;
+						else
+							os << f << a << l << s << e;
+					}
+				};
+			}
+		}
 	}
-
-	template<typename Ch> void nopretty_template(basic_ostream<Ch>& os)
-	{
-		os.iword(flag_storage_index()) &= !flag::pretty;
-	}
 }
 
-ostream& peli::json::pretty(ostream& os)
-{
-	pretty_template(os);
-	return os;
-}
-
-wostream& peli::json::pretty(wostream& os)
-{
-	pretty_template(os);
-	return os;
-}
-
-ostream& peli::json::nopretty(ostream& os)
-{
-	nopretty_template(os);
-	return os;
-}
-
-wostream& peli::json::nopretty(wostream& os)
-{
-	nopretty_template(os);
-	return os;
-}
+#endif // PELI_DETAIL_PRINTER_BOOLEAN_H

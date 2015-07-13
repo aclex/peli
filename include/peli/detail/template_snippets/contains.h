@@ -17,48 +17,26 @@
  *
  */
 
-#include "peli/json/iomanip.h"
+#ifndef PELI_DETAIL_TEMPLATE_SNIPPETS_CONTAINS_H
+#define PELI_DETAIL_TEMPLATE_SNIPPETS_CONTAINS_H
 
-#include "json/detail/printer/util.h"
-
-using namespace peli::json;
-using namespace peli::json::detail::printer;
-
-using namespace std;
-
-namespace
+namespace peli
 {
-	template<typename Ch> void pretty_template(basic_ostream<Ch>& os)
+	namespace detail
 	{
-		os.iword(flag_storage_index()) |= flag::pretty;
+		namespace template_snippets
+		{
+			template<typename Tp, typename... List> struct contains;
+
+			template<typename Tp, typename Head, typename... Rest> struct contains<Tp, Head, Rest...>
+				: std::conditional<std::is_same<Tp, Head>::value, std::true_type, contains<Tp, Rest...>>::type
+			{
+
+			};
+
+			template<typename Tp> struct contains<Tp> : std::false_type { };
+		}
 	}
-
-	template<typename Ch> void nopretty_template(basic_ostream<Ch>& os)
-	{
-		os.iword(flag_storage_index()) &= !flag::pretty;
-	}
 }
 
-ostream& peli::json::pretty(ostream& os)
-{
-	pretty_template(os);
-	return os;
-}
-
-wostream& peli::json::pretty(wostream& os)
-{
-	pretty_template(os);
-	return os;
-}
-
-ostream& peli::json::nopretty(ostream& os)
-{
-	nopretty_template(os);
-	return os;
-}
-
-wostream& peli::json::nopretty(wostream& os)
-{
-	nopretty_template(os);
-	return os;
-}
+#endif // PELI_DETAIL_TEMPLATE_SNIPPETS_CONTAINS_H

@@ -27,6 +27,12 @@ using namespace peli;
 
 int main(int argc, char* argv[])
 {
+	json::object obj;
+	obj["object"] = json::make_value<json::object>();
+
+	json::object& inner_obj(obj["object"]);
+	inner_obj["inner_number"] = json::value(42);
+
 	json::value v1(json::make_value<json::object>());
 	json::object& obj1(v1);
 	obj1["test"] = json::value(52);
@@ -38,6 +44,7 @@ int main(int argc, char* argv[])
 	assert(v1 == v2);
 
 	json::object& obj2(v2);
+	auto c = obj2["test"];
 
 	assert(&obj1 != &obj2);
 

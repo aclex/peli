@@ -17,48 +17,24 @@
  *
  */
 
-#include "peli/json/iomanip.h"
+#ifndef PELI_JSON_PRINTER_H
+#define PELI_JSON_PRINTER_H
 
-#include "json/detail/printer/util.h"
+#include <ostream>
 
-using namespace peli::json;
-using namespace peli::json::detail::printer;
-
-using namespace std;
-
-namespace
+namespace peli
 {
-	template<typename Ch> void pretty_template(basic_ostream<Ch>& os)
+	namespace json
 	{
-		os.iword(flag_storage_index()) |= flag::pretty;
-	}
+		class value;
 
-	template<typename Ch> void nopretty_template(basic_ostream<Ch>& os)
-	{
-		os.iword(flag_storage_index()) &= !flag::pretty;
+		class printer
+		{
+		public:
+			static void print(std::ostream& os, const value& v);
+			static void print(std::wostream& os, const value& v);
+		};
 	}
 }
 
-ostream& peli::json::pretty(ostream& os)
-{
-	pretty_template(os);
-	return os;
-}
-
-wostream& peli::json::pretty(wostream& os)
-{
-	pretty_template(os);
-	return os;
-}
-
-ostream& peli::json::nopretty(ostream& os)
-{
-	nopretty_template(os);
-	return os;
-}
-
-wostream& peli::json::nopretty(wostream& os)
-{
-	nopretty_template(os);
-	return os;
-}
+#endif // PELI_JSON_PRINTER_H

@@ -19,9 +19,9 @@
 
 #include "peli/detail/variant_value/value_factory.h"
 
-#include "detail/parser/tokenizer.h"
+#include "json/detail/parser/tokenizer.h"
 
-#include "detail/printer/printer.h"
+#include "json/detail/printer/printer.h"
 
 using namespace std;
 

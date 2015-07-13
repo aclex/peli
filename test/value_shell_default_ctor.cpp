@@ -29,6 +29,7 @@ int main(int argc, char* argv[])
 {
 	json::value v;
 
+	static_assert(noexcept(json::value()), "Default constructor isn't noexcept");
 	assert(v.null());
 
 	return 0;

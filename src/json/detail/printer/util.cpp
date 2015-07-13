@@ -17,48 +17,38 @@
  *
  */
 
-#include "peli/json/iomanip.h"
-
 #include "json/detail/printer/util.h"
 
-using namespace peli::json;
+#include <ios>
+
 using namespace peli::json::detail::printer;
 
 using namespace std;
 
-namespace
+int peli::json::detail::printer::flag_storage_index()
 {
-	template<typename Ch> void pretty_template(basic_ostream<Ch>& os)
-	{
-		os.iword(flag_storage_index()) |= flag::pretty;
-	}
-
-	template<typename Ch> void nopretty_template(basic_ostream<Ch>& os)
-	{
-		os.iword(flag_storage_index()) &= !flag::pretty;
-	}
+	static int i = ios_base::xalloc();
+	return i;
 }
 
-ostream& peli::json::pretty(ostream& os)
+int peli::json::detail::printer::tab_level_storage_index()
 {
-	pretty_template(os);
-	return os;
+	static int i = ios_base::xalloc();
+	return i;
 }
 
-wostream& peli::json::pretty(wostream& os)
+bool flag::get(const long& flag_word, long flag)
 {
-	pretty_template(os);
-	return os;
+	return flag_word & flag;
 }
 
-ostream& peli::json::nopretty(ostream& os)
+void flag::set(long& flag_word, long flag)
 {
-	nopretty_template(os);
-	return os;
+	flag_word |= flag;
 }
 
-wostream& peli::json::nopretty(wostream& os)
+void flag::unset(long& flag_word, long flag)
 {
-	nopretty_template(os);
-	return os;
+	flag_word &= ~flag;
 }
+
