@@ -30,32 +30,38 @@ namespace
 {
 	template<typename Ch> inline void skip_whitespace_generic(basic_istream<Ch>& is)
 	{
-		while(is_whitespace(is.get()));
+		std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
 
-		is.unget();
+		typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+		while(is_whitespace(c))
+		{
+			c = rdbuf->snextc();
+		}
 	}
 
 	template<typename Ch> inline void get_number_value_generic(basic_istream<Ch>& is, basic_string<Ch>& buf)
 	{
-		Ch c = is.get();
+		std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
+
+		typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 		while(!is_value_delimiter(c))
 		{
 			buf += c;
-			c = is.get();
+			c = rdbuf->snextc();
 		}
-
-		is.unget();
 	}
 
 	template<typename Ch> inline void get_string_generic(basic_istream<Ch>& is, basic_string<Ch>& buf)
 	{
-		Ch c = is.get();
-		Ch prev_c = 0;
+		std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
+
+		typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+		typename std::basic_streambuf<Ch>::int_type  prev_c = 0;
 		while(!(c == special_chars::quote && prev_c != special_chars::backslash))
 		{
 			buf += c;
 			prev_c = c;
-			c = is.get();
+			c = rdbuf->snextc();
 		}
 	}
 }
