@@ -155,7 +155,7 @@ namespace peli
 						return ret;
 					}
 
-					static constexpr std::size_t s_reserved_size = 256;
+					static constexpr std::size_t s_reserved_size = 16;
 
 					static constexpr std::array<char, special_chars::f + 1> s_ch_to_hex
 					{{
