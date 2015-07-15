@@ -18,8 +18,6 @@
  */
 
 #include "peli/json/value.h"
-#include "json/parser.h"
-#include "json/printer.h"
 
 #include "json/detail/parser/tokenizer.h"
 #include "json/detail/printer/printer.h"
@@ -30,7 +28,7 @@ namespace
 {
 	template<typename Ch> std::basic_istream<Ch>& generic_stream_in(std::basic_istream<Ch>& is, value& v)
 	{
-		v = parser::parse(is);
+		v = peli::json::detail::parser::tokenizer::gentle_stream(is);
 		return is;
 	}
 

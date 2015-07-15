@@ -2,8 +2,6 @@ add_subdirectory(detail)
 
 set(PELI_JSON_SOURCES
 	value.cpp
-	parser.cpp
-	printer.cpp
 )
 
 prefix(PELI_JSON_DETAIL_SOURCES "detail/")
