@@ -44,7 +44,6 @@ namespace peli
 						switch (c)
 						{
 						case special_chars::t:
-
 							c = is.get();
 							if (c != special_chars::r)
 							{
@@ -72,7 +71,6 @@ namespace peli
 							break;
 
 						case special_chars::f:
-
 							c = is.get();
 							if (c != special_chars::a)
 							{
