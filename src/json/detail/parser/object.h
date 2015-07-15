@@ -26,12 +26,11 @@
 #include "peli/json/value.h"
 #include "peli/json/object.h"
 
-#include "json/parser.h"
-
 #include "json/detail/special_chars.h"
 
 #include "json/detail/parser/parser.h"
 #include "json/detail/parser/stream_routines.h"
+#include "json/detail/parser/tokenizer.h"
 
 namespace peli
 {
@@ -78,8 +77,7 @@ namespace peli
 
 								skip_whitespace(is);
 
-// 								is >> obj[std::move(id)];
-								obj[std::move(id)] = peli::json::parser::parse(is);
+								obj[std::move(id)] = tokenizer::tok(is);
 
 								skip_whitespace(is);
 

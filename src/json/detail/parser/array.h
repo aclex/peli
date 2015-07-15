@@ -25,12 +25,11 @@
 #include "peli/json/value.h"
 #include "peli/json/array.h"
 
-// #include "json/parser.h"
-
 #include "json/detail/special_chars.h"
 
 #include "json/detail/parser/parser.h"
 #include "json/detail/parser/stream_routines.h"
+#include "json/detail/parser/tokenizer.h"
 
 namespace peli
 {
@@ -65,7 +64,7 @@ namespace peli
 
 						while (true)
 						{
-							arr.emplace_back(peli::json::parser::parse(is));
+							arr.emplace_back(tokenizer::tok(is));
 
 							skip_whitespace(is);
 
