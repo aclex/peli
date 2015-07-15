@@ -34,6 +34,7 @@ namespace peli
 				{
 				public:
 					template<typename Ch, typename Alloc> static json::value tok(std::basic_istream<Ch, Alloc>& is);
+					template<typename Ch, typename Alloc> static json::value gentle_stream(std::basic_istream<Ch, Alloc>& is);
 				};
 			}
 		}

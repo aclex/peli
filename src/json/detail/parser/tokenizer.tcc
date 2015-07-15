@@ -66,3 +66,14 @@ template<typename Ch, typename Alloc> peli::json::value peli::json::detail::pars
 
 	throw std::invalid_argument("");
 }
+
+
+template<typename Ch, typename Alloc> peli::json::value peli::json::detail::parser::tokenizer::gentle_stream(std::basic_istream<Ch, Alloc>& is)
+{
+	if (!typename std::basic_istream<Ch, Alloc>::sentry(is, true))
+	{
+		throw std::invalid_argument("");
+	}
+
+	return peli::json::detail::parser::tokenizer::tok(is);
+}
