@@ -47,33 +47,34 @@ namespace peli
 					{
 						peli::json::basic_object<Ch> obj;
 
-						Ch t = is.get();
+						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
+
+						typename std::basic_streambuf<Ch>::int_type t = rdbuf->sgetc();
+
 						if (t != special_chars::left_curly)
-						{
-							is.unget();
 							throw std::invalid_argument("");
-						}
+
+						rdbuf->sbumpc();
 
 						skip_whitespace(is);
 
-						t = is.peek();
+						t = rdbuf->sgetc();
 						if (t != special_chars::right_curly)
 						{
 							if (t != special_chars::quote)
 								throw std::invalid_argument("");
 
-							while (true)
+							while (t != s_eof)
 							{
 								auto&& id = parser<std::basic_string<Ch>>::parse(is);
 
 								skip_whitespace(is);
 
-								t = is.get();
+								t = rdbuf->sgetc();
 								if (t != special_chars::colon)
-								{
-									is.unget();
 									throw std::invalid_argument("");
-								}
+
+								rdbuf->sbumpc();
 
 								skip_whitespace(is);
 
@@ -81,28 +82,30 @@ namespace peli
 
 								skip_whitespace(is);
 
-								t = is.get();
+								t = rdbuf->sgetc();
 								if (t == special_chars::right_curly)
 								{
+									rdbuf->sbumpc();
 									break;
 								}
 
 								if (t != special_chars::comma)
-								{
-									is.unget();
 									throw std::invalid_argument("");
-								}
+
+								rdbuf->sbumpc();
 
 								skip_whitespace(is);
 							}
 						}
 						else
 						{
-							is.get();
+							rdbuf->sbumpc();
 						}
 
 						return obj;
 					}
+
+					static constexpr typename std::basic_streambuf<Ch>::int_type s_eof = std::basic_streambuf<Ch>::traits_type::eof();
 				};
 			}
 		}

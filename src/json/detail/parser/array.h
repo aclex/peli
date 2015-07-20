@@ -47,38 +47,42 @@ namespace peli
 					{
 						peli::json::array arr;
 
-						Ch t = is.get();
+						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
+
+						typename std::basic_streambuf<Ch>::int_type t = rdbuf->sgetc();
 						if (t != special_chars::left_square)
-						{
-							is.unget();
 							throw std::runtime_error("");
-						}
+
+						rdbuf->sbumpc();
 
 						skip_whitespace(is);
 
-						if (is.peek() == special_chars::right_square)
+						t = rdbuf->sgetc();
+						if (t == special_chars::right_square)
 						{
-							is.get();
+							rdbuf->sbumpc();
 							return arr;
 						}
 
-						while (true)
+						static constexpr typename std::basic_streambuf<Ch>::int_type s_eof = std::basic_streambuf<Ch>::traits_type::eof();
+
+						while (t != s_eof)
 						{
 							arr.emplace_back(tokenizer::tok(is));
 
 							skip_whitespace(is);
 
-							t = is.get();
+							t = rdbuf->sgetc();
 							if (t == special_chars::right_square)
 							{
+								rdbuf->sbumpc();
 								break;
 							}
 
 							if (t != special_chars::comma)
-							{
-								is.unget();
 								throw std::runtime_error("");
-							}
+
+							rdbuf->sbumpc();
 
 							skip_whitespace(is);
 						}

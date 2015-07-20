@@ -60,70 +60,86 @@ namespace peli
 				private:
 					static inline void stream_string(std::basic_istream<Ch>& is, std::basic_string<Ch>& ret)
 					{
-						Ch c = is.get();
-						if (c != special_chars::quote)
-						{
-							is.unget();
-							throw std::invalid_argument("");
-						}
+						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
 
-						c = is.get();
-						while(true)
+						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+
+						if (c != special_chars::quote)
+							throw std::invalid_argument("No starting quote found while parsing a string");
+
+						c = rdbuf->snextc();
+
+						while(c != s_eof)
 						{
 							switch (c)
 							{
 							case special_chars::quote:
+								rdbuf->sbumpc();
 								return;
 
 							case special_chars::backslash:
+								rdbuf->sbumpc();
 								stream_char(is, ret);
+								c = rdbuf->sgetc();
 								break;
 
 							default:
 								ret += c;
+								c = rdbuf->snextc();
 								break;
 							}
-
-							c = is.get();
 						}
+
+						throw std::invalid_argument("No ending quote found while parsing a string");
 					}
+
 					static inline void stream_char(std::basic_istream<Ch>& is, std::basic_string<Ch>& ret)
 					{
-						Ch c = is.get();
+						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
+
+						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+
 						switch (c)
 						{
 						case special_chars::quote:
 						case special_chars::backslash:
 						case special_chars::slash:
+							rdbuf->sbumpc();
 							ret += c;
 							break;
 
 						case special_chars::b:
+							rdbuf->sbumpc();
 							ret += 0x08;
 							break;
 
 						case special_chars::f:
+							rdbuf->sbumpc();
 							ret += 0x0c;
 							break;
 
 						case special_chars::n:
+							rdbuf->sbumpc();
 							ret += 0x0a;
 							break;
 
 						case special_chars::r:
+							rdbuf->sbumpc();
 							ret += 0x0d;
 							break;
 
 						case special_chars::t:
+							rdbuf->sbumpc();
 							ret += 0x09;
 							break;
 
 						case special_chars::u:
+							rdbuf->sbumpc();
 							stream_unicode_sequence(is, ret);
 							break;
 
 						default:
-							throw std::invalid_argument("");
+							throw std::invalid_argument("Invalid escape sequence");
 						}
 					}
 
@@ -133,8 +149,19 @@ namespace peli
 
 						if (utf::is_lead_surrogate(cp))
 						{
-							if (!(is.get() == special_chars::backslash && is.get() == special_chars::u))
-								throw std::invalid_argument("");
+							std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
+
+							typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+
+							if (c != special_chars::backslash)
+								throw std::invalid_argument("Incorrect surrogate pair");
+
+							c = rdbuf->snextc();
+
+							if (c != special_chars::u)
+								throw std::invalid_argument("Incorrect surrogate pair");
+
+							rdbuf->sbumpc();
 
 							auto trail_cp = extract_codepoint(is);
 							ret += utf::convert<Ch>(cp, trail_cp);
@@ -147,10 +174,12 @@ namespace peli
 
 					static inline std::uint_fast16_t extract_codepoint(std::basic_istream<Ch>& is)
 					{
-						std::uint_fast16_t ret = s_ch_to_hex[is.get()] << 12;
-						ret += s_ch_to_hex[is.get()] << 8;
-						ret += s_ch_to_hex[is.get()] << 4;
-						ret += s_ch_to_hex[is.get()];
+						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
+
+						std::uint_fast16_t ret = s_ch_to_hex[rdbuf->sbumpc()] << 12;
+						ret += s_ch_to_hex[rdbuf->sbumpc()] << 8;
+						ret += s_ch_to_hex[rdbuf->sbumpc()] << 4;
+						ret += s_ch_to_hex[rdbuf->sbumpc()];
 
 						return ret;
 					}
@@ -167,6 +196,8 @@ namespace peli
 						0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0, 0, 0, 0, 0, 0,
 						0, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf
 					}};
+
+					static constexpr typename std::basic_streambuf<Ch>::int_type s_eof = std::basic_streambuf<Ch>::traits_type::eof();
 				};
 
 				template<typename Ch> constexpr std::array<char, special_chars::f + 1> parser<std::basic_string<Ch>>::s_ch_to_hex;

@@ -40,67 +40,53 @@ namespace peli
 					template<typename Ch> static bool parse(std::basic_istream<Ch>& is)
 					{
 						bool ret = false;
-						Ch c = is.get();
+
+						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
+
+						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 						switch (c)
 						{
 						case special_chars::t:
-							c = is.get();
+							c = rdbuf->snextc();
 							if (c != special_chars::r)
-							{
-								is.unget();
 								throw std::invalid_argument("");
-							}
 
-							c = is.get();
+							c = rdbuf->snextc();
 
 							if (c != special_chars::u)
-							{
-								is.unget();
 								throw std::invalid_argument("");
-							}
 
-							c = is.get();
+							c = rdbuf->snextc();
 
 							if (c != special_chars::e)
-							{
-								is.unget();
 								throw std::invalid_argument("");
-							}
+
+							rdbuf->sbumpc();
 
 							ret = true;
 							break;
 
 						case special_chars::f:
-							c = is.get();
+							c = rdbuf->snextc();
 							if (c != special_chars::a)
-							{
-								is.unget();
 								throw std::invalid_argument("");
-							}
 
-							c = is.get();
+							c = rdbuf->snextc();
 
 							if (c != special_chars::l)
-							{
-								is.unget();
 								throw std::invalid_argument("");
-							}
 
-							c = is.get();
+							c = rdbuf->snextc();
 
 							if (c != special_chars::s)
-							{
-								is.unget();
 								throw std::invalid_argument("");
-							}
 
-							c = is.get();
+							c = rdbuf->snextc();
 
 							if (c != special_chars::e)
-							{
-								is.unget();
 								throw std::invalid_argument("");
-							}
+
+							rdbuf->sbumpc();
 
 							ret = false;
 							break;

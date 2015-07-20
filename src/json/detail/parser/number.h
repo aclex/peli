@@ -67,15 +67,16 @@ namespace peli
 					template<typename Ch, typename Alloc>
 					static void extract(std::basic_istream<Ch, Alloc>& is, buffer_type<Ch>& buf)
 					{
-						Ch c = is.get();
+						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
+
+						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+
 						auto it = std::begin(buf);
 						while(!is_value_delimiter(c) && it < std::end(buf) - 1)
 						{
 							(*it++) = c;
-							c = is.get();
+							c = rdbuf->snextc();
 						}
-
-						is.unget();
 					}
 
 					static peli::json::number convert(const buffer_type<char>& buf)
