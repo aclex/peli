@@ -39,7 +39,7 @@ template<typename Ch, typename Alloc> peli::json::value peli::json::detail::pars
 
 	skip_whitespace(is);
 
-	Ch next_char = is.peek();
+	typename std::basic_streambuf<Ch>::int_type next_char = is.rdbuf()->sgetc();
 
 	switch (next_char)
 	{
