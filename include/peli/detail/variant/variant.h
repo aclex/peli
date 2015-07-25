@@ -35,9 +35,13 @@
 #include <type_traits>
 #include <utility>
 #include <memory>
+#include <limits>
+#include <cstring>
+#include <cassert>
 
 #include <peli/detail/template_snippets/contains.h>
 #include <peli/detail/template_snippets/templated_visitor.h>
+#include <peli/detail/template_snippets/type_list.h>
 
 namespace peli
 {
@@ -63,10 +67,24 @@ namespace peli
 			public:
 				struct visitor : template_snippets::templated_visitor::visitor<Ts...> { };
 
+				typedef template_snippets::type_list<Ts...> types;
+
+				static_assert(sizeof...(Ts) < std::numeric_limits<int>::max(), "Too many types");
+
+				template<typename TypeList, typename Op> struct triviality_signed_index_of :
+					std::integral_constant<int, std::is_trivial<Op>::value ? template_snippets::index_of<TypeList, Op>::value + 1 :
+						-(template_snippets::index_of<TypeList, Op>::value + 1)>
+				{
+
+				};
+
+				template<typename T> using proper_storage_type = typename std::conditional<std::is_trivial<T>::value, T, T*>::type;
+
 			private:
 				class value_holder
 				{
 				public:
+					virtual value_holder* clone() const = 0;
 					virtual void placement_copy(void* dest) const = 0;
 					virtual void placement_move(void* dest) noexcept = 0;
 					virtual void accept(visitor* v) = 0;
@@ -86,6 +104,11 @@ namespace peli
 					{
 						using std::swap;
 						swap(m_value, v.m_value);
+					}
+
+					value_holder* clone() const noexcept(std::is_nothrow_copy_constructible<value_holder_template>::value) override
+					{
+						return new value_holder_template(*this);
 					}
 
 					void placement_copy(void* dest) const noexcept(std::is_nothrow_copy_constructible<value_holder_template>::value) override
@@ -170,67 +193,60 @@ namespace peli
 				template<typename T> using proper_value_holder =
 					typename std::conditional<std::is_trivial<T>::value, trivial_value_holder<T>, complex_value_holder<T>>::type;
 
-				using data_t = typename std::aligned_union<0, proper_value_holder<typename std::decay<Ts>::type>...>::type;
+				using data_t = typename std::aligned_union<0, proper_storage_type<typename std::decay<Ts>::type>...>::type;
 
 			public:
 				variant() noexcept : m_valid(false) { }
-				variant(const variant& v) : m_valid(v.m_valid)
+				variant(const variant& v) : m_valid(v.m_valid), m_type_index(v.m_type_index), m_data(v.m_data)
 				{
-					if (v.m_valid)
-						v.holder()->placement_copy(&m_data);
+					if (v.m_valid && !v.is_trivial())
+					{
+						value_holder* a = v.holder()->clone();
+						*internal::safe_cast<value_holder**>(&m_data) = a;
+						assert(a == holder());
+					}
 				}
 
-				variant(variant&& v) noexcept : m_valid(v.m_valid)
+				variant(variant&& v) noexcept
 				{
-					if (v.m_valid)
-						v.holder()->placement_move(&m_data);
+					using std::swap;
+					swap(*this, v);
 				}
 
 				template<typename U,
 				bool Cond = std::is_trivial<U>::value,
 				typename std::enable_if<Cond, int>::type = 0>
-				explicit variant(U v) noexcept : m_valid(true)
+				explicit variant(U v) noexcept : m_valid(true), m_type_index(triviality_signed_index_of<types, U>::value)
 				{
 					static_type_check<U>();
-
-					new (&m_data) proper_value_holder<U>(v);
+					data<U>() = v;
 				}
 
 				template<typename U,
 				typename DecayedU = typename std::decay<U>::type,
 				bool Cond = !std::is_trivial<DecayedU>::value,
 				typename std::enable_if<Cond, int>::type = 0>
-				explicit variant(U&& v) noexcept(noexcept(proper_value_holder<DecayedU>(v))) : m_valid(true)
+				explicit variant(U&& v) noexcept(noexcept(proper_value_holder<DecayedU>(v))) :
+					m_valid(true),
+					m_type_index(triviality_signed_index_of<types, DecayedU>::value)
 				{
 					static_type_check<U>();
-
-					new (&m_data) proper_value_holder<DecayedU>(std::forward<U>(v));
+					*internal::safe_cast<value_holder**>(&m_data) = new proper_value_holder<DecayedU>(std::forward<U>(v));
 				}
 
-				variant& operator=(const variant& v)
+				friend void swap(variant& lhs, variant& rhs) noexcept
 				{
-					if (m_valid)
-						holder()->~value_holder();
+					using std::swap;
 
-					if (v.m_valid)
-						v.holder()->placement_copy(&m_data);
-
-					m_valid = v.m_valid;
-
-					return *this;
+					swap(lhs.m_valid, rhs.m_valid);
+					swap(lhs.m_type_index, rhs.m_type_index);
+					swap(lhs.m_data, rhs.m_data);
 				}
 
-				variant& operator=(variant&& v) noexcept
+				variant& operator=(variant v) noexcept
 				{
-					if (m_valid)
-						holder()->~value_holder();
-
-					if (v.m_valid)
-					{
-						v.holder()->placement_move(&m_data);
-					}
-
-					m_valid = v.m_valid;
+					using std::swap;
+					swap(*this, v);
 
 					return *this;
 				}
@@ -246,15 +262,26 @@ namespace peli
 						return false;
 
 					if (!m_valid)
+					{
 						return true;
+					}
 
 					if (&m_data == &(rhs.m_data))
+					{
 						return true;
+					}
 
-					if (holder()->type_info() != rhs.holder()->type_info())
+					if (m_type_index != rhs.m_type_index)
 						return false;
 
-					return holder()->equals(*rhs.holder());
+					if (is_trivial())
+					{
+						return !std::memcmp(&m_data, &(rhs.m_data), sizeof(m_data));
+					}
+					else
+					{
+						return holder()->equals(*rhs.holder());
+					}
 				}
 
 				bool operator!=(const variant& rhs) const noexcept
@@ -267,7 +294,7 @@ namespace peli
 					static_type_check<T>();
 					runtime_type_check<T>();
 
-					return holder<T>()->value();
+					return is_trivial() ? data<T>() : holder<T>()->value();
 				}
 
 				template<typename T> T cast()
@@ -275,25 +302,31 @@ namespace peli
 					static_type_check<T>();
 					runtime_type_check<T>();
 
-					return holder<T>()->value();
+					return is_trivial() ? data<T>() : holder<T>()->value();
 				}
 
 				void accept(visitor* v)
 				{
 					if (m_valid)
-						holder()->accept(v);
+					{
+						if (!is_trivial())
+							holder()->accept(v);
+					}
 				}
 
 				void accept(visitor* v) const
 				{
 					if (m_valid)
-						holder()->accept(v);
+					{
+						if (!is_trivial())
+							holder()->accept(v);
+					}
 				}
 
 				~variant() noexcept
 				{
-					if (m_valid)
-						holder()->~value_holder();
+					if (m_valid && !is_trivial())
+						delete holder();
 				}
 
 			private:
@@ -308,35 +341,51 @@ namespace peli
 					if (!m_valid)
 						throw std::invalid_argument("Not initialized.");
 
-					if (typeid(typename std::decay<T>::type) != holder()->type_info())
+					if (triviality_signed_index_of<types, typename std::decay<T>::type>::value != m_type_index)
 						throw std::bad_cast();
 				}
 
 				constexpr const value_holder* holder() const
 				{
-					return internal::safe_cast<const value_holder*>(&m_data);
+					return *internal::safe_cast<value_holder* const *>(&m_data);
 				}
 
 				inline value_holder* holder()
 				{
-					return internal::safe_cast<value_holder*>(&m_data);
+					return *internal::safe_cast<value_holder**>(&m_data);
+				}
+
+				template<typename T> inline const typename std::decay<T>::type& data() const
+				{
+					return *internal::safe_cast<const typename std::decay<T>::type*>(&m_data);
+				}
+
+				template<typename T> inline typename std::decay<T>::type& data()
+				{
+					return *internal::safe_cast<typename std::decay<T>::type*>(&m_data);
+				}
+
+				constexpr bool is_trivial() const
+				{
+					return m_type_index > 0;
 				}
 
 				template<typename T,
 				typename DecayedT = typename std::decay<T>::type>
 				constexpr const proper_value_holder<DecayedT>* holder() const
 				{
-					return internal::safe_cast<const proper_value_holder<DecayedT>*>(&m_data);
+					return *internal::safe_cast<proper_value_holder<DecayedT>* const *>(&m_data);
 				}
 
 				template<typename T,
 				typename DecayedT = typename std::decay<T>::type>
 				inline proper_value_holder<DecayedT>* holder()
 				{
-					return internal::safe_cast<proper_value_holder<DecayedT>*>(&m_data);
+					return *internal::safe_cast<proper_value_holder<DecayedT>**>(&m_data);
 				}
 
 				bool m_valid;
+				int m_type_index;
 				data_t m_data;
 			};
 		}
