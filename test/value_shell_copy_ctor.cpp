@@ -27,7 +27,8 @@ using namespace peli;
 
 int main(int argc, char* argv[])
 {
-	json::value v1(json::make_value<json::object>());
+	json::object a;
+	json::value v1(a);
 	json::object& obj1(v1);
 	obj1["test"] = json::value(52);
 
