@@ -37,12 +37,12 @@ namespace peli
 			{
 				template<typename Arg> struct object_argument_visitor
 				{
-					virtual void visit(const Arg& arg) { }
+					virtual void visit(const Arg&) { }
 				};
 
 				template<typename Arg> struct value_argument_visitor
 				{
-					virtual void visit(Arg arg) { }
+					virtual void visit(Arg) { }
 				};
 
 				template<typename Arg> using argument_visitor =

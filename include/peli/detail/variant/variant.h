@@ -56,6 +56,12 @@ namespace peli
 				{
 					return static_cast<T>(ptr);
 				}
+
+				template<typename T> constexpr bool is_nothrow_swappable() noexcept
+				{
+					using std::swap;
+					return noexcept(swap(std::declval<T&>(), std::declval<T&>()));
+				}
 			}
 
 			template<typename... Ts> class variant
@@ -67,12 +73,12 @@ namespace peli
 				class value_holder
 				{
 				public:
-					virtual void placement_copy(void* dest) const = 0;
-					virtual void placement_move(void* dest) noexcept = 0;
-					virtual void accept(visitor* v) = 0;
-					virtual void accept(visitor* v) const = 0;
+					virtual void placement_copy(void*) const = 0;
+					virtual void placement_move(void*) noexcept = 0;
+					virtual void accept(visitor*) = 0;
+					virtual void accept(visitor*) const = 0;
 					virtual const std::type_info& type_info() const noexcept = 0;
-					virtual bool equals(const value_holder& rhs) const noexcept = 0;
+					virtual bool equals(const value_holder&) const noexcept = 0;
 					virtual ~value_holder() noexcept { }
 				};
 
@@ -80,7 +86,7 @@ namespace peli
 				{
 				public:
 					value_holder_template() = default;
-					value_holder_template(const value_holder_template& v) = default;
+					value_holder_template(const value_holder_template&) = default;
 
 					value_holder_template(value_holder_template&& v) noexcept
 					{
@@ -142,7 +148,7 @@ namespace peli
 					template<typename U,
 					bool Cond = !std::is_trivial<typename std::decay<U>::type>::value,
 					typename std::enable_if<Cond, int>::type = 0>
-					explicit value_holder_template(U&& v) noexcept
+					explicit value_holder_template(U&& v) noexcept(internal::is_nothrow_swappable<U>())
 					{
 						using std::swap;
 						swap(this->m_value, v);
@@ -200,7 +206,7 @@ namespace peli
 				typename DecayedU = typename std::decay<U>::type,
 				bool Cond = !std::is_trivial<DecayedU>::value,
 				typename std::enable_if<Cond, int>::type = 0>
-				explicit variant(U&& v) noexcept(noexcept(proper_value_holder<DecayedU>(v))) : m_valid(true)
+				explicit variant(U&& v) noexcept(noexcept(proper_value_holder<DecayedU>(std::forward<U>(v)))) : m_valid(true)
 				{
 					static_type_check<U>();
 
