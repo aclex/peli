@@ -5,13 +5,9 @@ set(PELI_SOURCES
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_subdirectory(detail)
 add_subdirectory(json)
 
 add_library(peli SHARED ${PELI_SOURCES}
-# 	$<TARGET_OBJECTS:peli_detail_variant_value>
-# 	$<TARGET_OBJECTS:peli_json_detail_parser>
-# 	$<TARGET_OBJECTS:peli_json_detail_printer>
 	$<TARGET_OBJECTS:peli_json>
 )
 
