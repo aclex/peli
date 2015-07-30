@@ -108,8 +108,8 @@ void check_redundant()
 
 	const json::object& obj1(v1);
 	const json::wobject& obj2(v2);
-	json::object ch1 { { "a", json::make_value<json::object>() }, { "b", json::value() } };
-	json::wobject ch2 { { L"a", json::make_value<json::wobject>() }, { L"b", json::value() } };
+	json::object ch1 { { "a", json::value() }, { "b", json::value() } };
+	json::wobject ch2 { { L"a", json::value() }, { L"b", json::value() } };
 
 	assert(obj1 == ch1);
 	assert(obj2 == ch2);
