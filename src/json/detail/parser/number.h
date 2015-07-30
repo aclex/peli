@@ -51,6 +51,7 @@ namespace peli
 					static peli::json::number parse(std::basic_istream<Ch, Alloc>& is)
 					{
 						static buffer_type<Ch> buf;
+
 						buf.fill(0);
 
 						extract(is, buf);
@@ -71,8 +72,8 @@ namespace peli
 
 						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 
-						auto it = std::begin(buf);
-						while(!is_value_delimiter(c) && it < std::end(buf) - 1)
+						auto it = std::begin(buf), stop = std::end(buf) - 1;
+						while(!is_value_delimiter(c) && it < stop)
 						{
 							(*it++) = c;
 							c = rdbuf->snextc();

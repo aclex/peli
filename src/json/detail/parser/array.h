@@ -64,9 +64,7 @@ namespace peli
 							return arr;
 						}
 
-						static constexpr typename std::basic_streambuf<Ch>::int_type s_eof = std::basic_streambuf<Ch>::traits_type::eof();
-
-						while (t != s_eof)
+						while (t != std::basic_streambuf<Ch>::traits_type::eof())
 						{
 							arr.emplace_back(tokenizer::tok(is));
 

@@ -64,7 +64,7 @@ namespace peli
 							if (t != special_chars::quote)
 								throw std::invalid_argument("");
 
-							while (t != s_eof)
+							while (t != std::basic_streambuf<Ch>::traits_type::eof())
 							{
 								auto&& id = parser<std::basic_string<Ch>>::parse(is);
 
@@ -78,7 +78,7 @@ namespace peli
 
 								skip_whitespace(is);
 
-								obj[std::move(id)] = tokenizer::tok(is);
+								obj.emplace(std::move(id), tokenizer::tok(is));
 
 								skip_whitespace(is);
 
@@ -104,8 +104,6 @@ namespace peli
 
 						return obj;
 					}
-
-					static constexpr typename std::basic_streambuf<Ch>::int_type s_eof = std::basic_streambuf<Ch>::traits_type::eof();
 				};
 			}
 		}

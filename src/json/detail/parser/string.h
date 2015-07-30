@@ -48,7 +48,6 @@ namespace peli
 					static typename std::basic_string<Ch> parse(std::basic_istream<Ch>& is)
 					{
 						std::basic_string<Ch> ret;
-						ret.reserve(s_reserved_size);
 
 						stream_string(is, ret);
 
@@ -69,7 +68,7 @@ namespace peli
 
 						c = rdbuf->snextc();
 
-						while(c != s_eof)
+						while(c != std::basic_streambuf<Ch>::traits_type::eof())
 						{
 							switch (c)
 							{
@@ -196,8 +195,6 @@ namespace peli
 						0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0, 0, 0, 0, 0, 0,
 						0, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf
 					}};
-
-					static constexpr typename std::basic_streambuf<Ch>::int_type s_eof = std::basic_streambuf<Ch>::traits_type::eof();
 				};
 
 				template<typename Ch> constexpr std::array<char, special_chars::f + 1> parser<std::basic_string<Ch>>::s_ch_to_hex;
