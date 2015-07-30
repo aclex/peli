@@ -69,16 +69,6 @@ namespace peli
 
 				template<> void skip_whitespace<char>(std::istream& is);
 				template<> void skip_whitespace<wchar_t>(std::wistream& is);
-
-				template<typename Ch> void get_number_value(std::basic_istream<Ch>& is, std::basic_string<Ch>& buf);
-
-				template<> void get_number_value<char>(std::istream& is, std::string& buf);
-				template<> void get_number_value<wchar_t>(std::wistream& is, std::wstring& buf);
-
-				template<typename Ch> void get_string(std::basic_istream<Ch>& is, std::basic_string<Ch>& buf);
-
-				template<> void get_string<char>(std::istream& is, std::string& buf);
-				template<> void get_string<wchar_t>(std::wistream& is, std::wstring& buf);
 			}
 		}
 	}
