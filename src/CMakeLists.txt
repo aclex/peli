@@ -5,6 +5,8 @@ set(PELI_SOURCES
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+add_definitions(-Wall -Wextra -pedantic)
+
 add_subdirectory(json)
 
 add_library(peli SHARED ${PELI_SOURCES}
