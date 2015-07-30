@@ -43,11 +43,9 @@ namespace peli
 				template<typename Ch> class parser<peli::json::basic_object<Ch>>
 				{
 				public:
-					static typename peli::json::basic_object<Ch> parse(std::basic_istream<Ch>& is)
+					static typename peli::json::basic_object<Ch> parse(std::basic_streambuf<Ch>* rdbuf)
 					{
 						peli::json::basic_object<Ch> obj;
-
-						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
 
 						typename std::basic_streambuf<Ch>::int_type t = rdbuf->sgetc();
 
@@ -56,7 +54,7 @@ namespace peli
 
 						rdbuf->sbumpc();
 
-						skip_whitespace(is);
+						skip_whitespace(rdbuf);
 
 						t = rdbuf->sgetc();
 						if (t != special_chars::right_curly)
@@ -66,9 +64,9 @@ namespace peli
 
 							while (t != std::basic_streambuf<Ch>::traits_type::eof())
 							{
-								auto&& id = parser<std::basic_string<Ch>>::parse(is);
+								auto&& id = parser<std::basic_string<Ch>>::parse(rdbuf);
 
-								skip_whitespace(is);
+								skip_whitespace(rdbuf);
 
 								t = rdbuf->sgetc();
 								if (t != special_chars::colon)
@@ -76,11 +74,11 @@ namespace peli
 
 								rdbuf->sbumpc();
 
-								skip_whitespace(is);
+								skip_whitespace(rdbuf);
 
-								obj.emplace(std::move(id), tokenizer::tok(is));
+								obj.emplace(std::move(id), tokenizer::tok(rdbuf));
 
-								skip_whitespace(is);
+								skip_whitespace(rdbuf);
 
 								t = rdbuf->sgetc();
 								if (t == special_chars::right_curly)
@@ -94,7 +92,7 @@ namespace peli
 
 								rdbuf->sbumpc();
 
-								skip_whitespace(is);
+								skip_whitespace(rdbuf);
 							}
 						}
 						else

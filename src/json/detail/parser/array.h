@@ -42,12 +42,10 @@ namespace peli
 				template<> class parser<peli::json::array>
 				{
 				public:
-					template<typename Ch, typename Alloc>
-					static typename peli::json::array parse(std::basic_istream<Ch, Alloc>& is)
+					template<typename Ch>
+					static typename peli::json::array parse(std::basic_streambuf<Ch>* rdbuf)
 					{
 						peli::json::array arr;
-
-						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
 
 						typename std::basic_streambuf<Ch>::int_type t = rdbuf->sgetc();
 						if (t != special_chars::left_square)
@@ -55,7 +53,7 @@ namespace peli
 
 						rdbuf->sbumpc();
 
-						skip_whitespace(is);
+						skip_whitespace(rdbuf);
 
 						t = rdbuf->sgetc();
 						if (t == special_chars::right_square)
@@ -66,9 +64,9 @@ namespace peli
 
 						while (t != std::basic_streambuf<Ch>::traits_type::eof())
 						{
-							arr.emplace_back(tokenizer::tok(is));
+							arr.emplace_back(tokenizer::tok(rdbuf));
 
-							skip_whitespace(is);
+							skip_whitespace(rdbuf);
 
 							t = rdbuf->sgetc();
 							if (t == special_chars::right_square)
@@ -82,7 +80,7 @@ namespace peli
 
 							rdbuf->sbumpc();
 
-							skip_whitespace(is);
+							skip_whitespace(rdbuf);
 						}
 
 						return arr;

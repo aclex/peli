@@ -45,22 +45,18 @@ namespace peli
 				template<typename Ch> class parser<std::basic_string<Ch>>
 				{
 				public:
-					static typename std::basic_string<Ch> parse(std::basic_istream<Ch>& is)
+					static typename std::basic_string<Ch> parse(std::basic_streambuf<Ch>* rdbuf)
 					{
 						std::basic_string<Ch> ret;
 
-						stream_string(is, ret);
-
-						ret.shrink_to_fit();
+						stream_string(rdbuf, ret);
 
 						return ret;
 					}
 
 				private:
-					static inline void stream_string(std::basic_istream<Ch>& is, std::basic_string<Ch>& ret)
+					static inline void stream_string(std::basic_streambuf<Ch>* rdbuf, std::basic_string<Ch>& ret)
 					{
-						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
-
 						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 
 						if (c != special_chars::quote)
@@ -78,7 +74,7 @@ namespace peli
 
 							case special_chars::backslash:
 								rdbuf->sbumpc();
-								stream_char(is, ret);
+								stream_char(rdbuf, ret);
 								c = rdbuf->sgetc();
 								break;
 
@@ -92,10 +88,8 @@ namespace peli
 						throw std::invalid_argument("No ending quote found while parsing a string");
 					}
 
-					static inline void stream_char(std::basic_istream<Ch>& is, std::basic_string<Ch>& ret)
+					static inline void stream_char(std::basic_streambuf<Ch>* rdbuf, std::basic_string<Ch>& ret)
 					{
-						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
-
 						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 
 						switch (c)
@@ -134,7 +128,7 @@ namespace peli
 
 						case special_chars::u:
 							rdbuf->sbumpc();
-							stream_unicode_sequence(is, ret);
+							stream_unicode_sequence(rdbuf, ret);
 							break;
 
 						default:
@@ -142,14 +136,12 @@ namespace peli
 						}
 					}
 
-					static void stream_unicode_sequence(std::basic_istream<Ch>& is, std::basic_string<Ch>& ret)
+					static void stream_unicode_sequence(std::basic_streambuf<Ch>* rdbuf, std::basic_string<Ch>& ret)
 					{
-						auto cp = extract_codepoint(is);
+						auto cp = extract_codepoint(rdbuf);
 
 						if (utf::is_lead_surrogate(cp))
 						{
-							std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
-
 							typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 
 							if (c != special_chars::backslash)
@@ -162,7 +154,7 @@ namespace peli
 
 							rdbuf->sbumpc();
 
-							auto trail_cp = extract_codepoint(is);
+							auto trail_cp = extract_codepoint(rdbuf);
 							ret += utf::convert<Ch>(cp, trail_cp);
 						}
 						else
@@ -171,10 +163,8 @@ namespace peli
 						}
 					}
 
-					static inline std::uint_fast16_t extract_codepoint(std::basic_istream<Ch>& is)
+					static inline std::uint_fast16_t extract_codepoint(std::basic_streambuf<Ch>* rdbuf)
 					{
-						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
-
 						std::uint_fast16_t ret = s_ch_to_hex[rdbuf->sbumpc()] << 12;
 						ret += s_ch_to_hex[rdbuf->sbumpc()] << 8;
 						ret += s_ch_to_hex[rdbuf->sbumpc()] << 4;
@@ -182,8 +172,6 @@ namespace peli
 
 						return ret;
 					}
-
-					static constexpr std::size_t s_reserved_size = 16;
 
 					static constexpr std::array<char, special_chars::f + 1> s_ch_to_hex
 					{{

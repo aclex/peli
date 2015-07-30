@@ -37,11 +37,9 @@ namespace peli
 				template<> class parser<bool>
 				{
 				public:
-					template<typename Ch> static bool parse(std::basic_istream<Ch>& is)
+					template<typename Ch> static bool parse(std::basic_streambuf<Ch>* rdbuf)
 					{
 						bool ret = false;
-
-						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
 
 						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 						switch (c)

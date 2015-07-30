@@ -28,10 +28,8 @@ using namespace peli::json::detail::parser;
 
 namespace
 {
-	template<typename Ch> inline void skip_whitespace_generic(basic_istream<Ch>& is)
+	template<typename Ch> inline void skip_whitespace_generic(basic_streambuf<Ch>* rdbuf)
 	{
-		std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
-
 		typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 		while(is_whitespace(c))
 		{
@@ -40,12 +38,12 @@ namespace
 	}
 }
 
-template<> void peli::json::detail::parser::skip_whitespace<char>(istream& is)
+template<> void peli::json::detail::parser::skip_whitespace<char>(basic_streambuf<char>* rdbuf)
 {
-	skip_whitespace_generic(is);
+	skip_whitespace_generic(rdbuf);
 }
 
-template<> void peli::json::detail::parser::skip_whitespace<wchar_t>(wistream& is)
+template<> void peli::json::detail::parser::skip_whitespace<wchar_t>(basic_streambuf<wchar_t>* rdbuf)
 {
-	skip_whitespace_generic(is);
+	skip_whitespace_generic(rdbuf);
 }

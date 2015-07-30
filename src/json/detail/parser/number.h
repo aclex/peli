@@ -47,14 +47,14 @@ namespace peli
 					template<typename Ch> using buffer_type = std::array<Ch, s_buf_size>;
 
 				public:
-					template<typename Ch, typename Alloc>
-					static peli::json::number parse(std::basic_istream<Ch, Alloc>& is)
+					template<typename Ch>
+					static peli::json::number parse(std::basic_streambuf<Ch>* rdbuf)
 					{
 						static buffer_type<Ch> buf;
 
 						buf.fill(0);
 
-						extract(is, buf);
+						extract(rdbuf, buf);
 
 						auto ret = convert(buf);
 
@@ -65,11 +65,9 @@ namespace peli
 					}
 
 				private:
-					template<typename Ch, typename Alloc>
-					static void extract(std::basic_istream<Ch, Alloc>& is, buffer_type<Ch>& buf)
+					template<typename Ch>
+					static void extract(std::basic_streambuf<Ch>* rdbuf, buffer_type<Ch>& buf)
 					{
-						std::basic_streambuf<Ch>* rdbuf = is.rdbuf();
-
 						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 
 						auto it = std::begin(buf), stop = std::end(buf) - 1;

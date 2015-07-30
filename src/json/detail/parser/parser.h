@@ -20,7 +20,7 @@
 #ifndef PELI_DETAIL_PARSER_PARSER_H
 #define PELI_DETAIL_PARSER_PARSER_H
 
-#include <istream>
+#include <streambuf>
 #include <array>
 
 namespace peli
@@ -36,8 +36,8 @@ namespace peli
 					template<class> struct fake_dependency : public std::false_type { };
 
 				public:
-					template<typename Ch, typename Alloc>
-					static JsonType parse(std::basic_istream<Ch, Alloc>& is)
+					template<typename Ch>
+					static JsonType parse(std::basic_streambuf<Ch>* rdbuf)
 					{
 						static_assert(fake_dependency<JsonType>::value, "Type is not supported for parsing");
 					}

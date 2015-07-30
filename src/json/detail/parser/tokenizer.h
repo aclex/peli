@@ -21,6 +21,7 @@
 #define PELI_DETAIL_PARSER_TOKENIZER_H
 
 #include <istream>
+#include <streambuf>
 
 namespace peli
 {
@@ -33,7 +34,7 @@ namespace peli
 				class tokenizer
 				{
 				public:
-					template<typename Ch, typename Alloc> static json::value tok(std::basic_istream<Ch, Alloc>& is);
+					template<typename Ch> static json::value tok(std::basic_streambuf<Ch>* rdbuf);
 					template<typename Ch, typename Alloc> static json::value gentle_stream(std::basic_istream<Ch, Alloc>& is);
 				};
 			}

@@ -16,8 +16,10 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "json/value.h"
 
+#include <cassert>
+
+#include "json/value.h"
 
 #include "json/detail/special_chars.h"
 
@@ -30,41 +32,41 @@
 
 #include "json/detail/parser/stream_routines.h"
 
-template<typename Ch, typename Alloc> peli::json::value peli::json::detail::parser::tokenizer::tok(std::basic_istream<Ch, Alloc>& is)
+template<typename Ch> peli::json::value peli::json::detail::parser::tokenizer::tok(std::basic_streambuf<Ch>* rdbuf)
 {
 	using namespace peli::json;
 	using namespace peli::detail;
 	using namespace peli::json::detail;
 	using namespace peli::json::detail::parser;
 
-	skip_whitespace(is);
+	skip_whitespace(rdbuf);
 
-	typename std::basic_streambuf<Ch>::int_type next_char = is.rdbuf()->sgetc();
+	typename std::basic_streambuf<Ch>::int_type next_char = rdbuf->sgetc();
 
 	switch (next_char)
 	{
 	case special_chars::left_curly:
-		return value(parser<basic_object<Ch>>::parse(is));
+		return value(parser<basic_object<Ch>>::parse(rdbuf));
 
 	case special_chars::left_square:
-		return value(parser<array>::parse(is));
+		return value(parser<array>::parse(rdbuf));
 
 	case special_chars::quote:
-		return value(parser<std::basic_string<Ch>>::parse(is));
+		return value(parser<std::basic_string<Ch>>::parse(rdbuf));
 
 	case special_chars::n:
-		parser<void>::parse(is);
+		parser<void>::parse(rdbuf);
 		return value();
 
 	case special_chars::t:
 	case special_chars::f:
-		return value(parser<bool>::parse(is));
+		return value(parser<bool>::parse(rdbuf));
 
 	default:
-		return value(parser<number>::parse(is));
+		return value(parser<number>::parse(rdbuf));
 	}
 
-	throw std::invalid_argument("");
+	assert("No way here");
 }
 
 
@@ -75,5 +77,5 @@ template<typename Ch, typename Alloc> peli::json::value peli::json::detail::pars
 		throw std::invalid_argument("");
 	}
 
-	return peli::json::detail::parser::tokenizer::tok(is);
+	return peli::json::detail::parser::tokenizer::tok(is.rdbuf());
 }

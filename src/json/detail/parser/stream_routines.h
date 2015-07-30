@@ -65,10 +65,10 @@ namespace peli
 						}
 					}
 
-				template<typename Ch> void skip_whitespace(std::basic_istream<Ch>& is);
+				template<typename Ch> void skip_whitespace(std::basic_streambuf<Ch>* rdbuf);
 
-				template<> void skip_whitespace<char>(std::istream& is);
-				template<> void skip_whitespace<wchar_t>(std::wistream& is);
+				template<> void skip_whitespace<char>(std::basic_streambuf<char>* rdbuf);
+				template<> void skip_whitespace<wchar_t>(std::basic_streambuf<wchar_t>* rdbuf);
 			}
 		}
 	}
