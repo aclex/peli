@@ -120,8 +120,6 @@ namespace
 
 	uint_fast32_t surrogate_to_wide(uint16_t leading_surrogate, uint16_t trailing_surrogate)
 	{
-		uint_fast32_t cp = leading_surrogate;
-
 		// Take care of surrogate pairs first
 		if (!is_lead_surrogate(leading_surrogate) || !is_trail_surrogate(trailing_surrogate))
 			throw invalid_argument("");
