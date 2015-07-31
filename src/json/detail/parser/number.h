@@ -52,40 +52,33 @@ namespace peli
 					{
 						static buffer_type<Ch> buf;
 
-						buf.fill(0);
+						typename std::basic_streambuf<Ch>::pos_type curr_pos = rdbuf->pubseekoff(0, std::ios_base::cur, std::ios_base::in);
+						auto chars_read = rdbuf->sgetn(buf.data(), s_buf_size - 1);
+						buf[chars_read] = 0;
 
-						extract(rdbuf, buf);
+						Ch* rest;
 
-						auto ret = convert(buf);
+						json::number ret = convert(buf.data(), &rest);
 
 						if (errno == ERANGE)
 							throw std::invalid_argument(std::strerror(errno));
+
+						auto chars_parsed = rest - buf.data();
+
+						rdbuf->pubseekpos(curr_pos + chars_parsed, std::ios_base::in);
 
 						return ret;
 					}
 
 				private:
-					template<typename Ch>
-					static void extract(std::basic_streambuf<Ch>* rdbuf, buffer_type<Ch>& buf)
+					static peli::json::number convert(const char* buf, char** rest)
 					{
-						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
-
-						auto it = std::begin(buf), stop = std::end(buf) - 1;
-						while(!is_value_delimiter(c) && it < stop)
-						{
-							(*it++) = c;
-							c = rdbuf->snextc();
-						}
+						return std::strtold(buf, rest);
 					}
 
-					static peli::json::number convert(const buffer_type<char>& buf)
+					static peli::json::number convert(const wchar_t* buf, wchar_t** rest)
 					{
-						return std::strtold(buf.data(), nullptr);
-					}
-
-					static peli::json::number convert(const buffer_type<wchar_t>& buf)
-					{
-						return std::wcstold(buf.data(), nullptr);
+						return std::wcstold(buf, rest);
 					}
 				};
 			}
