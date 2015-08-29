@@ -67,7 +67,15 @@ namespace peli
 			template<typename... Ts> class variant
 			{
 			public:
-				struct visitor : template_snippets::templated_visitor::visitor<Ts...> { };
+				struct visitor : template_snippets::templated_visitor::visitor<Ts...>
+				{
+					template<template<typename...> class T> struct refine
+					{
+						typedef T<Ts...> type;
+					};
+					using template_snippets::templated_visitor::visitor<Ts...>::visit;
+					virtual void visit() { }
+				};
 
 			private:
 				class value_holder
@@ -288,12 +296,16 @@ namespace peli
 				{
 					if (m_valid)
 						holder()->accept(v);
+					else
+						v->visit();
 				}
 
 				void accept(visitor* v) const
 				{
 					if (m_valid)
 						holder()->accept(v);
+					else
+						v->visit();
 				}
 
 				~variant() noexcept
