@@ -42,50 +42,36 @@ namespace peli
 			{
 				template<> struct head<json::array> : pretty_head<head, json::array>, object_formatter
 				{
-					template<typename Ch> static void bounce(std::basic_ostream<Ch>& os, const peli::json::array& arr)
+					template<typename Typewriter> static void bounce(Typewriter* tw, const peli::json::array& arr)
 					{
-						const bool we_are_pretty = os.iword(flag_storage_index()) & flag::pretty;
-
-						long& tab_level = os.iword(tab_level_storage_index());
-
 						using namespace special_chars;
 
-						if (we_are_pretty)
+						put_tab_spacing(tw);
+
+						tw->rdbuf->sputc(left_square);
+
+						if (!arr.empty())
 						{
-							for (long i = 0; i < tab_level; ++i)
-								os << "\t";
+							put_newline(tw);
 						}
 
-						os << left_square;
-
-						if (we_are_pretty && !arr.empty())
-						{
-							os << std::endl;
-						}
-
-						++tab_level;
+						++(tw->tab_level);
 
 						for (auto it = arr.cbegin(); it != arr.cend(); ++it)
 						{
-							os << (*it);
+							tw->print(*it);
+
 							if (it != --arr.cend())
-								os << comma;
+								tw->rdbuf->sputc(comma);
 
-							if (we_are_pretty)
-							{
-								os << std::endl;
-							}
+							put_newline(tw);
 						}
 
-						--tab_level;
+						--(tw->tab_level);
 
-						if (we_are_pretty)
-						{
-							for (long i = 0; i < tab_level; ++i)
-								os << "\t";
-						}
+						put_tab_spacing(tw);
 
-						os << right_square;
+						tw->rdbuf->sputc(right_square);
 					}
 				};
 			}

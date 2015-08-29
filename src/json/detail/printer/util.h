@@ -36,9 +36,9 @@ namespace peli
 					const long pretty = 0x01;
 					const long structure_newline = 0x02;
 
-					bool get(const long& flag_word, long flag);
-					void set(long& flag_word, long flag);
-					void unset(long& flag_word, long flag);
+					constexpr bool get(const long& flag_word, long flag) { return flag_word & flag; }
+					inline void set(long& flag_word, long flag) { flag_word |= flag; }
+					inline void unset(long& flag_word, long flag) { flag_word &= ~flag; }
 				}
 			}
 		}

@@ -20,6 +20,7 @@
 #ifndef PELI_DETAIL_PRINTER_BOOLEAN_H
 #define PELI_DETAIL_PRINTER_BOOLEAN_H
 
+#include <array>
 #include <ostream>
 
 #include "json/detail/printer/head.h"
@@ -37,13 +38,23 @@ namespace peli
 				template<> struct head<bool> : pretty_head<head, bool>, simple_formatter
 				{
 				public:
-					template<typename Ch> static void bounce(std::basic_ostream<Ch>& os, bool b)
+					template<typename Typewriter> static void bounce(Typewriter* tw, bool b)
 					{
 						using namespace special_chars;
+
+						static std::array<typename Typewriter::char_type, 4> true_str { t, r, u, e };
+						static std::array<typename Typewriter::char_type, 5> false_str { f, a, l, s, e };
+
 						if (b)
-							os << t << r << u << e;
+							put(tw->rdbuf, true_str);
 						else
-							os << f << a << l << s << e;
+							put(tw->rdbuf, false_str);
+					}
+
+				private:
+					template<typename Ch, std::size_t N> static void put(std::basic_streambuf<Ch>* rdbuf, const std::array<Ch, N>& str)
+					{
+						rdbuf->sputn(&str.front(), str.size());
 					}
 				};
 			}

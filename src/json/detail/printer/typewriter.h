@@ -17,22 +17,43 @@
  *
  */
 
-#include "json/detail/printer/util.h"
+#ifndef PELI_DETAIL_PRINTER_TYPEWRITER_H
+#define PELI_DETAIL_PRINTER_TYPEWRITER_H
 
-#include <ios>
+#include <ostream>
+#include <streambuf>
+#include <cstddef>
 
-using namespace peli::json::detail::printer;
-
-using namespace std;
-
-int peli::json::detail::printer::flag_storage_index()
+namespace peli
 {
-	static int i = ios_base::xalloc();
-	return i;
+	namespace json
+	{
+		class value;
+
+		namespace detail
+		{
+			namespace printer
+			{
+				template<typename Ch, typename Visitor> class typewriter
+				{
+				public:
+					typedef Ch char_type;
+
+					std::basic_streambuf<Ch>* const rdbuf;
+					const bool pretty;
+					std::size_t tab_level;
+					bool need_structure_newline;
+
+					explicit typewriter(std::basic_ostream<Ch>& os);
+					template<typename U> void print(const U& v);
+					void print();
+					void print(const json::value& v);
+				};
+			}
+		}
+	}
 }
 
-int peli::json::detail::printer::tab_level_storage_index()
-{
-	static int i = ios_base::xalloc();
-	return i;
-}
+#include "json/detail/printer/typewriter.tcc" // template definition
+
+#endif // PELI_DETAIL_PRINTER_TYPEWRITER_H

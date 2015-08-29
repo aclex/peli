@@ -20,8 +20,9 @@
 #ifndef PELI_DETAIL_PRINTER_NULL_H
 #define PELI_DETAIL_PRINTER_NULL_H
 
+#include <array>
+
 #include "json/detail/printer/head.h"
-#include "json/detail/printer/stream_routines.h"
 
 #include "json/detail/special_chars.h"
 
@@ -36,10 +37,13 @@ namespace peli
 				template<> struct head<void> : pretty_head<head, void>, simple_formatter
 				{
 				public:
-					template<typename Ch> static void bounce(std::basic_ostream<Ch>& os)
+					template<typename Typewriter> static void bounce(Typewriter* t)
 					{
 						using namespace special_chars;
-						os << n << u << l << l;
+
+						static std::array<typename Typewriter::char_type, 4> null_str { n, u, l, l };
+
+						t->rdbuf->sputn(&null_str.front(), null_str.size());
 					}
 				};
 			}

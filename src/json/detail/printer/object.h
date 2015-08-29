@@ -42,75 +42,55 @@ namespace peli
 			{
 				template<typename Ch> struct head<json::basic_object<Ch>> : pretty_head<head, json::basic_object<Ch>>, object_formatter
 				{
-					static void bounce(std::basic_ostream<Ch>& os, const json::basic_object<Ch>& obj)
+					template<typename Typewriter,
+					typename std::enable_if<std::is_same<typename Typewriter::char_type, Ch>::value, int>::type c = 0>
+					static void bounce(Typewriter* tw, const json::basic_object<Ch>& obj)
 					{
-						long& flag_word = os.iword(flag_storage_index());
-						const bool we_are_pretty = flag::get(flag_word, flag::pretty);
-
-						long fake_tab_level = 0;
-						long& tab_level = we_are_pretty ? os.iword(tab_level_storage_index()) : fake_tab_level;
-
 						using namespace special_chars;
 
-						if (we_are_pretty)
-						{
-							for (long i = 0; i < tab_level; ++i)
-								os << "\t";
-						}
+						put_tab_spacing(tw);
 
-						os << left_curly;
+						tw->rdbuf->sputc(left_curly);
 
-						if (we_are_pretty)
-						{
-							if (!obj.empty())
-								os << std::endl;
-							else
-								os << space;
-						}
+						if (!obj.empty())
+							put_newline(tw);
+						else
+							put_space(tw);
 
-						++tab_level;
+						++(tw->tab_level);
 
 						for (auto it = obj.cbegin(); it != obj.cend(); ++it)
 						{
-							if (we_are_pretty)
-							{
-								for (long i = 0; i < tab_level; ++i)
-									os << "\t";
-							}
+							put_tab_spacing(tw);
 
-							printer::head<std::basic_string<Ch>>::print(os, it->first);
+							printer::head<std::basic_string<Ch>>::print(tw, it->first);
 
-							if (we_are_pretty)
-								os << space;
+							put_space(tw);
 
-							os << colon;
+							tw->rdbuf->sputc(colon);
 
-							if (we_are_pretty)
-								flag::set(flag_word, flag::structure_newline);
-
-							os << it->second;
-
-							if (we_are_pretty)
-								flag::unset(flag_word, flag::structure_newline);
+							set_structure_newline(tw, true);
+							tw->print(it->second);
+							set_structure_newline(tw, false);
 
 							if (it != --obj.cend())
-								os << comma;
+								tw->rdbuf->sputc(comma);
 
-							if (we_are_pretty)
-							{
-								os << std::endl;
-							}
+							put_newline(tw);
 						}
 
-						--tab_level;
+						--(tw->tab_level);
 
-						if (we_are_pretty)
-						{
-							for (long i = 0; i < tab_level; ++i)
-								os << "\t";
-						}
+						put_tab_spacing(tw);
 
-						os << right_curly;
+						tw->rdbuf->sputc(right_curly);
+					}
+
+					template<typename Typewriter,
+					typename std::enable_if<!std::is_same<typename Typewriter::char_type, Ch>::value, int>::type c = 0>
+					static void bounce(Typewriter*, const json::basic_object<Ch>&)
+					{
+						throw std::invalid_argument("Incompatible character types.");
 					}
 				};
 			}

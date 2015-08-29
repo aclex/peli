@@ -20,88 +20,94 @@
 #include "peli/json/value.h"
 
 #include "json/detail/parser/tokenizer.h"
-#include "json/detail/printer/printer.h"
+#include "json/detail/printer/typewriter.h"
+
+#include "peli/detail/template_snippets/templated_visitor.h"
+#include "peli/detail/template_snippets/bind_specialization.h"
 
 using namespace peli::json;
+using namespace peli::detail;
+using namespace peli::detail::template_snippets;
 
 namespace
 {
-	template<typename Ch> std::basic_istream<Ch>& generic_stream_in(std::basic_istream<Ch>& is, value& v)
+	template<typename BaseVisitor, typename Typewriter, typename Arg> struct object_atomic_typewriter_visitor : virtual public BaseVisitor
 	{
-		v = peli::json::detail::parser::tokenizer::gentle_stream(is);
-		return is;
-	}
-
-	template<typename Derived> class printing_dispatcher
-	{
-	protected:
-		template<class> struct fake_dependency : std::false_type { };
-
-		template<typename T> void dispatch(const T& v)
+		void visit(const Arg& v) override
 		{
-			static_cast<Derived*>(this)->print(v);
-		}
-
-		void dispatch()
-		{
-			static_cast<Derived*>(this)->print();
+			static_cast<Typewriter*>(this)->print(v);
 		}
 	};
 
-	template<class Visitor, typename Ch> class printing_visitor_template :
-			public Visitor,
-			public peli::json::detail::printer::basic_printer<Ch>,
-			public printing_dispatcher<printing_visitor_template<Visitor, Ch>>
+	template<typename BaseVisitor, typename Typewriter, typename Arg> struct value_atomic_typewriter_visitor : virtual public BaseVisitor
 	{
-	public:
-		using peli::json::detail::printer::basic_printer<Ch>::basic_printer;
-
-		void visit(const peli::json::object& v) override { this->template dispatch(v); }
-		void visit(const peli::json::wobject& v) override { this->template dispatch(v); }
-		void visit(const peli::json::array& v) override { this->template dispatch(v); }
-		void visit(const std::string& v) override { this->template dispatch(v); }
-		void visit(const std::wstring& v) override { this->template dispatch(v); }
-		void visit(peli::json::number v) override { this->template dispatch(v); }
-		void visit(bool v) override { this->template dispatch(v); }
-		void visit() { this->dispatch(); }
+		void visit(Arg v) override
+		{
+			static_cast<Typewriter*>(this)->print(v);
+		}
 	};
 
-	template<typename Visitor, typename Ch> printing_visitor_template<Visitor, Ch> printing_visitor(std::basic_ostream<Ch>& os)
+	template<typename BaseVisitor, typename Typewriter, typename Arg> using atomic_typewriter_visitor =
+		typename std::conditional<std::is_fundamental<Arg>::value,
+			value_atomic_typewriter_visitor<BaseVisitor, Typewriter, Arg>, object_atomic_typewriter_visitor<BaseVisitor, Typewriter, Arg>>::type;
+
+	template<typename UpstreamVisitor, typename DownstreamVisitor, typename... Ts> using typewriter_visitor =
+		templated_visitor::using_unfolder<bind_specialization<atomic_typewriter_visitor, UpstreamVisitor, DownstreamVisitor>::template type, Ts...>;
+
+	template<typename Ch, typename VariantVisitor, typename ConcreteVisitor> struct printing_visitor_template :
+		detail::printer::typewriter<Ch, ConcreteVisitor>,
+		VariantVisitor::template refine<bind_specialization<typewriter_visitor, VariantVisitor, ConcreteVisitor>::template type>::type
 	{
-		return printing_visitor_template<Visitor, Ch>(os);
-	}
-
-	template<typename Visitor, typename Variant, typename Ch>
-	std::basic_ostream<Ch>& generic_stream_out(std::basic_ostream<Ch>& os, const Variant& v)
-	{
-		auto visitor(printing_visitor<Visitor>(os));
-
-		if (v.valid())
-			v.accept(&visitor);
-		else
-			visitor.visit();
-
-		return os;
-	}
+		using detail::printer::typewriter<Ch, ConcreteVisitor>::typewriter;
+		void visit() override { this->print(); }
+	};
 }
 
 std::istream& peli::json::operator>>(std::istream& is, value& v)
 {
-	return generic_stream_in(is, v);
+	v = peli::json::detail::parser::tokenizer::gentle_stream(is);
+	return is;
 }
 
 std::wistream& peli::json::operator>>(std::wistream& is, value& v)
 {
-	return generic_stream_in(is, v);
+	v = peli::json::detail::parser::tokenizer::gentle_stream(is);
+	return is;
 }
 
 std::ostream& peli::json::operator<<(std::ostream& os, const value& v)
 {
-	return generic_stream_out<value::variant_type::visitor>(os, v.m_variant);
+	typedef value::variant_type::visitor variant_visitor;
+	struct printing_visitor : public printing_visitor_template<char, variant_visitor, printing_visitor>
+	{
+		using printing_visitor_template<char, variant_visitor, printing_visitor>::printing_visitor_template;
+		void visit(const peli::json::value& v)
+		{
+			v.m_variant.accept(this);
+		}
+	};
+
+	printing_visitor visitor(os);
+
+	v.m_variant.accept(&visitor);
+	return os;
 }
 
 std::wostream& peli::json::operator<<(std::wostream& os, const value& v)
 {
-	return generic_stream_out<value::variant_type::visitor>(os, v.m_variant);
+	typedef value::variant_type::visitor variant_visitor;
+	struct printing_visitor : public printing_visitor_template<wchar_t, variant_visitor, printing_visitor>
+	{
+		using printing_visitor_template<wchar_t, variant_visitor, printing_visitor>::printing_visitor_template;
+		void visit(const peli::json::value& v)
+		{
+			v.m_variant.accept(this);
+		}
+	};
+
+	printing_visitor visitor(os);
+
+	v.m_variant.accept(&visitor);
+	return os;
 }
 

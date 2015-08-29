@@ -20,12 +20,7 @@
 #ifndef PELI_DETAIL_PRINTER_HEAD_H
 #define PELI_DETAIL_PRINTER_HEAD_H
 
-#include <ostream>
-
-#include "json/detail/printer/util.h"
 #include "json/detail/printer/stream_routines.h"
-
-#include "json/detail/special_chars.h"
 
 namespace peli
 {
@@ -40,43 +35,43 @@ namespace peli
 					template<class> struct fake_dependency : public std::false_type { };
 
 				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const T& v)
+					template<typename Typewriter> static void print(Typewriter*, const T&)
 					{
-						static_assert(fake_dependency<T>::value, "Type is not supported for printing");
+// 						static_assert(fake_dependency<T>::value, "Type is not supported for printing");
 					}
 				};
 
 				template<template<class> class H, typename T> struct pretty_head
 				{
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const T& v)
+					template<typename Typewriter> static void print(Typewriter* t, const T& v)
 					{
-						H<T>::preformat(os);
-						H<T>::bounce(os, v);
+						H<T>::preformat(t);
+						H<T>::bounce(t, v);
 					}
 				};
 
 				template<template<class> class H> struct pretty_head<H, void>
 				{
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os)
+					template<typename Typewriter> static void print(Typewriter* t)
 					{
-						H<void>::preformat(os);
-						H<void>::bounce(os);
+						H<void>::preformat(t);
+						H<void>::bounce(t);
 					}
 				};
 
 				struct simple_formatter
 				{
-					template<typename Ch> static void preformat(std::basic_ostream<Ch>& os)
+					template<typename Typewriter> static void preformat(Typewriter* t)
 					{
-						put_structure_space(os);
+						put_structure_space(t);
 					}
 				};
 
 				struct object_formatter
 				{
-					template<typename Ch> static void preformat(std::basic_ostream<Ch>& os)
+					template<typename Typewriter> static void preformat(Typewriter* t)
 					{
-						put_structure_newline(os);
+						put_structure_newline(t);
 					}
 				};
 			}
