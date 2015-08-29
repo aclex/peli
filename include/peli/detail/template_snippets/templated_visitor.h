@@ -49,24 +49,25 @@ namespace peli
 						typename std::conditional<std::is_fundamental<Arg>::value,
 							value_argument_visitor<Arg>, object_argument_visitor<Arg>>::type;
 
-				template<typename... As> struct using_unfolder;
+				template<template<typename...> class AtomicVisitor, typename... As> struct using_unfolder;
 
-				template<typename A1, typename... As> struct using_unfolder<A1, As...> : argument_visitor<A1>, using_unfolder<As...>
+				template<template<typename...> class AtomicVisitor, typename A1, typename... As> struct using_unfolder<AtomicVisitor, A1, As...> :
+						AtomicVisitor<A1>, using_unfolder<AtomicVisitor, As...>
 				{
 						typedef using_unfolder type;
 
-						using argument_visitor<A1>::visit;
-						using using_unfolder<As...>::type::visit;
+						using AtomicVisitor<A1>::visit;
+						using using_unfolder<AtomicVisitor, As...>::type::visit;
 				};
 
-				template<typename A> struct using_unfolder<A> : argument_visitor<A>
+				template<template<typename...> class AtomicVisitor, typename A> struct using_unfolder<AtomicVisitor, A> : AtomicVisitor<A>
 				{
 						typedef using_unfolder type;
 
-						using argument_visitor<A>::visit;
+						using AtomicVisitor<A>::visit;
 				};
 
-				template<typename... Ts> using visitor = using_unfolder<Ts...>;
+				template<typename... Ts> using visitor = using_unfolder<argument_visitor, Ts...>;
 			}
 		}
 	}
