@@ -1,3 +1,6 @@
 [submodule "cmake/common"]
 	path = cmake/common
 	url = git://git.code.sf.net/u/aclex/common_cmake_modules
+[submodule "dep/floaxie"]
+	path = dep/floaxie
+	url = https://github.com/aclex/floaxie.git
