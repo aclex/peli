@@ -68,9 +68,9 @@ namespace peli
 			<
 				bool,
 				json::number,
-				std::string, std::wstring,
+				std::string,
 				json::array,
-				json::object, json::wobject
+				json::object
 			>
 			variant_type;
 
@@ -143,10 +143,8 @@ namespace peli
 		};
 
 		std::istream& operator>>(std::istream& is, value& v);
-		std::wistream& operator>>(std::wistream& is, value& v);
 
 		std::ostream& operator<<(std::ostream& os, const value& v);
-		std::wostream& operator<<(std::wostream& os, const value& v);
 	}
 }
 

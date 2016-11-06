@@ -69,12 +69,6 @@ std::istream& peli::json::operator>>(std::istream& is, value& v)
 	return is;
 }
 
-std::wistream& peli::json::operator>>(std::wistream& is, value& v)
-{
-	v = peli::json::detail::parser::tokenizer::gentle_stream(is);
-	return is;
-}
-
 std::ostream& peli::json::operator<<(std::ostream& os, const value& v)
 {
 	typedef value::variant_type::visitor variant_visitor;
@@ -92,22 +86,3 @@ std::ostream& peli::json::operator<<(std::ostream& os, const value& v)
 	v.m_variant.accept(&visitor);
 	return os;
 }
-
-std::wostream& peli::json::operator<<(std::wostream& os, const value& v)
-{
-	typedef value::variant_type::visitor variant_visitor;
-	struct printing_visitor : public printing_visitor_template<wchar_t, variant_visitor, printing_visitor>
-	{
-		using printing_visitor_template<wchar_t, variant_visitor, printing_visitor>::printing_visitor_template;
-		void visit(const peli::json::value& v)
-		{
-			v.m_variant.accept(this);
-		}
-	};
-
-	printing_visitor visitor(os);
-
-	v.m_variant.accept(&visitor);
-	return os;
-}
-

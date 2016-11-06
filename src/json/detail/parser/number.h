@@ -27,6 +27,8 @@
 #include <iostream>
 #include <array>
 
+#include "floaxie/atof.h"
+
 #include "peli/json/number.h"
 
 #include "json/detail/parser/parser.h"
@@ -58,7 +60,7 @@ namespace peli
 
 						Ch* rest;
 
-						json::number ret = convert(buf.data(), &rest);
+						json::number ret = floaxie::atof<double>(buf.data(), &rest);
 
 						if (errno == ERANGE)
 							throw std::invalid_argument(std::strerror(errno));
@@ -68,17 +70,6 @@ namespace peli
 						rdbuf->pubseekpos(curr_pos + chars_parsed, std::ios_base::in);
 
 						return ret;
-					}
-
-				private:
-					static peli::json::number convert(const char* buf, char** rest)
-					{
-						return std::strtold(buf, rest);
-					}
-
-					static peli::json::number convert(const wchar_t* buf, wchar_t** rest)
-					{
-						return std::wcstold(buf, rest);
 					}
 				};
 			}

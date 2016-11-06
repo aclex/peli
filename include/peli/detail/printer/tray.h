@@ -36,10 +36,8 @@ namespace peli
 			{
 			public:
 				virtual void put(const peli::json::object& obj) = 0;
-				virtual void put(const peli::json::wobject& obj) = 0;
 				virtual void put(const peli::json::array& arr) = 0;
 				virtual void put(const std::string& str) = 0;
-				virtual void put(const std::wstring& str) = 0;
 				virtual void put(json::number n) = 0;
 				virtual void put(bool b) = 0;
 				virtual void put() = 0;
