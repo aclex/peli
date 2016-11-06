@@ -14,8 +14,16 @@ include(PrefixSuffix)
 git_version(PROJECT_VERSION)
 three_part_version_to_vars(${PROJECT_VERSION} PROJECT_VERSION_MAJOR PROJECT_VERSION_MINOR PROJECT_VERSION_PATCH)
 
-add_definitions(-fPIC)
-add_definitions(-std=c++11)
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR
+	CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+	add_definitions(-std=c++14)
+
+	add_definitions(-Wall)
+	add_definitions(-Wextra)
+	add_definitions(-Werror)
+
+	add_definitions(-fPIC)
+endif ()
 
 include_directories(include)
 
