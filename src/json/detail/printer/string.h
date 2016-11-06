@@ -49,8 +49,8 @@ namespace peli
 
 						tw->rdbuf->sputc(quote);
 
-						for (Ch c : str)
-							stream_char(tw, c);
+						for (Ch cs : str)
+							stream_char(tw, cs);
 
 						tw->rdbuf->sputc(quote);
 					}
