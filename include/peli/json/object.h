@@ -32,6 +32,7 @@ namespace peli
 		template<typename Ch> using basic_object = std::map<std::basic_string<Ch>, value>;
 
 		typedef basic_object<char> object;
+		typedef basic_object<wchar_t> wobject;
 	}
 }
 

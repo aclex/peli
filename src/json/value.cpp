@@ -31,9 +31,23 @@ std::istream& peli::json::operator>>(std::istream& is, value& v)
 	return is;
 }
 
+std::wistream& peli::json::operator>>(std::wistream& is, value& v)
+{
+	v = peli::json::detail::parser::tokenizer::gentle_stream(is);
+	return is;
+}
+
 std::ostream& peli::json::operator<<(std::ostream& os, const value& v)
 {
 	peli::json::detail::printer::visitor<typename std::ostream::char_type> print_visitor(os);
+
+	v.m_variant.accept(print_visitor);
+	return os;
+}
+
+std::wostream& peli::json::operator<<(std::wostream& os, const value& v)
+{
+	peli::json::detail::printer::visitor<typename std::wostream::char_type> print_visitor(os);
 
 	v.m_variant.accept(print_visitor);
 	return os;

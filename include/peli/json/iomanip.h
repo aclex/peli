@@ -27,7 +27,9 @@ namespace peli
 	namespace json
 	{
 		std::ostream& pretty(std::ostream& os);
+		std::wostream& pretty(std::wostream& os);
 		std::ostream& nopretty(std::ostream& os);
+		std::wostream& nopretty(std::wostream& os);
 	}
 }
 
