@@ -8,7 +8,7 @@
 using namespace std;
 using namespace peli;
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	fstream f("canada.json", ios::in);
 	f.sync_with_stdio(false);
