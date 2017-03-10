@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
- * using_unfolder class is based on overloaded pattern by Dave Abrahams
+ * unfolder class is based on overloaded pattern by Dave Abrahams
  * (https://gist.github.com/3779345) distributed under the Boost
  * Software License, Version 1.0. (See accompanying
  * file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@
 #define PELI_DETAIL_TEMPLATE_SNIPPETS_TEMPLATED_VISITOR_H
 
 #include <type_traits>
+#include <cassert>
 
 namespace peli
 {
@@ -35,39 +36,60 @@ namespace peli
 		{
 			namespace templated_visitor
 			{
-				template<typename Arg> struct object_argument_visitor
+				template<template<typename...> class AtomicVisitor, typename... As> struct unfolder;
+
+				template<template<typename...> class AtomicVisitor, typename A1, typename... As> struct unfolder<AtomicVisitor, A1, As...> :
+						AtomicVisitor<A1>, unfolder<AtomicVisitor, As...>
 				{
-					virtual void visit(const Arg&) { }
+					typedef unfolder type;
+
+					using AtomicVisitor<A1>::visit;
+					using unfolder<AtomicVisitor, As...>::type::visit;
 				};
 
-				template<typename Arg> struct value_argument_visitor
+				template<template<typename...> class AtomicVisitor, typename A> struct unfolder<AtomicVisitor, A> : AtomicVisitor<A>
 				{
-					virtual void visit(Arg) { }
+					typedef unfolder type;
+
+					using AtomicVisitor<A>::visit;
 				};
 
-				template<typename Arg> using argument_visitor =
-						typename std::conditional<std::is_fundamental<Arg>::value,
-							value_argument_visitor<Arg>, object_argument_visitor<Arg>>::type;
-
-				template<template<typename...> class AtomicVisitor, typename... As> struct using_unfolder;
-
-				template<template<typename...> class AtomicVisitor, typename A1, typename... As> struct using_unfolder<AtomicVisitor, A1, As...> :
-						AtomicVisitor<A1>, using_unfolder<AtomicVisitor, As...>
+				template<typename Arg> class abstract_visitor
 				{
-						typedef using_unfolder type;
-
-						using AtomicVisitor<A1>::visit;
-						using using_unfolder<AtomicVisitor, As...>::type::visit;
+				public:
+					virtual void visit(Arg arg) = 0;
 				};
 
-				template<template<typename...> class AtomicVisitor, typename A> struct using_unfolder<AtomicVisitor, A> : AtomicVisitor<A>
+				template<class RealVisitor> class visitor_holder
 				{
-						typedef using_unfolder type;
+				protected:
+					visitor_holder() : m_visitor(nullptr) { assert(false); }
+					visitor_holder(RealVisitor& v) : m_visitor(&v) { }
+					RealVisitor& real_visitor() { return *m_visitor; }
 
-						using AtomicVisitor<A>::visit;
+				private:
+					RealVisitor* const m_visitor;
 				};
 
-				template<typename... Ts> using visitor = using_unfolder<argument_visitor, Ts...>;
+				template<class RealVisitor, class DynamicVisitor, typename Arg> class visitor_element :
+					virtual public DynamicVisitor, virtual public visitor_holder<RealVisitor>
+				{
+				public:
+					visitor_element() { }
+					void visit(Arg a) override { this->real_visitor().visit(a); };
+				};
+
+				template<class RealVisitor, class DynamicVisitor, typename... Args> class visitor_wrapper
+				{
+				public:
+					template<class Arg> using element_type = visitor_element<RealVisitor, DynamicVisitor, Arg>;
+
+					class type : public unfolder<element_type, Args...>
+					{
+					public:
+						type(RealVisitor& v) : visitor_holder<RealVisitor>(v) { }
+					};
+				};
 			}
 		}
 	}

@@ -21,11 +21,6 @@
  * (https://www.ojdip.net/2013/10/implementing-a-variant-type-in-cpp/) and
  * corresponding example implementation.
  *
- * using_unfolder class is based on overloaded pattern by Dave Abrahams
- * (https://gist.github.com/3779345) distributed under the Boost
- * Software License, Version 1.0. (See accompanying
- * file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
- *
  */
 
 #ifndef PELI_DETAIL_VARIANT_VARIANT_H
@@ -66,25 +61,18 @@ namespace peli
 
 			template<typename... Ts> class variant
 			{
-			public:
-				struct visitor : template_snippets::templated_visitor::visitor<Ts...>
-				{
-					template<template<typename...> class T> struct refine
-					{
-						typedef T<Ts...> type;
-					};
-					using template_snippets::templated_visitor::visitor<Ts...>::visit;
-					virtual void visit() { }
-				};
-
 			private:
+				class dynamic_visitor : public template_snippets::templated_visitor::unfolder<template_snippets::templated_visitor::abstract_visitor, Ts...> { };
+
+				template<class RealVisitor> using visitor_wrapper = typename template_snippets::templated_visitor::visitor_wrapper<RealVisitor, dynamic_visitor, Ts...>::type;
+
 				class value_holder
 				{
 				public:
 					virtual void placement_copy(void*) const = 0;
 					virtual void placement_move(void*) noexcept = 0;
-					virtual void accept(visitor*) = 0;
-					virtual void accept(visitor*) const = 0;
+					virtual void accept(dynamic_visitor*) = 0;
+					virtual void accept(dynamic_visitor*) const = 0;
 					virtual const std::type_info& type_info() const noexcept = 0;
 					virtual bool equals(const value_holder&) const noexcept = 0;
 					virtual ~value_holder() noexcept { }
@@ -127,12 +115,12 @@ namespace peli
 						return m_value == static_cast<const value_holder_template&>(rhs).m_value;
 					}
 
-					void accept(visitor* v) override
+					void accept(dynamic_visitor* v) override
 					{
 						v->visit(m_value);
 					}
 
-					void accept(visitor* v) const override
+					void accept(dynamic_visitor* v) const override
 					{
 						v->visit(m_value);
 					}
@@ -292,20 +280,26 @@ namespace peli
 					return holder<T>()->value();
 				}
 
-				void accept(visitor* v)
+				template<class Visitor> void accept(Visitor v)
 				{
+					typedef visitor_wrapper<Visitor> wrapper;
+					wrapper w(v);
+
 					if (m_valid)
-						holder()->accept(v);
+						holder()->accept(&w);
 					else
-						v->visit();
+						v.visit();
 				}
 
-				void accept(visitor* v) const
+				template<class Visitor> void accept(Visitor v) const
 				{
+					typedef visitor_wrapper<Visitor> wrapper;
+					wrapper w(v);
+
 					if (m_valid)
-						holder()->accept(v);
+						holder()->accept(&w);
 					else
-						v->visit();
+						v.visit();
 				}
 
 				~variant() noexcept
