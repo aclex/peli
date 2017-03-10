@@ -23,11 +23,7 @@
 #include <ostream>
 
 #include "peli/json/array.h"
-#include "peli/json/value.h"
-#include "peli/json/iomanip.h"
 
-#include "json/detail/printer/head.h"
-#include "json/detail/printer/util.h"
 #include "json/detail/printer/stream_routines.h"
 
 #include "json/detail/special_chars.h"
@@ -40,38 +36,39 @@ namespace peli
 		{
 			namespace printer
 			{
-				template<> struct head<json::array> : pretty_head<head, json::array>, object_formatter
+				template<> struct head<json::array>
 				{
-					template<typename Typewriter> static void bounce(Typewriter* tw, const peli::json::array& arr)
+					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const peli::json::array& arr)
 					{
 						using namespace special_chars;
 
-						put_tab_spacing(tw);
+						put_structure_newline(os);
+						put_tab_spacing(os);
 
-						tw->rdbuf->sputc(left_square);
+						os.rdbuf()->sputc(left_square);
 
 						if (!arr.empty())
 						{
-							put_newline(tw);
+							put_newline(os);
 						}
 
-						++(tw->tab_level);
+						++(tab_level(os));
 
 						for (auto it = arr.cbegin(); it != arr.cend(); ++it)
 						{
-							tw->print(*it);
+							os << *it;
 
 							if (it != --arr.cend())
-								tw->rdbuf->sputc(comma);
+								os.rdbuf()->sputc(comma);
 
-							put_newline(tw);
+							put_newline(os);
 						}
 
-						--(tw->tab_level);
+						--(tab_level(os));
 
-						put_tab_spacing(tw);
+						put_tab_spacing(os);
 
-						tw->rdbuf->sputc(right_square);
+						os.rdbuf()->sputc(right_square);
 					}
 				};
 			}

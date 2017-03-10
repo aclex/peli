@@ -37,41 +37,7 @@ namespace peli
 				public:
 					template<typename Typewriter> static void print(Typewriter*, const T&)
 					{
-// 						static_assert(fake_dependency<T>::value, "Type is not supported for printing");
-					}
-				};
-
-				template<template<class> class H, typename T> struct pretty_head
-				{
-					template<typename Typewriter> static void print(Typewriter* t, const T& v)
-					{
-						H<T>::preformat(t);
-						H<T>::bounce(t, v);
-					}
-				};
-
-				template<template<class> class H> struct pretty_head<H, void>
-				{
-					template<typename Typewriter> static void print(Typewriter* t)
-					{
-						H<void>::preformat(t);
-						H<void>::bounce(t);
-					}
-				};
-
-				struct simple_formatter
-				{
-					template<typename Typewriter> static void preformat(Typewriter* t)
-					{
-						put_structure_space(t);
-					}
-				};
-
-				struct object_formatter
-				{
-					template<typename Typewriter> static void preformat(Typewriter* t)
-					{
-						put_structure_newline(t);
+						static_assert(fake_dependency<T>::value, "Type is not supported for printing");
 					}
 				};
 			}

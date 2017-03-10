@@ -23,10 +23,7 @@
 #include <ostream>
 
 #include "peli/json/object.h"
-#include "peli/json/value.h"
-#include "peli/json/iomanip.h"
 
-#include "json/detail/printer/util.h"
 #include "json/detail/printer/string.h"
 #include "json/detail/printer/stream_routines.h"
 
@@ -40,57 +37,49 @@ namespace peli
 		{
 			namespace printer
 			{
-				template<typename Ch> struct head<json::basic_object<Ch>> : pretty_head<head, json::basic_object<Ch>>, object_formatter
+				template<typename Ch> struct head<json::basic_object<Ch>>
 				{
-					template<typename Typewriter,
-					typename std::enable_if<std::is_same<typename Typewriter::char_type, Ch>::value, int>::type c = 0>
-					static void bounce(Typewriter* tw, const json::basic_object<Ch>& obj)
+					static void print(std::basic_ostream<Ch>& os, const json::basic_object<Ch>& obj)
 					{
 						using namespace special_chars;
 
-						put_tab_spacing(tw);
+						put_structure_newline(os);
+						put_tab_spacing(os);
 
-						tw->rdbuf->sputc(left_curly);
+						os.rdbuf()->sputc(left_curly);
 
 						if (!obj.empty())
-							put_newline(tw);
+							put_newline(os);
 						else
-							put_space(tw);
+							put_space(os);
 
-						++(tw->tab_level);
+						++(tab_level(os));
 
 						for (auto it = obj.cbegin(); it != obj.cend(); ++it)
 						{
-							put_tab_spacing(tw);
+							put_tab_spacing(os);
 
-							printer::head<std::basic_string<Ch>>::print(tw, it->first);
+							printer::head<std::basic_string<Ch>>::print(os, it->first);
 
-							put_space(tw);
+							put_space(os);
 
-							tw->rdbuf->sputc(colon);
+							os.rdbuf()->sputc(colon);
 
-							set_structure_newline(tw, true);
-							tw->print(it->second);
-							set_structure_newline(tw, false);
+							set_needs_structure_newline(os, true);
+							os << it->second;
+							set_needs_structure_newline(os, false);
 
 							if (it != --obj.cend())
-								tw->rdbuf->sputc(comma);
+								os.rdbuf()->sputc(comma);
 
-							put_newline(tw);
+							put_newline(os);
 						}
 
-						--(tw->tab_level);
+						--(tab_level(os));
 
-						put_tab_spacing(tw);
+						put_tab_spacing(os);
 
-						tw->rdbuf->sputc(right_curly);
-					}
-
-					template<typename Typewriter,
-					typename std::enable_if<!std::is_same<typename Typewriter::char_type, Ch>::value, int>::type c = 0>
-					static void bounce(Typewriter*, const json::basic_object<Ch>&)
-					{
-						throw std::invalid_argument("Incompatible character types.");
+						os.rdbuf()->sputc(right_curly);
 					}
 				};
 			}

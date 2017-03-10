@@ -23,8 +23,6 @@
 #include <array>
 #include <ostream>
 
-#include "json/detail/printer/head.h"
-
 #include "json/detail/special_chars.h"
 
 namespace peli
@@ -35,26 +33,28 @@ namespace peli
 		{
 			namespace printer
 			{
-				template<> struct head<bool> : pretty_head<head, bool>, simple_formatter
+				template<> struct head<bool>
 				{
 				public:
-					template<typename Typewriter> static void bounce(Typewriter* tw, bool b)
+					template<typename Ch> static void print(std::basic_ostream<Ch>& os, bool b)
 					{
 						using namespace special_chars;
 
-						static std::array<typename Typewriter::char_type, 4> true_str { t, r, u, e };
-						static std::array<typename Typewriter::char_type, 5> false_str { f, a, l, s, e };
+						put_structure_space(os);
+
+						static constexpr std::array<Ch, 4> true_str { t, r, u, e };
+						static constexpr std::array<Ch, 5> false_str { f, a, l, s, e };
 
 						if (b)
-							put(tw->rdbuf, true_str);
+							put(os.rdbuf(), true_str);
 						else
-							put(tw->rdbuf, false_str);
+							put(os.rdbuf(), false_str);
 					}
 
 				private:
 					template<typename Ch, std::size_t N> static void put(std::basic_streambuf<Ch>* rdbuf, const std::array<Ch, N>& str)
 					{
-						rdbuf->sputn(&str.front(), str.size());
+						rdbuf->sputn(str.data(), str.size());
 					}
 				};
 			}

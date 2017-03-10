@@ -23,10 +23,6 @@
 #include <array>
 #include <ostream>
 #include <string>
-#include <iomanip>
-#include <type_traits>
-
-#include "json/detail/printer/head.h"
 
 #include "json/detail/special_chars.h"
 
@@ -41,29 +37,22 @@ namespace peli
 				template<typename Ch> class head<std::basic_string<Ch>>
 				{
 				public:
-					template<typename Typewriter,
-					typename std::enable_if<std::is_same<typename Typewriter::char_type, Ch>::value, int>::type c = 0>
-					static void print(Typewriter* tw, const std::basic_string<Ch>& str)
+					static void print(std::basic_ostream<Ch>& os, const std::basic_string<Ch>& str)
 					{
 						using namespace special_chars;
 
-						tw->rdbuf->sputc(quote);
+						put_structure_space(os);
+
+						os.rdbuf()->sputc(quote);
 
 						for (Ch cs : str)
-							stream_char(tw, cs);
+							stream_char(os, cs);
 
-						tw->rdbuf->sputc(quote);
-					}
-
-					template<typename Typewriter,
-					typename std::enable_if<!std::is_same<typename Typewriter::char_type, Ch>::value, int>::type c = 0>
-					static void print(Typewriter*, const std::basic_string<Ch>&)
-					{
-						throw std::invalid_argument("Incompatible character types.");
+						os.rdbuf()->sputc(quote);
 					}
 
 				private:
-					template<typename Typewriter> static void stream_char(Typewriter* tw, Ch c)
+					static void stream_char(std::basic_ostream<Ch>& os, Ch c)
 					{
 						using namespace special_chars;
 
@@ -73,34 +62,34 @@ namespace peli
 						case quote:
 						case backslash:
 						case slash:
-							tw->rdbuf->sputc(backslash);
-							tw->rdbuf->sputc(c);
+							os.rdbuf()->sputc(backslash);
+							os.rdbuf()->sputc(c);
 							break;
 
 						// control characters with predefined verbal escape sequences
 						case backspace:
-							tw->rdbuf->sputc(backslash);
-							tw->rdbuf->sputc(b);
+							os.rdbuf()->sputc(backslash);
+							os.rdbuf()->sputc(b);
 							break;
 
 						case tab:
-							tw->rdbuf->sputc(backslash);
-							tw->rdbuf->sputc(t);
+							os.rdbuf()->sputc(backslash);
+							os.rdbuf()->sputc(t);
 							break;
 
 						case lf:
-							tw->rdbuf->sputc(backslash);
-							tw->rdbuf->sputc(n);
+							os.rdbuf()->sputc(backslash);
+							os.rdbuf()->sputc(n);
 							break;
 
 						case ff:
-							tw->rdbuf->sputc(backslash);
-							tw->rdbuf->sputc(f);
+							os.rdbuf()->sputc(backslash);
+							os.rdbuf()->sputc(f);
 							break;
 
 						case cr:
-							tw->rdbuf->sputc(backslash);
-							tw->rdbuf->sputc(r);
+							os.rdbuf()->sputc(backslash);
+							os.rdbuf()->sputc(r);
 							break;
 
 						// other control characters of the range 0x00...0x1F
@@ -132,23 +121,23 @@ namespace peli
 						case 0x1e:
 						case 0x1f:
 						{
-							tw->rdbuf->sputc(backslash);
-							tw->rdbuf->sputc(u);
+							os.rdbuf()->sputc(backslash);
+							os.rdbuf()->sputc(u);
 							auto pnt = hex(c);
-							tw->rdbuf->sputn(&pnt.front(), pnt.size());
+							os.rdbuf()->sputn(pnt.data(), pnt.size());
 							break;
 						}
 
 						// normal characters
 						default:
-							tw->rdbuf->sputc(c);
+							os.rdbuf()->sputc(c);
 							break;
 						}
 					}
 
 					static std::array<Ch, 4> hex(Ch c)
 					{
-						constexpr std::size_t sz(4);
+						static constexpr std::size_t sz(4);
 
 						static char hex [] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ,'a', 'b', 'c', 'd', 'e', 'f' };
 

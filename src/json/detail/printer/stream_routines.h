@@ -34,57 +34,68 @@ namespace peli
 		{
 			namespace printer
 			{
-				template<typename Typewriter> inline bool should_process(Typewriter* t)
-				{
-					return t->pretty && t->need_structure_newline;
-				}
-
-				template<typename Typewriter> inline void put_space(Typewriter* t)
-				{
-					if (t->pretty)
-						t->rdbuf->sputc(special_chars::space);
-				}
-
-				template<typename Typewriter> inline void put_tab_spacing(Typewriter* t)
-				{
-					if (t->pretty)
-					{
-						for (size_t i = 0; i < t->tab_level; ++i)
-							t->rdbuf->sputc(special_chars::tab);
-					}
-				}
-
-				template<typename Typewriter> inline void put_structure_newline(Typewriter* t)
-				{
-					if (should_process(t))
-					{
-						put_newline(t);
-					}
-				}
-
-				template<typename Typewriter> inline void put_newline(Typewriter* t)
-				{
-					if (t->pretty)
-						t->rdbuf->sputc(special_chars::lf);
-				}
-
-				template<typename Typewriter> inline void put_structure_space(Typewriter* t)
-				{
-					if (should_process(t))
-						t->rdbuf->sputc(special_chars::space);
-					else
-						put_tab_spacing(t);
-				}
-
 				template<typename Ch> inline bool is_pretty_printing(std::basic_ostream<Ch>& os)
 				{
 					return flag::get(os.iword(flag_storage_index()), flag::pretty);
 				}
 
-				template<typename Typewriter> inline void set_structure_newline(Typewriter* t, bool value)
+				template<typename Ch> inline bool needs_structure_newline(std::basic_ostream<Ch>& os)
 				{
-					if (t->pretty)
-						t->need_structure_newline = value;
+					return flag::get(os.iword(flag_storage_index()), flag::structure_newline);
+				}
+
+				template<typename Ch> inline void set_needs_structure_newline(std::basic_ostream<Ch>& os, bool value)
+				{
+					value ? flag::set(os.iword(flag_storage_index()), flag::structure_newline) :
+						flag::unset(os.iword(flag_storage_index()), flag::structure_newline);
+				}
+
+				template<typename Ch> inline long& tab_level(std::basic_ostream<Ch>& os)
+				{
+					return os.iword(tab_level_storage_index());
+				}
+
+				template<typename Ch> inline bool should_process(std::basic_ostream<Ch>& os)
+				{
+					return is_pretty_printing(os) && needs_structure_newline(os);
+				}
+
+				template<typename Ch> inline void put_space(std::basic_ostream<Ch>& os)
+				{
+					if (is_pretty_printing(os))
+						os.rdbuf()->sputc(special_chars::space);
+				}
+
+				template<typename Ch> inline void put_tab_spacing(std::basic_ostream<Ch>& os)
+				{
+					if (is_pretty_printing(os))
+					{
+						const size_t tl = tab_level(os);
+						for (size_t i = 0; i < tl; ++i)
+							os.rdbuf()->sputc(special_chars::tab);
+					}
+				}
+
+				template<typename Ch> inline void put_newline(std::basic_ostream<Ch>& os)
+				{
+					if (is_pretty_printing(os))
+						os.rdbuf()->sputc(special_chars::lf);
+				}
+
+				template<typename Ch> inline void put_structure_newline(std::basic_ostream<Ch>& os)
+				{
+					if (needs_structure_newline(os))
+					{
+						put_newline(os);
+					}
+				}
+
+				template<typename Ch> inline void put_structure_space(std::basic_ostream<Ch>& os)
+				{
+					if (should_process(os))
+						os.rdbuf()->sputc(special_chars::space);
+					else
+						put_tab_spacing(os);
 				}
 			}
 		}
