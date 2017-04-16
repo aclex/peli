@@ -39,12 +39,12 @@ namespace peli
 					return flag::get(os.iword(flag_storage_index()), flag::pretty);
 				}
 
-				template<typename Ch> inline bool needs_structure_newline(std::basic_ostream<Ch>& os)
+				template<typename Ch> inline bool needs_structure_period(std::basic_ostream<Ch>& os)
 				{
 					return flag::get(os.iword(flag_storage_index()), flag::structure_newline);
 				}
 
-				template<typename Ch> inline void set_needs_structure_newline(std::basic_ostream<Ch>& os, bool value)
+				template<typename Ch> inline void set_needs_structure_period(std::basic_ostream<Ch>& os, bool value)
 				{
 					value ? flag::set(os.iword(flag_storage_index()), flag::structure_newline) :
 						flag::unset(os.iword(flag_storage_index()), flag::structure_newline);
@@ -53,11 +53,6 @@ namespace peli
 				template<typename Ch> inline long& tab_level(std::basic_ostream<Ch>& os)
 				{
 					return os.iword(tab_level_storage_index());
-				}
-
-				template<typename Ch> inline bool should_process(std::basic_ostream<Ch>& os)
-				{
-					return is_pretty_printing(os) && needs_structure_newline(os);
 				}
 
 				template<typename Ch> inline void put_space(std::basic_ostream<Ch>& os)
@@ -84,18 +79,20 @@ namespace peli
 
 				template<typename Ch> inline void put_structure_newline(std::basic_ostream<Ch>& os)
 				{
-					if (needs_structure_newline(os))
+					if (needs_structure_period(os))
 					{
 						put_newline(os);
+						put_tab_spacing(os);
+						set_needs_structure_period(os, false);
 					}
 				}
 
 				template<typename Ch> inline void put_structure_space(std::basic_ostream<Ch>& os)
 				{
-					if (should_process(os))
-						os.rdbuf()->sputc(special_chars::space);
-					else
-						put_tab_spacing(os);
+					if (needs_structure_period(os))
+					{
+						put_space(os);
+					}
 				}
 			}
 		}

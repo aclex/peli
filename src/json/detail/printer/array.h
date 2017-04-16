@@ -43,7 +43,6 @@ namespace peli
 						using namespace special_chars;
 
 						put_structure_newline(os);
-						put_tab_spacing(os);
 
 						os.rdbuf()->sputc(left_square);
 
@@ -56,6 +55,7 @@ namespace peli
 
 						for (auto it = arr.cbegin(); it != arr.cend(); ++it)
 						{
+							put_tab_spacing(os);
 							os << *it;
 
 							if (it != --arr.cend())

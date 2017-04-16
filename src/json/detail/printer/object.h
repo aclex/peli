@@ -39,12 +39,11 @@ namespace peli
 			{
 				template<typename Ch> struct head<json::basic_object<Ch>>
 				{
-					static void print(std::basic_ostream<Ch>& os, const json::basic_object<Ch>& obj)
+					template<typename StreamCh> static void print(std::basic_ostream<StreamCh>& os, const json::basic_object<Ch>& obj)
 					{
 						using namespace special_chars;
 
 						put_structure_newline(os);
-						put_tab_spacing(os);
 
 						os.rdbuf()->sputc(left_curly);
 
@@ -58,16 +57,15 @@ namespace peli
 						for (auto it = obj.cbegin(); it != obj.cend(); ++it)
 						{
 							put_tab_spacing(os);
-
 							printer::head<std::basic_string<Ch>>::print(os, it->first);
 
 							put_space(os);
 
 							os.rdbuf()->sputc(colon);
 
-							set_needs_structure_newline(os, true);
+							set_needs_structure_period(os, true);
 							os << it->second;
-							set_needs_structure_newline(os, false);
+							set_needs_structure_period(os, false);
 
 							if (it != --obj.cend())
 								os.rdbuf()->sputc(comma);

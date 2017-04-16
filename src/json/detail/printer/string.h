@@ -51,6 +51,11 @@ namespace peli
 						os.rdbuf()->sputc(quote);
 					}
 
+					template<typename StreamCh> static void print(std::basic_ostream<StreamCh>&, const std::basic_string<Ch>&)
+					{
+						throw std::runtime_error("Character types mismatch, please use encoding conversion.");
+					}
+
 				private:
 					static void stream_char(std::basic_ostream<Ch>& os, Ch c)
 					{
