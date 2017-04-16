@@ -143,7 +143,7 @@ void check_engineer_fraction()
 	assert(arr2 == ch1);
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	check_zero();
 	check_integer();

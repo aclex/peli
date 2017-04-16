@@ -45,7 +45,7 @@ void check()
 	assert(os2.str() == str2);
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	check();
 

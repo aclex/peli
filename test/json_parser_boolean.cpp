@@ -48,7 +48,7 @@ void check_boolean()
 	assert(obj2 == ch1);
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	check_boolean();
 

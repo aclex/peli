@@ -26,7 +26,7 @@ using namespace std;
 
 using namespace peli;
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	const string test_json = "{ \"привет\" : \"мир\" }";
 	std::istringstream istr(test_json);

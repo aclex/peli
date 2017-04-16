@@ -115,7 +115,7 @@ void check_redundant()
 	assert(obj2 == ch2);
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	check_empty();
 	check_one();

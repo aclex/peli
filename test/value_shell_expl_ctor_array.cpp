@@ -25,7 +25,7 @@ using namespace std;
 
 using namespace peli;
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	json::array sample;
 	sample.push_back(json::value(42));

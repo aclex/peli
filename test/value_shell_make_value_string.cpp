@@ -26,7 +26,7 @@ using namespace std;
 
 using namespace peli;
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	json::value v(json::make_value<string>());
 	json::value wv(json::make_value<wstring>());

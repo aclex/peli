@@ -25,7 +25,7 @@ using namespace std;
 
 using namespace peli;
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	json::object a;
 	json::value v1(a);

@@ -25,7 +25,7 @@ using namespace std;
 
 using namespace peli;
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	int isample(42);
 
@@ -67,17 +67,17 @@ int main(int argc, char* argv[])
 	json::value uiv(static_cast<unsigned int>(isample));
 	unsigned int ui(uiv);
 
-	assert(isample == ui);
+	assert(static_cast<unsigned int>(isample) == ui);
 
 	json::value liv(static_cast<long>(isample));
-	unsigned int li(liv);
+	long li(liv);
 
 	assert(isample == li);
 
 	json::value uliv(static_cast<unsigned long>(isample));
 	unsigned long uli(uliv);
 
-	assert(isample == uli);
+	assert(static_cast<unsigned int>(isample) == uli);
 
 	double dsample(512.5);
 

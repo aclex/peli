@@ -49,7 +49,7 @@ void check()
 	assert(obj1[0].null());
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	check();
 

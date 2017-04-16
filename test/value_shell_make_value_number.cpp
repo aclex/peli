@@ -17,6 +17,7 @@
  *
  */
 
+#include <iostream>
 #include <cassert>
 
 #include "peli/json/value.h"
@@ -26,13 +27,15 @@ using namespace std;
 
 using namespace peli;
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	json::value v(json::make_value<json::number>());
 
 	try
 	{
 		json::number n(v);
+		n = 42;
+		cout << n << endl;
 	}
 	catch(...)
 	{

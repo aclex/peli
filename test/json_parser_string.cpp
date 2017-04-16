@@ -88,7 +88,6 @@ void check_verbal_escapes()
 
 	const json::array& arr1(v1);
 	const json::array& arr2(v2);
-	const string& test_str(arr1[0]);
 	json::array ch1 { json::value("   check all the verbal escapes: \" \\ / \b \f \n \r \t \"") };
 	json::array ch2 { json::value(L"   check all the verbal escapes: \" \\ / \b \f \n \r \t \"") };
 
@@ -118,14 +117,12 @@ void check_u_escapes()
 	assert(arr2 == ch2);
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	check_empty();
 	check_plain();
 	check_verbal_escapes();
 	check_u_escapes();
-
-	double d = strtod("0.5", nullptr);
 
 	return 0;
 }

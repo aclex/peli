@@ -51,7 +51,7 @@ void check_boolean()
 	os2.seekp(0);
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	check_boolean();
 

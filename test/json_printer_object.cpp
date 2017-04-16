@@ -159,7 +159,7 @@ void check_nested()
 	assert(os2.str() == str2_pretty);
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
 	check_empty();
 	check_one();
