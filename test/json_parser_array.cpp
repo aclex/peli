@@ -18,7 +18,6 @@
  */
 
 #include <sstream>
-#include <cassert>
 #include <iostream>
 
 #include "peli/json/value.h"
@@ -27,7 +26,7 @@ using namespace std;
 
 using namespace peli;
 
-void check_empty()
+int check_empty()
 {
 	const string str1 = "   [\n\t   ]\r\n  ";
 	const wstring str2 = L"[  \r\t   ]\n\t  \n  \n\r  ";
@@ -44,11 +43,16 @@ void check_empty()
 	const json::array& obj2(v2);
 	json::array ch1;
 
-	assert(obj1 == ch1);
-	assert(obj2 == ch1);
+	if (obj1 != ch1)
+		return -1;
+
+	if (obj2 != ch1)
+		return -2;
+
+	return 0;
 }
 
-void check_one()
+int check_one()
 {
 	const string str1 = "   [\n\t\n\n\t\r   null]\r\n  ";
 	const wstring str2 = L"[  \r\t \n\n\t\r   null  ]\n\t  \n  \n\r  ";
@@ -65,11 +69,16 @@ void check_one()
 	const json::array& obj2(v2);
 	json::array ch1 { json::value() };
 
-	assert(obj1 == ch1);
-	assert(obj2 == ch1);
+	if (obj1 != ch1)
+		return -3;
+
+	if (obj2 != ch1)
+		return -4;
+
+	return 0;
 }
 
-void check_two()
+int check_two()
 {
 	const string str1 = "   [\n\t\"a\"\n\n\t\r,   null \n\n\r  ,\"b\", \t\tnull]\r\n  ";
 	const wstring str2 = L"[  \r\t \"a\"\n\n\t\r,   null  \n\n\r  ,\"b\", \r\tnull ]\n\t  \n  \n\r  ";
@@ -87,15 +96,30 @@ void check_two()
 	json::array ch1 { json::value("a"), json::value(), json::value("b"), json::value() };
 	json::array ch2 { json::value(L"a"), json::value(), json::value(L"b"), json::value() };
 
-	assert(obj1 == ch1);
-	assert(obj2 == ch2);
+	if (obj1 != ch1)
+		return -5;
+
+	if (obj2 != ch2)
+		return -6;
+
+	return 0;
 }
 
 int main(int, char**)
 {
-	check_empty();
-	check_one();
-	check_two();
+	const int er = check_empty();
+
+	if (er)
+		return er;
+
+	const int nr = check_one();
+
+	if (nr)
+		return nr;
+
+	const int tr = check_two();
+
+	return tr;
 
 	return 0;
 }

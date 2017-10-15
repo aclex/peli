@@ -18,7 +18,6 @@
  */
 
 #include <sstream>
-#include <cassert>
 #include <iostream>
 
 #include "peli/json/value.h"
@@ -27,7 +26,7 @@ using namespace std;
 
 using namespace peli;
 
-void check_empty()
+int check_empty()
 {
 	const string str1 = "   {\n\t   }\r\n  ";
 	const wstring str2 = L"{  \r\t   }\n\t  \n  \n\r  ";
@@ -45,11 +44,16 @@ void check_empty()
 	json::object ch1;
 	json::wobject ch2;
 
-	assert(obj1 == ch1);
-	assert(obj2 == ch2);
+	if (obj1 != ch1)
+		return -1;
+
+	if (obj2 != ch2)
+		return -2;
+
+	return 0;
 }
 
-void check_one()
+int check_one()
 {
 	const string str1 = "   {\n\t\"a\"\n\n\t\r:   null}\r\n  ";
 	const wstring str2 = L"{  \r\t \"a\"\n\n\t\r:   null  }\n\t  \n  \n\r  ";
@@ -67,11 +71,16 @@ void check_one()
 	json::object ch1 { { "a", json::value() } };
 	json::wobject ch2 { { L"a", json::value() } };
 
-	assert(obj1 == ch1);
-	assert(obj2 == ch2);
+	if (obj1 != ch1)
+		return -3;
+
+	if (obj2 != ch2)
+		return -4;
+
+	return 0;
 }
 
-void check_two()
+int check_two()
 {
 	const string str1 = "   {\n\t\"a\"\n\n\t\r:   null \n\n\r  ,\"b\": \t\tnull}\r\n  ";
 	const wstring str2 = L"{  \r\t \"a\"\n\n\t\r:   null  \n\n\r  ,\"b\": \r\tnull }\n\t  \n  \n\r  ";
@@ -89,11 +98,16 @@ void check_two()
 	json::object ch1 { { "a", json::value() }, { "b", json::value() } };
 	json::wobject ch2 { { L"a", json::value() }, { L"b", json::value() } };
 
-	assert(obj1 == ch1);
-	assert(obj2 == ch2);
+	if (obj1 != ch1)
+		return -5;
+
+	if (obj2 != ch2)
+		return -6;
+
+	return 0;
 }
 
-void check_redundant()
+int check_redundant()
 {
 	const string str1 = "   {\n\t\"a\"\n\n\t\r:   null \n\n\r  ,\n\t\"a\"\n\n\t\r:   {   } \n\n,\r \"b\": \t\tnull}\r\n  ";
 	const wstring str2 = L"{  \r\t \"a\"\n\n\t\r:   null  \n\n\r  ,\n\t\"a\"\n\n\t\r:   {   } \n\n,\r\"b\": \r\tnull }\n\t  \n  \n\r  ";
@@ -111,16 +125,35 @@ void check_redundant()
 	json::object ch1 { { "a", json::value() }, { "b", json::value() } };
 	json::wobject ch2 { { L"a", json::value() }, { L"b", json::value() } };
 
-	assert(obj1 == ch1);
-	assert(obj2 == ch2);
+	if (obj1 != ch1)
+		return -7;
+
+	if (obj2 != ch2)
+		return -8;
+
+	return 0;
 }
 
 int main(int, char**)
 {
-	check_empty();
-	check_one();
-	check_two();
-	check_redundant();
+	const int er = check_empty();
+
+	if (er)
+		return er;
+
+	const int nr = check_one();
+
+	if (nr)
+		return nr;
+
+	const int tr = check_two();
+
+	if (tr)
+		return tr;
+
+	const int rr = check_redundant();
+
+	return rr;
 
 	return 0;
 }

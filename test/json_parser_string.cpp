@@ -18,7 +18,6 @@
  */
 
 #include <sstream>
-#include <cassert>
 #include <iostream>
 
 #include <cstdlib>
@@ -29,7 +28,7 @@ using namespace std;
 
 using namespace peli;
 
-void check_empty()
+int check_empty()
 {
 	const string str1 = "   [\n\t\"\"   ]\r\n  ";
 	const wstring str2 = L"[  \r\t\"\"   ]\n\t  \n  \n\r  ";
@@ -47,11 +46,16 @@ void check_empty()
 	json::array ch1 { json::value("") };
 	json::array ch2 { json::value(L"") };
 
-	assert(arr1 == ch1);
-	assert(arr2 == ch2);
+	if (arr1 != ch1)
+		return -1;
+
+	if (arr2 != ch2)
+		return -2;
+
+	return 0;
 }
 
-void check_plain()
+int check_plain()
 {
 	const string str1 = "   [\n\t\"проверка обычной Unicode-строки\"   ]\r\n  ";
 	const wstring str2 = L"[  \r\t\"проверка обычной Unicode-строки\"   ]\n\t  \n  \n\r  ";
@@ -69,11 +73,16 @@ void check_plain()
 	json::array ch1 { json::value("проверка обычной Unicode-строки") };
 	json::array ch2 { json::value(L"проверка обычной Unicode-строки") };
 
-	assert(arr1 == ch1);
-	assert(arr2 == ch2);
+	if (arr1 != ch1)
+		return -3;
+
+	if (arr2 != ch2)
+		return -4;
+
+	return 0;
 }
 
-void check_verbal_escapes()
+int check_verbal_escapes()
 {
 	const string str1 = "   [\n\t\"   check all the verbal escapes: \\\" \\\\ \\/ \\b \\f \\n \\r \\t \\\"\"   ]\r\n  ";
 	const wstring str2 = L"[  \r\t\"   check all the verbal escapes: \\\" \\\\ \\/ \\b \\f \\n \\r \\t \\\"\"   ]\n\t  \n  \n\r  ";
@@ -91,11 +100,16 @@ void check_verbal_escapes()
 	json::array ch1 { json::value("   check all the verbal escapes: \" \\ / \b \f \n \r \t \"") };
 	json::array ch2 { json::value(L"   check all the verbal escapes: \" \\ / \b \f \n \r \t \"") };
 
-	assert(arr1 == ch1);
-	assert(arr2 == ch2);
+	if (arr1 != ch1)
+		return -5;
+
+	if (arr2 != ch2)
+		return -6;
+
+	return 0;
 }
 
-void check_u_escapes()
+int check_u_escapes()
 {
 	const string str1 = "   [\n\t\"check unicode escapes: \\u043f\\u0440\\u0438\\u0432\\u0435\\u0442, \\ud800\\udd75 \\ud834\\udd1e \\u043C\\u0438\\u0440! \"   ]\r\n  ";
 	const wstring str2 = L"[  \r\t\"check unicode escapes: \\u043f\\u0440\\u0438\\u0432\\u0435\\u0442, \\ud800\\udd75 \\ud834\\udd1e \\u043C\\u0438\\u0440!\"   ]\n\t  \n  \n\r  ";
@@ -113,16 +127,35 @@ void check_u_escapes()
 	json::array ch1 { json::value("check unicode escapes: привет, 𐅵 𝄞 мир! ") };
 	json::array ch2 { json::value(L"check unicode escapes: привет, 𐅵 𝄞 мир!") };
 
-	assert(arr1 == ch1);
-	assert(arr2 == ch2);
+	if (arr1 != ch1)
+		return -7;
+
+	if (arr2 != ch2)
+		return -8;
+
+	return 0;
 }
 
 int main(int, char**)
 {
-	check_empty();
-	check_plain();
-	check_verbal_escapes();
-	check_u_escapes();
+	const int er = check_empty();
+
+	if (er)
+		return er;
+
+	const int pr = check_plain();
+
+	if (pr)
+		return pr;
+
+	const int vr = check_verbal_escapes();
+
+	if (vr)
+		return vr;
+
+	const int ur = check_u_escapes();
+
+	return ur;
 
 	return 0;
 }

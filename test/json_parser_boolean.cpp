@@ -18,7 +18,6 @@
  */
 
 #include <sstream>
-#include <cassert>
 #include <iostream>
 
 #include "peli/json/value.h"
@@ -27,7 +26,7 @@ using namespace std;
 
 using namespace peli;
 
-void check_boolean()
+int check_boolean()
 {
 	const string str1 = "   [\n\ttrue, false, true, true   ]\r\n  ";
 	const wstring str2 = L"[  \r\ttrue, false, true, true   ]\n\t  \n  \n\r  ";
@@ -44,13 +43,16 @@ void check_boolean()
 	const json::array& obj2(v2);
 	json::array ch1 { json::value(true), json::value(false), json::value(true), json::value(true) };
 
-	assert(obj1 == ch1);
-	assert(obj2 == ch1);
+	if (obj1 != ch1)
+		return -1;
+
+	if (obj2 != ch1)
+		return -2;
+
+	return 0;
 }
 
 int main(int, char**)
 {
-	check_boolean();
-
-	return 0;
+	return check_boolean();
 }

@@ -17,7 +17,6 @@
  *
  */
 
-#include <cassert>
 #include <iostream>
 
 #include "peli/json/value.h"
@@ -42,9 +41,14 @@ int main(int, char**)
 
 	obj["null"] = json::value();
 
-	assert(obj["boolean"]);
-	assert(static_cast<string>(arr[1]) == "string_value");
-	assert(static_cast<int>(inner_obj["inner_number"]) == 42);
+	if (!obj["boolean"])
+		return -1;
+
+	if (static_cast<string>(arr[1]) != "string_value")
+		return -2;
+
+	if (static_cast<int>(inner_obj["inner_number"]) != 42)
+		return -3;
 
 	return 0;
 }

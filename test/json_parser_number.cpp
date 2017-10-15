@@ -18,7 +18,6 @@
  */
 
 #include <sstream>
-#include <cassert>
 #include <iostream>
 #include <cmath>
 #include <limits>
@@ -29,7 +28,7 @@ using namespace std;
 
 using namespace peli;
 
-void check_zero()
+int check_zero()
 {
 	const string str1 = "   [\n\t0   ]\r\n  ";
 	const wstring str2 = L"[  \r\t0   ]\n\t  \n  \n\r  ";
@@ -46,11 +45,16 @@ void check_zero()
 	const json::array& arr2(v2);
 	json::array ch1 { json::value(0) };
 
-	assert(arr1 == ch1);
-	assert(arr2 == ch1);
+	if (arr1 != ch1)
+		return -1;
+
+	if (arr2 != ch1)
+		return -2;
+
+	return 0;
 }
 
-void check_integer()
+int check_integer()
 {
 	const string str1 = "   [\n\t-123456, 123456   ]\r\n  ";
 	const wstring str2 = L"[  \r\t-123456, 123456   ]\n\t  \n  \n\r  ";
@@ -67,11 +71,16 @@ void check_integer()
 	const json::array& arr2(v2);
 	json::array ch1 { json::value(-123456), json::value(123456) };
 
-	assert(arr1 == ch1);
-	assert(arr2 == ch1);
+	if (arr1 != ch1)
+		return -3;
+
+	if (arr2 != ch1)
+		return -4;
+
+	return 0;
 }
 
-void check_decimal_fraction()
+int check_decimal_fraction()
 {
 	const string str1 = "   [\n\t3.4375, -3.4375, 0.04, -0.04   ]\r\n  ";
 	const wstring str2 = L"[  \r\t3.4375, -3.4375, 0.04, -0.04   ]\n\t  \n  \n\r  ";
@@ -102,11 +111,16 @@ void check_decimal_fraction()
 	if (fabs(static_cast<json::number>(arr1[3]) - static_cast<json::number>(ch1[3])) < precision)
 		ch1[3] = arr1[3];
 
-	assert(arr1 == ch1);
-	assert(arr2 == ch1);
+	if (arr1 != ch1)
+		return -5;
+
+	if (arr2 != ch1)
+		return -6;
+
+	return 0;
 }
 
-void check_engineer_fraction()
+int check_engineer_fraction()
 {
 	const string str1 = "   [\n\t0.34375e1, -0.34375e+1, 0.34375E1, -0.34375E+1, 4e-2, -4e-2   ]\r\n  ";
 	const wstring str2 = L"[  \r\t0.34375e1, -0.34375e+1, 0.34375E1, -0.34375E+1, 4e-2, -4e-2   ]\n\t  \n  \n\r  ";
@@ -139,16 +153,33 @@ void check_engineer_fraction()
 	if (fabs(static_cast<json::number>(arr1[5]) - static_cast<json::number>(ch1[5])) < precision)
 		ch1[5] = arr1[5];
 
-	assert(arr1 == ch1);
-	assert(arr2 == ch1);
+	if (arr1 != ch1)
+		return -7;
+
+	if (arr2 != ch1)
+		return -8;
+
+	return 0;
 }
 
 int main(int, char**)
 {
-	check_zero();
-	check_integer();
-	check_decimal_fraction();
-	check_engineer_fraction();
+	const int zr = check_zero();
 
-	return 0;
+	if (zr)
+		return zr;
+
+	const int ir = check_integer();
+
+	if (ir)
+		return ir;
+
+	const int dr = check_decimal_fraction();
+
+	if (dr)
+		return dr;
+
+	const int er = check_engineer_fraction();
+
+	return er;
 }

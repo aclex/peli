@@ -17,8 +17,6 @@
  *
  */
 
-#include <cassert>
-
 #include "peli/json/value.h"
 
 using namespace std;
@@ -32,70 +30,83 @@ int main(int, char**)
 	json::value iv(isample);
 	int i(iv);
 
-	assert(isample == i);
+	if (isample != i)
+		return -1;
 
 	json::value cv(static_cast<char>(isample));
 	char c(cv);
 
-	assert(isample == c);
+	if (isample != c)
+		return -2;
 
 	json::value ucv(static_cast<unsigned char>(isample));
 	unsigned char uc(ucv);
 
-	assert(isample == uc);
+	if (isample != uc)
+		return -3;
 
 	json::value scv(static_cast<signed char>(isample));
 	signed char sc(cv);
 
-	assert(isample == sc);
+	if (isample != sc)
+		return -4;
 
 	json::value wcv(static_cast<wchar_t>(isample));
 	wchar_t wc(wcv);
 
-	assert(isample == wc);
+	if (isample != wc)
+		return -5;
 
 	json::value shiv(static_cast<short>(isample));
 	short shi(shiv);
 
-	assert(isample == shi);
+	if (isample != shi)
+		return -6;
 
 	json::value ushiv(static_cast<unsigned short>(isample));
 	unsigned short ushi(ushiv);
 
-	assert(isample == ushi);
+	if (isample != ushi)
+		return -7;
 
 	json::value uiv(static_cast<unsigned int>(isample));
 	unsigned int ui(uiv);
 
-	assert(static_cast<unsigned int>(isample) == ui);
+	if (static_cast<unsigned int>(isample) != ui)
+		return -8;
 
 	json::value liv(static_cast<long>(isample));
 	long li(liv);
 
-	assert(isample == li);
+	if (isample != li)
+		return -9;
 
 	json::value uliv(static_cast<unsigned long>(isample));
 	unsigned long uli(uliv);
 
-	assert(static_cast<unsigned int>(isample) == uli);
+	if (static_cast<unsigned int>(isample) != uli)
+		return -10;
 
 	double dsample(512.5);
 
 	json::value dv(dsample);
 	double d(dv);
 
-	assert(dsample == d);
+	if (dsample != d)
+		return -11;
 
 	float fsample(42.0);
 
 	json::value fv(fsample);
 	float f(fv);
 
-	assert(fsample == f);
+	if (fsample != f)
+		return -12;
 
 	int fi(fv);
 
-	assert(isample == fi);
+	if (isample != fi)
+		return -13;
 
 	return 0;
 }

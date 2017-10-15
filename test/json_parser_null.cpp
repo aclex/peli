@@ -18,7 +18,6 @@
  */
 
 #include <sstream>
-#include <cassert>
 #include <iostream>
 
 #include "peli/json/value.h"
@@ -27,7 +26,7 @@ using namespace std;
 
 using namespace peli;
 
-void check()
+int check()
 {
 	const string str1 = "   [\n\tnull   ]\r\n  ";
 	const wstring str2 = L"[  \r\tnull   ]\n\t  \n  \n\r  ";
@@ -44,14 +43,19 @@ void check()
 	const json::array& obj2(v2);
 	json::array ch1 { json::value() };
 
-	assert(obj1 == ch1);
-	assert(obj2 == ch1);
-	assert(obj1[0].null());
+	if (obj1 != ch1)
+		return -1;
+
+	if (obj2 != ch1)
+		return -2;
+
+	if (!obj1[0].null())
+		return -3;
+
+	return 0;
 }
 
 int main(int, char**)
 {
-	check();
-
-	return 0;
+	return check();
 }

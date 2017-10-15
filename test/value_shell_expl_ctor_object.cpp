@@ -17,8 +17,6 @@
  *
  */
 
-#include <cassert>
-
 #include "peli/json/value.h"
 
 using namespace std;
@@ -33,7 +31,8 @@ int main(int, char**)
 	json::value v(sample);
 	json::object& obj(v);
 
-	assert(sample == obj);
+	if (sample != obj)
+		return -1;
 
 	json::wobject wsample;
 	wsample[L"wtest"] = json::value(64);
@@ -41,7 +40,8 @@ int main(int, char**)
 	json::value wv(wsample);
 	json::wobject& wobj(wv);
 
-	assert(wsample == wobj);
+	if (wsample != wobj)
+		return -2;
 
 	return 0;
 }
