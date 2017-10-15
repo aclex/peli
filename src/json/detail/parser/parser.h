@@ -37,7 +37,7 @@ namespace peli
 
 				public:
 					template<typename Ch>
-					static JsonType parse(std::basic_streambuf<Ch>* rdbuf)
+					static JsonType parse(std::basic_streambuf<Ch>*)
 					{
 						static_assert(fake_dependency<JsonType>::value, "Type is not supported for parsing");
 					}
