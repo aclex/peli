@@ -77,6 +77,7 @@ namespace peli
 				public:
 					visitor_element() { }
 					void visit(Arg a) override { this->real_visitor().visit(a); };
+					using DynamicVisitor::visit;
 				};
 
 				template<class RealVisitor, class DynamicVisitor, typename... Args> class visitor_wrapper
