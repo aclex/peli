@@ -65,7 +65,7 @@ namespace peli
 						if (errno == ERANGE)
 							throw std::invalid_argument(std::strerror(errno));
 
-						auto chars_parsed = rest - buf.data();
+						typename std::basic_streambuf<Ch>::off_type chars_parsed = rest - buf.data();
 
 						rdbuf->pubseekpos(curr_pos + chars_parsed, std::ios_base::in);
 
