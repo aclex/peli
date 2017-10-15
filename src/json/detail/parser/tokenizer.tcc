@@ -19,7 +19,7 @@
 
 #include <cassert>
 
-#include "json/value.h"
+#include "peli/json/value.h"
 
 #include "json/detail/special_chars.h"
 
