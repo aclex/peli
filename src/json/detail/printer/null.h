@@ -41,7 +41,7 @@ namespace peli
 
 						put_structure_space(os);
 
-						static std::array<Ch, 4> null_str { n, u, l, l };
+						static std::array<Ch, 4> null_str {{ n, u, l, l }};
 
 						os.rdbuf()->sputn(null_str.data(), null_str.size());
 					}

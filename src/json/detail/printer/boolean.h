@@ -42,8 +42,8 @@ namespace peli
 
 						put_structure_space(os);
 
-						static constexpr std::array<Ch, 4> true_str { t, r, u, e };
-						static constexpr std::array<Ch, 5> false_str { f, a, l, s, e };
+						static constexpr std::array<Ch, 4> true_str {{ t, r, u, e }};
+						static constexpr std::array<Ch, 5> false_str {{ f, a, l, s, e }};
 
 						if (b)
 							put(os.rdbuf(), true_str);
