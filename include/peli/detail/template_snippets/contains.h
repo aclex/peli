@@ -35,6 +35,10 @@ namespace peli
 			};
 
 			template<typename Tp> struct contains<Tp> : std::false_type { };
+
+			template<typename Tp, typename... Args> struct pack_holds;
+
+			template<typename Tp, template<typename...> class Cont, typename... Types> struct pack_holds<Tp, Cont<Types...>> : contains<Tp, Types...> {};
 		}
 	}
 }
