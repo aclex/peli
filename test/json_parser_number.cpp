@@ -105,10 +105,10 @@ int check_decimal_fraction()
 
 	json::number precision = pow(10, -1 * (numeric_limits<json::number>::digits10 - 2));
 
-	if (fabs(static_cast<json::number>(arr1[2]) - static_cast<json::number>(ch1[2])) < precision)
+	if (abs(static_cast<json::number>(arr1[2]) - static_cast<json::number>(ch1[2])) < precision)
 		ch1[2] = arr1[2];
 
-	if (fabs(static_cast<json::number>(arr1[3]) - static_cast<json::number>(ch1[3])) < precision)
+	if (abs(static_cast<json::number>(arr1[3]) - static_cast<json::number>(ch1[3])) < precision)
 		ch1[3] = arr1[3];
 
 	if (arr1 != ch1)
