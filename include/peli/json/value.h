@@ -112,14 +112,14 @@ namespace peli
 			typename DeductedType = typename std::result_of<deduction_helper_type(T)>::type>
 			explicit operator T() const
 			{
-				return static_cast<T>(m_variant.cast<DeductedType>());
+				return static_cast<T>(detail::variant::get<DeductedType>(m_variant));
 			}
 
 			template<typename T,
 			typename DeductedType = typename std::result_of<deduction_helper_type(T)>::type>
 			explicit operator const T&() const
 			{
-				return static_cast<const T&>(m_variant.cast<const DeductedType&>());
+				return static_cast<const T&>(detail::variant::get<const DeductedType&>(m_variant));
 			}
 
 			template<typename T,
@@ -127,7 +127,7 @@ namespace peli
 			class = typename std::enable_if<std::is_same<T, DeductedType>::value>::type>
 			explicit operator T&()
 			{
-				return m_variant.cast<T&>();
+				return detail::variant::get<T&>(m_variant);
 			}
 
 			friend std::ostream& operator<<(std::ostream& os, const value& v);

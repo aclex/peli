@@ -264,22 +264,6 @@ namespace peli
 					return !operator==(rhs);
 				}
 
-				template<typename T> T cast() const
-				{
-					static_type_check<T>();
-					runtime_type_check<T>();
-
-					return holder<T>()->value();
-				}
-
-				template<typename T> T cast()
-				{
-					static_type_check<T>();
-					runtime_type_check<T>();
-
-					return holder<T>()->value();
-				}
-
 				template<class Visitor> void accept(Visitor v)
 				{
 					typedef visitor_wrapper<Visitor> wrapper;
@@ -309,6 +293,9 @@ namespace peli
 				}
 
 			private:
+				template<typename T, typename... Types> friend T get(const variant<Types...>& v);
+				template<typename T, typename... Types> friend T get(variant<Types...>& v);
+
 				template<typename T> constexpr void static_type_check() const
 				{
 					static_assert(template_snippets::contains<typename std::decay<T>::type, Ts...>::value,
@@ -351,6 +338,22 @@ namespace peli
 				bool m_valid;
 				data_t m_data;
 			};
+
+			template<typename T, typename... Ts> T get(const variant<Ts...>& v)
+			{
+				v.template static_type_check<T>();
+				v.template runtime_type_check<T>();
+
+				return v.template holder<T>()->value();
+			}
+
+			template<typename T, typename... Ts> T get(variant<Ts...>& v)
+			{
+				v.template static_type_check<T>();
+				v.template runtime_type_check<T>();
+
+				return v.template holder<T>()->value();
+			}
 		}
 	}
 }
