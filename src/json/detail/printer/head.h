@@ -35,7 +35,7 @@ namespace peli
 					template<class> struct fake_dependency : public std::false_type { };
 
 				public:
-					template<typename Typewriter> static void print(Typewriter*, const T&)
+					template<typename Ch> static void print(std::basic_ostream<Ch>&, const T&)
 					{
 						static_assert(fake_dependency<T>::value, "Type is not supported for printing");
 					}
