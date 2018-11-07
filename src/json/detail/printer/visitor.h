@@ -23,12 +23,12 @@ namespace peli
 				{
 				public:
 					visitor(std::basic_ostream<Ch>& os) : m_os(os) { }
-					template<typename Arg> void visit(Arg a)
+					template<typename Arg> void operator()(Arg a)
 					{
 						printer::head<Arg>::print(m_os, a);
 					}
 
-					void visit()
+					void operator()()
 					{
 						printer::head<void>::print(m_os);
 					}

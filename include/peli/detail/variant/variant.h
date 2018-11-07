@@ -272,7 +272,7 @@ namespace peli
 					if (m_valid)
 						holder()->accept(&w);
 					else
-						v.visit();
+						v();
 				}
 
 				template<class Visitor> void accept(Visitor v) const
@@ -283,7 +283,7 @@ namespace peli
 					if (m_valid)
 						holder()->accept(&w);
 					else
-						v.visit();
+						v();
 				}
 
 				~variant() noexcept
@@ -353,6 +353,16 @@ namespace peli
 				v.template runtime_type_check<T>();
 
 				return v.template holder<T>()->value();
+			}
+
+			template
+			<
+				typename Visitor,
+				typename Variant
+			>
+			void visit(Visitor&& vis, Variant&& v)
+			{
+				v.accept(vis);
 			}
 		}
 	}

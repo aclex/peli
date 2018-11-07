@@ -41,7 +41,7 @@ std::ostream& peli::json::operator<<(std::ostream& os, const value& v)
 {
 	peli::json::detail::printer::visitor<typename std::ostream::char_type> print_visitor(os);
 
-	v.m_variant.accept(print_visitor);
+	visit(print_visitor, v.m_variant);
 	return os;
 }
 
@@ -49,6 +49,6 @@ std::wostream& peli::json::operator<<(std::wostream& os, const value& v)
 {
 	peli::json::detail::printer::visitor<typename std::wostream::char_type> print_visitor(os);
 
-	v.m_variant.accept(print_visitor);
+	visit(print_visitor, v.m_variant);
 	return os;
 }
