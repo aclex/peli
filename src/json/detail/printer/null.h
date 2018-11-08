@@ -22,6 +22,10 @@
 
 #include <array>
 
+#ifndef INTERNAL_VARIANT
+#include <variant>
+#endif
+
 #include "json/detail/special_chars.h"
 
 namespace peli
@@ -46,6 +50,17 @@ namespace peli
 						os.rdbuf()->sputn(null_str.data(), null_str.size());
 					}
 				};
+
+#ifndef INTERNAL_VARIANT
+				template<> class head<std::monostate> : public head<void>
+				{
+				public:
+					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const std::monostate&)
+					{
+						head<void>::print(os);
+					}
+				};
+#endif
 			}
 		}
 	}

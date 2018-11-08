@@ -293,8 +293,8 @@ namespace peli
 				}
 
 			private:
-				template<typename T, typename... Types> friend T get(const variant<Types...>& v);
-				template<typename T, typename... Types> friend T get(variant<Types...>& v);
+				template<typename T, typename... Types> friend const T& get(const variant<Types...>& v);
+				template<typename T, typename... Types> friend T& get(variant<Types...>& v);
 
 				template<typename T> constexpr void static_type_check() const
 				{
@@ -339,7 +339,7 @@ namespace peli
 				data_t m_data;
 			};
 
-			template<typename T, typename... Ts> T get(const variant<Ts...>& v)
+			template<typename T, typename... Ts> const T& get(const variant<Ts...>& v)
 			{
 				v.template static_type_check<T>();
 				v.template runtime_type_check<T>();
@@ -347,7 +347,7 @@ namespace peli
 				return v.template holder<T>()->value();
 			}
 
-			template<typename T, typename... Ts> T get(variant<Ts...>& v)
+			template<typename T, typename... Ts> T& get(variant<Ts...>& v)
 			{
 				v.template static_type_check<T>();
 				v.template runtime_type_check<T>();

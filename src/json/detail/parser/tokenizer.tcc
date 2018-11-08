@@ -35,7 +35,11 @@
 template<typename Ch> peli::json::value peli::json::detail::parser::tokenizer::tok(std::basic_streambuf<Ch>* rdbuf)
 {
 	using namespace peli::json;
+
+#ifdef INTERNAL_VARIANT
 	using namespace peli::detail;
+#endif
+
 	using namespace peli::json::detail;
 	using namespace peli::json::detail::parser;
 

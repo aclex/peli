@@ -23,7 +23,6 @@
 #include "json/detail/printer/visitor.h"
 
 using namespace peli::json;
-using namespace peli::detail;
 
 std::istream& peli::json::operator>>(std::istream& is, value& v)
 {
@@ -41,7 +40,14 @@ std::ostream& peli::json::operator<<(std::ostream& os, const value& v)
 {
 	peli::json::detail::printer::visitor<typename std::ostream::char_type> print_visitor(os);
 
-	visit(print_visitor, v.m_variant);
+#ifdef INTERNAL_VARIANT
+	namespace ns = peli::detail::variant;
+#else
+	namespace ns = std;
+#endif
+
+	ns::visit(print_visitor, v.m_variant);
+
 	return os;
 }
 
@@ -49,6 +55,13 @@ std::wostream& peli::json::operator<<(std::wostream& os, const value& v)
 {
 	peli::json::detail::printer::visitor<typename std::wostream::char_type> print_visitor(os);
 
-	visit(print_visitor, v.m_variant);
+#ifdef INTERNAL_VARIANT
+	namespace ns = peli::detail::variant;
+#else
+	namespace ns = std;
+#endif
+
+	ns::visit(print_visitor, v.m_variant);
+
 	return os;
 }

@@ -23,7 +23,11 @@
 #include <string>
 #include <type_traits>
 
+#ifdef INTERNAL_VARIANT
 #include <peli/detail/variant/variant.h>
+#else
+#include <variant>
+#endif
 
 #include <peli/json/object.h>
 #include <peli/json/array.h>
@@ -64,8 +68,14 @@ namespace peli
 				std::basic_string<Ch> operator()(U);
 			};
 
+#ifdef INTERNAL_VARIANT
 			typedef detail::variant::variant
 			<
+#else
+			typedef std::variant
+			<
+				std::monostate,
+#endif
 				bool,
 				json::number,
 				std::string, std::wstring,
@@ -95,7 +105,11 @@ namespace peli
 
 			bool null() const noexcept
 			{
+#ifdef INTERNAL_VARIANT
 				return !m_variant.valid();
+#else
+				return !m_variant.index();
+#endif
 			}
 
 			bool operator==(const value& rhs) const noexcept
@@ -112,14 +126,23 @@ namespace peli
 			typename DeductedType = typename std::result_of<deduction_helper_type(T)>::type>
 			explicit operator T() const
 			{
-				return static_cast<T>(detail::variant::get<DeductedType>(m_variant));
+#ifdef INTERNAL_VARIANT
+				namespace ns = detail::variant;
+#else
+				namespace ns = std;
+#endif
+				return static_cast<T>(ns::get<DeductedType>(m_variant));
 			}
 
-			template<typename T,
-			typename DeductedType = typename std::result_of<deduction_helper_type(T)>::type>
+			template<typename T>
 			explicit operator const T&() const
 			{
-				return static_cast<const T&>(detail::variant::get<const DeductedType&>(m_variant));
+#ifdef INTERNAL_VARIANT
+				namespace ns = detail::variant;
+#else
+				namespace ns = std;
+#endif
+				return static_cast<const T&>(ns::get<T>(m_variant));
 			}
 
 			template<typename T,
@@ -127,7 +150,12 @@ namespace peli
 			class = typename std::enable_if<std::is_same<T, DeductedType>::value>::type>
 			explicit operator T&()
 			{
-				return detail::variant::get<T&>(m_variant);
+#ifdef INTERNAL_VARIANT
+				namespace ns = detail::variant;
+#else
+				namespace ns = std;
+#endif
+				return ns::get<T>(m_variant);
 			}
 
 			friend std::ostream& operator<<(std::ostream& os, const value& v);
