@@ -17,18 +17,10 @@
  *
  */
 
-#ifndef PELI_DETAIL_PARSER_NULL_H
-#define PELI_DETAIL_PARSER_NULL_H
+#ifndef PELI_DETAIL_PRINTER_HEAD_H
+#define PELI_DETAIL_PRINTER_HEAD_H
 
-#include <string>
-#include <stdexcept>
-
-#include "peli/json/value.h"
-#include "peli/json/object.h"
-
-#include "json/detail/special_chars.h"
-
-#include "json/detail/parser/parser.h"
+#include "peli/json/detail/printer/stream_routines.h"
 
 namespace peli
 {
@@ -36,33 +28,16 @@ namespace peli
 	{
 		namespace detail
 		{
-			namespace parser
+			namespace printer
 			{
-				template<> class parser<void>
+				template<typename T> class head
 				{
+					template<class> struct fake_dependency : public std::false_type { };
+
 				public:
-					template<typename Ch> static void parse(std::basic_streambuf<Ch>* rdbuf)
+					template<typename Ch> static void print(std::basic_ostream<Ch>&, const T&)
 					{
-						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
-						if (c != special_chars::n)
-							throw std::invalid_argument("");
-
-						c = rdbuf->snextc();
-
-						if (c != special_chars::u)
-							throw std::invalid_argument("");
-
-						c = rdbuf->snextc();
-
-						if (c != special_chars::l)
-							throw std::invalid_argument("");
-
-						c = rdbuf->snextc();
-
-						if (c != special_chars::l)
-							throw std::invalid_argument("");
-
-						rdbuf->sbumpc();
+						static_assert(fake_dependency<T>::value, "Type is not supported for printing");
 					}
 				};
 			}
@@ -70,4 +45,4 @@ namespace peli
 	}
 }
 
-#endif // PELI_DETAIL_PARSER_NULL_H
+#endif // PELI_DETAIL_PRINTER_HEAD_H

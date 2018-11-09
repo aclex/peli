@@ -19,7 +19,7 @@
 
 #include "peli/json/iomanip.h"
 
-#include "json/detail/printer/util.h"
+#include "peli/json/detail/printer/util.h"
 
 using namespace peli::json;
 using namespace peli::json::detail::printer;

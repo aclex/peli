@@ -23,7 +23,7 @@
 #include <istream>
 #include <string>
 
-#include "json/detail/special_chars.h"
+#include "peli/json/detail/special_chars.h"
 
 namespace peli
 {

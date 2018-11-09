@@ -28,11 +28,11 @@
 
 #include "peli/json/array.h"
 
-#include "json/detail/special_chars.h"
+#include "peli/json/detail/special_chars.h"
 
-#include "json/detail/parser/parser.h"
-#include "json/detail/parser/stream_routines.h"
-#include "json/detail/parser/utf.h"
+#include "peli/json/detail/parser/parser.h"
+#include "peli/json/detail/parser/stream_routines.h"
+#include "peli/json/detail/parser/utf.h"
 
 namespace peli
 {

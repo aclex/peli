@@ -19,8 +19,8 @@
 
 #include "peli/json/value.h"
 
-#include "json/detail/parser/tokenizer.h"
-#include "json/detail/printer/visitor.h"
+#include "peli/json/detail/parser/tokenizer.h"
+#include "peli/json/detail/printer/visitor.h"
 
 using namespace peli::json;
 

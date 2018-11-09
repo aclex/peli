@@ -42,6 +42,6 @@ namespace peli
 	}
 }
 
-#include "json/detail/parser/tokenizer.tcc" // template definition
+#include "peli/json/detail/parser/tokenizer.tcc" // template definition
 
 #endif // PELI_DETAIL_PARSER_TOKENIZER_H

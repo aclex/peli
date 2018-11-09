@@ -17,16 +17,16 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_NULL_H
-#define PELI_DETAIL_PRINTER_NULL_H
+#ifndef PELI_DETAIL_PRINTER_ARRAY_H
+#define PELI_DETAIL_PRINTER_ARRAY_H
 
-#include <array>
+#include <ostream>
 
-#ifndef INTERNAL_VARIANT
-#include <variant>
-#endif
+#include "peli/json/array.h"
 
-#include "json/detail/special_chars.h"
+#include "peli/json/detail/printer/stream_routines.h"
+
+#include "peli/json/detail/special_chars.h"
 
 namespace peli
 {
@@ -36,34 +36,44 @@ namespace peli
 		{
 			namespace printer
 			{
-				template<> struct head<void>
+				template<> struct head<json::array>
 				{
-				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os)
+					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const peli::json::array& arr)
 					{
 						using namespace special_chars;
 
-						put_structure_space(os);
+						put_structure_newline(os);
 
-						static std::array<Ch, 4> null_str {{ n, u, l, l }};
+						os.rdbuf()->sputc(left_square);
 
-						os.rdbuf()->sputn(null_str.data(), null_str.size());
+						if (!arr.empty())
+						{
+							put_newline(os);
+						}
+
+						++(tab_level(os));
+
+						for (auto it = arr.cbegin(); it != arr.cend(); ++it)
+						{
+							put_tab_spacing(os);
+							os << *it;
+
+							if (it != --arr.cend())
+								os.rdbuf()->sputc(comma);
+
+							put_newline(os);
+						}
+
+						--(tab_level(os));
+
+						put_tab_spacing(os);
+
+						os.rdbuf()->sputc(right_square);
 					}
 				};
-
-#ifndef INTERNAL_VARIANT
-				template<> class head<std::monostate> : public head<void>
-				{
-				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const std::monostate&)
-					{
-						head<void>::print(os);
-					}
-				};
-#endif
 			}
 		}
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_NULL_H
+#endif // PELI_DETAIL_PRINTER_ARRAY_H

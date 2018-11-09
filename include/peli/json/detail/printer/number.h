@@ -25,7 +25,7 @@
 
 #include "peli/json/number.h"
 
-#include "json/detail/printer/stream_routines.h"
+#include "peli/json/detail/printer/stream_routines.h"
 
 namespace peli
 {

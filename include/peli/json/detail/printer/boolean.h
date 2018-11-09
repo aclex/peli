@@ -17,10 +17,13 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_HEAD_H
-#define PELI_DETAIL_PRINTER_HEAD_H
+#ifndef PELI_DETAIL_PRINTER_BOOLEAN_H
+#define PELI_DETAIL_PRINTER_BOOLEAN_H
 
-#include "json/detail/printer/stream_routines.h"
+#include <array>
+#include <ostream>
+
+#include "peli/json/detail/special_chars.h"
 
 namespace peli
 {
@@ -30,14 +33,28 @@ namespace peli
 		{
 			namespace printer
 			{
-				template<typename T> class head
+				template<> struct head<bool>
 				{
-					template<class> struct fake_dependency : public std::false_type { };
-
 				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>&, const T&)
+					template<typename Ch> static void print(std::basic_ostream<Ch>& os, bool b)
 					{
-						static_assert(fake_dependency<T>::value, "Type is not supported for printing");
+						using namespace special_chars;
+
+						put_structure_space(os);
+
+						static constexpr std::array<Ch, 4> true_str {{ t, r, u, e }};
+						static constexpr std::array<Ch, 5> false_str {{ f, a, l, s, e }};
+
+						if (b)
+							put(os.rdbuf(), true_str);
+						else
+							put(os.rdbuf(), false_str);
+					}
+
+				private:
+					template<typename Ch, std::size_t N> static void put(std::basic_streambuf<Ch>* rdbuf, const std::array<Ch, N>& str)
+					{
+						rdbuf->sputn(str.data(), str.size());
 					}
 				};
 			}
@@ -45,4 +62,4 @@ namespace peli
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_HEAD_H
+#endif // PELI_DETAIL_PRINTER_BOOLEAN_H
