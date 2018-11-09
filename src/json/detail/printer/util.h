@@ -20,6 +20,8 @@
 #ifndef PELI_DETAIL_PRINTER_UTIL_H
 #define PELI_DETAIL_PRINTER_UTIL_H
 
+#include <ios>
+
 namespace peli
 {
 	namespace json
@@ -28,8 +30,17 @@ namespace peli
 		{
 			namespace printer
 			{
-				int flag_storage_index();
-				int tab_level_storage_index();
+				inline int flag_storage_index()
+				{
+					static int i { std::ios_base::xalloc() };
+					return i;
+				}
+
+				inline int tab_level_storage_index()
+				{
+					static int i { std::ios_base::xalloc() };
+					return i;
+				}
 
 				namespace flag
 				{
