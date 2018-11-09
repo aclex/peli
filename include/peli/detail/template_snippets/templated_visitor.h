@@ -76,7 +76,7 @@ namespace peli
 				{
 				public:
 					visitor_element() { }
-					void visit(Arg a) override { this->real_visitor().visit(a); };
+					void visit(Arg a) override { this->real_visitor()(a); };
 					using DynamicVisitor::visit;
 				};
 
