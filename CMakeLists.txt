@@ -2,7 +2,7 @@ project(peli)
 
 cmake_minimum_required(VERSION 3.3)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/common/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/common/Modules/")
 
 include(GitVersion)
 include(AddUninstallTarget)
@@ -45,12 +45,12 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 endif ()
 
 add_library(peli INTERFACE)
-target_include_directories(peli INTERFACE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
+target_include_directories(peli INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
 
 set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_INCLUDEDIR}")
 configure_file(${PROJECT_SOURCE_DIR}/cmake/peli-config.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/peli-config.cmake" @ONLY)
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/peli DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/peli DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(TARGETS peli EXPORT peli-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(EXPORT peli-targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/peli)
 install(FILES ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/peli-config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/peli)
