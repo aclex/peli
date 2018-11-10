@@ -17,16 +17,17 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_ARRAY_H
-#define PELI_DETAIL_PRINTER_ARRAY_H
+#ifndef PELI_DETAIL_PRINTER_OBJECT_H
+#define PELI_DETAIL_PRINTER_OBJECT_H
 
 #include <ostream>
 
-#include "peli/json/array.h"
+#include "peli/json/object.h"
 
-#include "json/detail/printer/stream_routines.h"
+#include "peli/json/detail/printer/string.h"
+#include "peli/json/detail/printer/stream_routines.h"
 
-#include "json/detail/special_chars.h"
+#include "peli/json/detail/special_chars.h"
 
 namespace peli
 {
@@ -36,29 +37,37 @@ namespace peli
 		{
 			namespace printer
 			{
-				template<> struct head<json::array>
+				template<typename Ch> struct head<json::basic_object<Ch>>
 				{
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const peli::json::array& arr)
+					template<typename StreamCh> static void print(std::basic_ostream<StreamCh>& os, const json::basic_object<Ch>& obj)
 					{
 						using namespace special_chars;
 
 						put_structure_newline(os);
 
-						os.rdbuf()->sputc(left_square);
+						os.rdbuf()->sputc(left_curly);
 
-						if (!arr.empty())
-						{
+						if (!obj.empty())
 							put_newline(os);
-						}
+						else
+							put_space(os);
 
 						++(tab_level(os));
 
-						for (auto it = arr.cbegin(); it != arr.cend(); ++it)
+						for (auto it = obj.cbegin(); it != obj.cend(); ++it)
 						{
 							put_tab_spacing(os);
-							os << *it;
+							printer::head<std::basic_string<Ch>>::print(os, it->first);
 
-							if (it != --arr.cend())
+							put_space(os);
+
+							os.rdbuf()->sputc(colon);
+
+							set_needs_structure_period(os, true);
+							os << it->second;
+							set_needs_structure_period(os, false);
+
+							if (it != --obj.cend())
 								os.rdbuf()->sputc(comma);
 
 							put_newline(os);
@@ -68,7 +77,7 @@ namespace peli
 
 						put_tab_spacing(os);
 
-						os.rdbuf()->sputc(right_square);
+						os.rdbuf()->sputc(right_curly);
 					}
 				};
 			}
@@ -76,4 +85,4 @@ namespace peli
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_ARRAY_H
+#endif // PELI_DETAIL_PRINTER_OBJECT_H

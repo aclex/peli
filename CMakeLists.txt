@@ -28,7 +28,6 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
@@ -45,10 +44,20 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	add_definitions("/W4 /wd4244 /wd4805 /wd4389 /WX")
 endif ()
 
-include_directories(include)
+add_library(peli INTERFACE)
+target_include_directories(peli INTERFACE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
 
-add_subdirectory(src)
-add_subdirectory(example)
+set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_INCLUDEDIR}")
+configure_file(${PROJECT_SOURCE_DIR}/cmake/peli-config.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/peli-config.cmake" @ONLY)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/peli DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(TARGETS peli EXPORT peli-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(EXPORT peli-targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/peli)
+install(FILES ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/peli-config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/peli)
+
+if (BUILD_EXAMPLES)
+	add_subdirectory(example)
+endif (BUILD_EXAMPLES)
 
 if (BUILD_TESTS)
 	enable_testing()

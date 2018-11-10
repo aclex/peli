@@ -17,18 +17,16 @@
  *
  */
 
-#ifndef PELI_DETAIL_PARSER_NULL_H
-#define PELI_DETAIL_PARSER_NULL_H
+#ifndef PELI_DETAIL_PRINTER_NULL_H
+#define PELI_DETAIL_PRINTER_NULL_H
 
-#include <string>
-#include <stdexcept>
+#include <array>
 
-#include "peli/json/value.h"
-#include "peli/json/object.h"
+#ifndef INTERNAL_VARIANT
+#include <variant>
+#endif
 
-#include "json/detail/special_chars.h"
-
-#include "json/detail/parser/parser.h"
+#include "peli/json/detail/special_chars.h"
 
 namespace peli
 {
@@ -36,38 +34,36 @@ namespace peli
 	{
 		namespace detail
 		{
-			namespace parser
+			namespace printer
 			{
-				template<> class parser<void>
+				template<> struct head<void>
 				{
 				public:
-					template<typename Ch> static void parse(std::basic_streambuf<Ch>* rdbuf)
+					template<typename Ch> static void print(std::basic_ostream<Ch>& os)
 					{
-						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
-						if (c != special_chars::n)
-							throw std::invalid_argument("");
+						using namespace special_chars;
 
-						c = rdbuf->snextc();
+						put_structure_space(os);
 
-						if (c != special_chars::u)
-							throw std::invalid_argument("");
+						static std::array<Ch, 4> null_str {{ n, u, l, l }};
 
-						c = rdbuf->snextc();
-
-						if (c != special_chars::l)
-							throw std::invalid_argument("");
-
-						c = rdbuf->snextc();
-
-						if (c != special_chars::l)
-							throw std::invalid_argument("");
-
-						rdbuf->sbumpc();
+						os.rdbuf()->sputn(null_str.data(), null_str.size());
 					}
 				};
+
+#ifndef INTERNAL_VARIANT
+				template<> class head<std::monostate> : public head<void>
+				{
+				public:
+					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const std::monostate&)
+					{
+						head<void>::print(os);
+					}
+				};
+#endif
 			}
 		}
 	}
 }
 
-#endif // PELI_DETAIL_PARSER_NULL_H
+#endif // PELI_DETAIL_PRINTER_NULL_H

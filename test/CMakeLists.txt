@@ -1,7 +1,5 @@
 include(NewTest)
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
-
 new_test(value_shell_default_ctor.cpp peli)
 new_test(value_shell_copy_ctor.cpp peli)
 new_test(value_shell_move_ctor.cpp peli)

@@ -21,16 +21,16 @@
 
 #include "peli/json/value.h"
 
-#include "json/detail/special_chars.h"
+#include "peli/json/detail/special_chars.h"
 
-#include "json/detail/parser/object.h"
-#include "json/detail/parser/array.h"
-#include "json/detail/parser/string.h"
-#include "json/detail/parser/number.h"
-#include "json/detail/parser/boolean.h"
-#include "json/detail/parser/null.h"
+#include "peli/json/detail/parser/object.h"
+#include "peli/json/detail/parser/array.h"
+#include "peli/json/detail/parser/string.h"
+#include "peli/json/detail/parser/number.h"
+#include "peli/json/detail/parser/boolean.h"
+#include "peli/json/detail/parser/null.h"
 
-#include "json/detail/parser/stream_routines.h"
+#include "peli/json/detail/parser/stream_routines.h"
 
 template<typename Ch> peli::json::value peli::json::detail::parser::tokenizer::tok(std::basic_streambuf<Ch>* rdbuf)
 {

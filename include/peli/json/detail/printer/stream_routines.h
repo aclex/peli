@@ -23,8 +23,8 @@
 #include <ostream>
 #include <ios>
 
-#include "json/detail/printer/util.h"
-#include "json/detail/special_chars.h"
+#include "peli/json/detail/printer/util.h"
+#include "peli/json/detail/special_chars.h"
 
 namespace peli
 {

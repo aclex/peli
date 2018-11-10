@@ -11,6 +11,3 @@ set(PELI_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
 if(NOT TARGET peli AND NOT peli_BINARY_DIR)
   include("${PELI_CMAKE_FILES_DIR}/peli-targets.cmake")
 endif()
-
-# These are IMPORTED targets created by peli-targets.cmake
-set(PELI_LIBRARIES peli)

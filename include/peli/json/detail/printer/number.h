@@ -17,11 +17,15 @@
  *
  */
 
-#ifndef PELI_DETAIL_PARSER_TOKENIZER_H
-#define PELI_DETAIL_PARSER_TOKENIZER_H
+#ifndef PELI_DETAIL_PRINTER_NUMBER_H
+#define PELI_DETAIL_PRINTER_NUMBER_H
 
-#include <istream>
-#include <streambuf>
+#include <ostream>
+#include <limits>
+
+#include "peli/json/number.h"
+
+#include "peli/json/detail/printer/stream_routines.h"
 
 namespace peli
 {
@@ -29,19 +33,26 @@ namespace peli
 	{
 		namespace detail
 		{
-			namespace parser
+			namespace printer
 			{
-				class tokenizer
+				template<> struct head<json::number>
 				{
 				public:
-					template<typename Ch> static json::value tok(std::basic_streambuf<Ch>* rdbuf);
-					template<typename Ch, typename Alloc> static json::value gentle_stream(std::basic_istream<Ch, Alloc>& is);
+					template<typename Ch> static void print(std::basic_ostream<Ch>& os, json::number n)
+					{
+						put_structure_space(os);
+
+						const auto default_precision = os.precision();
+						os.precision(std::numeric_limits<json::number>::digits10 - 2);
+
+						os << n;
+
+						os.precision(default_precision);
+					}
 				};
 			}
 		}
 	}
 }
 
-#include "json/detail/parser/tokenizer.tcc" // template definition
-
-#endif // PELI_DETAIL_PARSER_TOKENIZER_H
+#endif // PELI_DETAIL_PRINTER_NUMBER_H

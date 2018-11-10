@@ -22,9 +22,9 @@
 
 #include <stdexcept>
 
-#include "json/detail/parser/parser.h"
+#include "peli/json/detail/parser/parser.h"
 
-#include "json/detail/special_chars.h"
+#include "peli/json/detail/special_chars.h"
 
 namespace peli
 {

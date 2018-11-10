@@ -17,16 +17,10 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_NULL_H
-#define PELI_DETAIL_PRINTER_NULL_H
+#ifndef PELI_DETAIL_PRINTER_UTIL_H
+#define PELI_DETAIL_PRINTER_UTIL_H
 
-#include <array>
-
-#ifndef INTERNAL_VARIANT
-#include <variant>
-#endif
-
-#include "json/detail/special_chars.h"
+#include <ios>
 
 namespace peli
 {
@@ -36,34 +30,30 @@ namespace peli
 		{
 			namespace printer
 			{
-				template<> struct head<void>
+				inline int flag_storage_index()
 				{
-				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os)
-					{
-						using namespace special_chars;
+					static int i { std::ios_base::xalloc() };
+					return i;
+				}
 
-						put_structure_space(os);
-
-						static std::array<Ch, 4> null_str {{ n, u, l, l }};
-
-						os.rdbuf()->sputn(null_str.data(), null_str.size());
-					}
-				};
-
-#ifndef INTERNAL_VARIANT
-				template<> class head<std::monostate> : public head<void>
+				inline int tab_level_storage_index()
 				{
-				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const std::monostate&)
-					{
-						head<void>::print(os);
-					}
-				};
-#endif
+					static int i { std::ios_base::xalloc() };
+					return i;
+				}
+
+				namespace flag
+				{
+					const long pretty = 0x01;
+					const long structure_newline = 0x02;
+
+					constexpr bool get(const long& flag_word, long flag) { return flag_word & flag; }
+					inline void set(long& flag_word, long flag) { flag_word |= flag; }
+					inline void unset(long& flag_word, long flag) { flag_word &= ~flag; }
+				}
 			}
 		}
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_NULL_H
+#endif // PELI_DETAIL_PRINTER_UTIL_H

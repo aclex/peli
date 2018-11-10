@@ -3,13 +3,13 @@
 
 #include <ostream>
 
-#include "json/detail/printer/head.h"
-#include "json/detail/printer/string.h"
-#include "json/detail/printer/boolean.h"
-#include "json/detail/printer/null.h"
-#include "json/detail/printer/number.h"
-#include "json/detail/printer/array.h"
-#include "json/detail/printer/object.h"
+#include "peli/json/detail/printer/head.h"
+#include "peli/json/detail/printer/string.h"
+#include "peli/json/detail/printer/boolean.h"
+#include "peli/json/detail/printer/null.h"
+#include "peli/json/detail/printer/number.h"
+#include "peli/json/detail/printer/array.h"
+#include "peli/json/detail/printer/object.h"
 
 namespace peli
 {

@@ -17,48 +17,31 @@
  *
  */
 
-#include "peli/json/iomanip.h"
+#ifndef PELI_DETAIL_PARSER_TOKENIZER_H
+#define PELI_DETAIL_PARSER_TOKENIZER_H
 
-#include "json/detail/printer/util.h"
+#include <istream>
+#include <streambuf>
 
-using namespace peli::json;
-using namespace peli::json::detail::printer;
-
-using namespace std;
-
-namespace
+namespace peli
 {
-	template<typename Ch> void pretty_template(basic_ostream<Ch>& os)
+	namespace json
 	{
-		os.iword(flag_storage_index()) |= flag::pretty;
+		namespace detail
+		{
+			namespace parser
+			{
+				class tokenizer
+				{
+				public:
+					template<typename Ch> static json::value tok(std::basic_streambuf<Ch>* rdbuf);
+					template<typename Ch, typename Alloc> static json::value gentle_stream(std::basic_istream<Ch, Alloc>& is);
+				};
+			}
+		}
 	}
-
-	template<typename Ch> void nopretty_template(basic_ostream<Ch>& os)
-	{
-		os.iword(flag_storage_index()) &= !flag::pretty;
-	}
 }
 
-ostream& peli::json::pretty(ostream& os)
-{
-	pretty_template(os);
-	return os;
-}
+#include "peli/json/detail/parser/tokenizer.tcc" // template definition
 
-wostream& peli::json::pretty(wostream& os)
-{
-	pretty_template(os);
-	return os;
-}
-
-ostream& peli::json::nopretty(ostream& os)
-{
-	nopretty_template(os);
-	return os;
-}
-
-wostream& peli::json::nopretty(wostream& os)
-{
-	nopretty_template(os);
-	return os;
-}
+#endif // PELI_DETAIL_PARSER_TOKENIZER_H

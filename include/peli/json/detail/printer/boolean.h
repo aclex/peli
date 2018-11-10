@@ -17,8 +17,13 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_UTIL_H
-#define PELI_DETAIL_PRINTER_UTIL_H
+#ifndef PELI_DETAIL_PRINTER_BOOLEAN_H
+#define PELI_DETAIL_PRINTER_BOOLEAN_H
+
+#include <array>
+#include <ostream>
+
+#include "peli/json/detail/special_chars.h"
 
 namespace peli
 {
@@ -28,21 +33,33 @@ namespace peli
 		{
 			namespace printer
 			{
-				int flag_storage_index();
-				int tab_level_storage_index();
-
-				namespace flag
+				template<> struct head<bool>
 				{
-					const long pretty = 0x01;
-					const long structure_newline = 0x02;
+				public:
+					template<typename Ch> static void print(std::basic_ostream<Ch>& os, bool b)
+					{
+						using namespace special_chars;
 
-					constexpr bool get(const long& flag_word, long flag) { return flag_word & flag; }
-					inline void set(long& flag_word, long flag) { flag_word |= flag; }
-					inline void unset(long& flag_word, long flag) { flag_word &= ~flag; }
-				}
+						put_structure_space(os);
+
+						static constexpr std::array<Ch, 4> true_str {{ t, r, u, e }};
+						static constexpr std::array<Ch, 5> false_str {{ f, a, l, s, e }};
+
+						if (b)
+							put(os.rdbuf(), true_str);
+						else
+							put(os.rdbuf(), false_str);
+					}
+
+				private:
+					template<typename Ch, std::size_t N> static void put(std::basic_streambuf<Ch>* rdbuf, const std::array<Ch, N>& str)
+					{
+						rdbuf->sputn(str.data(), str.size());
+					}
+				};
 			}
 		}
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_UTIL_H
+#endif // PELI_DETAIL_PRINTER_BOOLEAN_H

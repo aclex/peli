@@ -17,13 +17,18 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_BOOLEAN_H
-#define PELI_DETAIL_PRINTER_BOOLEAN_H
+#ifndef PELI_DETAIL_PARSER_NULL_H
+#define PELI_DETAIL_PARSER_NULL_H
 
-#include <array>
-#include <ostream>
+#include <string>
+#include <stdexcept>
 
-#include "json/detail/special_chars.h"
+#include "peli/json/value.h"
+#include "peli/json/object.h"
+
+#include "peli/json/detail/special_chars.h"
+
+#include "peli/json/detail/parser/parser.h"
 
 namespace peli
 {
@@ -31,30 +36,33 @@ namespace peli
 	{
 		namespace detail
 		{
-			namespace printer
+			namespace parser
 			{
-				template<> struct head<bool>
+				template<> class parser<void>
 				{
 				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os, bool b)
+					template<typename Ch> static void parse(std::basic_streambuf<Ch>* rdbuf)
 					{
-						using namespace special_chars;
+						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+						if (c != special_chars::n)
+							throw std::invalid_argument("");
 
-						put_structure_space(os);
+						c = rdbuf->snextc();
 
-						static constexpr std::array<Ch, 4> true_str {{ t, r, u, e }};
-						static constexpr std::array<Ch, 5> false_str {{ f, a, l, s, e }};
+						if (c != special_chars::u)
+							throw std::invalid_argument("");
 
-						if (b)
-							put(os.rdbuf(), true_str);
-						else
-							put(os.rdbuf(), false_str);
-					}
+						c = rdbuf->snextc();
 
-				private:
-					template<typename Ch, std::size_t N> static void put(std::basic_streambuf<Ch>* rdbuf, const std::array<Ch, N>& str)
-					{
-						rdbuf->sputn(str.data(), str.size());
+						if (c != special_chars::l)
+							throw std::invalid_argument("");
+
+						c = rdbuf->snextc();
+
+						if (c != special_chars::l)
+							throw std::invalid_argument("");
+
+						rdbuf->sbumpc();
 					}
 				};
 			}
@@ -62,4 +70,4 @@ namespace peli
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_BOOLEAN_H
+#endif // PELI_DETAIL_PARSER_NULL_H

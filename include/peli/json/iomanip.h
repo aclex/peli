@@ -22,14 +22,36 @@
 
 #include <ostream>
 
+#include "peli/json/detail/printer/util.h"
+
 namespace peli
 {
 	namespace json
 	{
-		std::ostream& pretty(std::ostream& os);
-		std::wostream& pretty(std::wostream& os);
-		std::ostream& nopretty(std::ostream& os);
-		std::wostream& nopretty(std::wostream& os);
+		namespace detail
+		{
+			template<typename Ch> void pretty_template(std::basic_ostream<Ch>& os)
+			{
+				os.iword(printer::flag_storage_index()) |= printer::flag::pretty;
+			}
+
+			template<typename Ch> void nopretty_template(std::basic_ostream<Ch>& os)
+			{
+				os.iword(printer::flag_storage_index()) &= !printer::flag::pretty;
+			}
+		}
+
+		template<typename Ch> std::basic_ostream<Ch>& pretty(std::basic_ostream<Ch>& os)
+		{
+			detail::pretty_template(os);
+			return os;
+		}
+
+		template<typename Ch> std::basic_ostream<Ch>& nopretty(std::basic_ostream<Ch>& os)
+		{
+			detail::nopretty_template(os);
+			return os;
+		}
 	}
 }
 

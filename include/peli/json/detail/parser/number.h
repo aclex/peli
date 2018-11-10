@@ -31,9 +31,9 @@
 
 #include "peli/json/number.h"
 
-#include "json/detail/parser/parser.h"
+#include "peli/json/detail/parser/parser.h"
 
-#include "json/detail/parser/stream_routines.h"
+#include "peli/json/detail/parser/stream_routines.h"
 
 namespace peli
 {

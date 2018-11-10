@@ -28,14 +28,31 @@ namespace peli
 	class bad_value_cast : public std::bad_cast
 	{
 	public:
-		bad_value_cast(const std::string& requested_type_name, const std::string& actual_type_name);
-		std::string requested_type_name() const;
-		std::string actual_type_name() const;
-		const char* what() const throw() override;
+		bad_value_cast(const std::string& requested_type_name, const std::string& actual_type_name) :
+			m_requested_type_name(requested_type_name),
+			m_actual_type_name(actual_type_name),
+			m_msg("Can't perform value cast: type " + m_requested_type_name + " was requested, but actual type is " + m_actual_type_name + '.')
+		{
+
+		}
+
+		std::string requested_type_name() const
+		{
+			return m_requested_type_name;
+		}
+
+		std::string actual_type_name() const
+		{
+			return m_actual_type_name;
+		}
+
+		const char* what() const throw() override
+		{
+			return m_msg.c_str();
+		}
 
 	private:
-		const std::string m_requested_type_name, m_actual_type_name;
-		std::string m_msg;
+		const std::string m_requested_type_name, m_actual_type_name, m_msg;
 	};
 }
 

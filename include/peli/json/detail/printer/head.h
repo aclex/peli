@@ -17,22 +17,32 @@
  *
  */
 
-#include "json/detail/printer/util.h"
+#ifndef PELI_DETAIL_PRINTER_HEAD_H
+#define PELI_DETAIL_PRINTER_HEAD_H
 
-#include <ios>
+#include "peli/json/detail/printer/stream_routines.h"
 
-using namespace peli::json::detail::printer;
-
-using namespace std;
-
-int peli::json::detail::printer::flag_storage_index()
+namespace peli
 {
-	static int i = ios_base::xalloc();
-	return i;
+	namespace json
+	{
+		namespace detail
+		{
+			namespace printer
+			{
+				template<typename T> class head
+				{
+					template<class> struct fake_dependency : public std::false_type { };
+
+				public:
+					template<typename Ch> static void print(std::basic_ostream<Ch>&, const T&)
+					{
+						static_assert(fake_dependency<T>::value, "Type is not supported for printing");
+					}
+				};
+			}
+		}
+	}
 }
 
-int peli::json::detail::printer::tab_level_storage_index()
-{
-	static int i = ios_base::xalloc();
-	return i;
-}
+#endif // PELI_DETAIL_PRINTER_HEAD_H

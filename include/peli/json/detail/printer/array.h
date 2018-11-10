@@ -17,10 +17,16 @@
  *
  */
 
-#ifndef PELI_DETAIL_PRINTER_HEAD_H
-#define PELI_DETAIL_PRINTER_HEAD_H
+#ifndef PELI_DETAIL_PRINTER_ARRAY_H
+#define PELI_DETAIL_PRINTER_ARRAY_H
 
-#include "json/detail/printer/stream_routines.h"
+#include <ostream>
+
+#include "peli/json/array.h"
+
+#include "peli/json/detail/printer/stream_routines.h"
+
+#include "peli/json/detail/special_chars.h"
 
 namespace peli
 {
@@ -30,14 +36,39 @@ namespace peli
 		{
 			namespace printer
 			{
-				template<typename T> class head
+				template<> struct head<json::array>
 				{
-					template<class> struct fake_dependency : public std::false_type { };
-
-				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>&, const T&)
+					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const peli::json::array& arr)
 					{
-						static_assert(fake_dependency<T>::value, "Type is not supported for printing");
+						using namespace special_chars;
+
+						put_structure_newline(os);
+
+						os.rdbuf()->sputc(left_square);
+
+						if (!arr.empty())
+						{
+							put_newline(os);
+						}
+
+						++(tab_level(os));
+
+						for (auto it = arr.cbegin(); it != arr.cend(); ++it)
+						{
+							put_tab_spacing(os);
+							os << *it;
+
+							if (it != --arr.cend())
+								os.rdbuf()->sputc(comma);
+
+							put_newline(os);
+						}
+
+						--(tab_level(os));
+
+						put_tab_spacing(os);
+
+						os.rdbuf()->sputc(right_square);
 					}
 				};
 			}
@@ -45,4 +76,4 @@ namespace peli
 	}
 }
 
-#endif // PELI_DETAIL_PRINTER_HEAD_H
+#endif // PELI_DETAIL_PRINTER_ARRAY_H
