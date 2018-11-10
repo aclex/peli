@@ -158,8 +158,7 @@ namespace peli
 				return ns::get<T>(m_variant);
 			}
 
-			friend std::ostream& operator<<(std::ostream& os, const value& v);
-			friend std::wostream& operator<<(std::wostream& os, const value& v);
+			template<typename Ch> friend std::basic_ostream<Ch>& operator<<(std::basic_ostream<Ch>& os, const value& v);
 
 			template<typename T> friend inline value make_value()
 			{
@@ -169,13 +168,9 @@ namespace peli
 		private:
 			variant_type m_variant;
 		};
-
-		std::istream& operator>>(std::istream& is, value& v);
-		std::wistream& operator>>(std::wistream& is, value& v);
-
-		std::ostream& operator<<(std::ostream& os, const value& v);
-		std::wostream& operator<<(std::wostream& os, const value& v);
 	}
 }
+
+#include "peli/json/value.tcc"
 
 #endif // PELI_JSON_VALUE_H
