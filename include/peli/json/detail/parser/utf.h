@@ -106,7 +106,7 @@ namespace peli
 							return result;
 						}
 
-						std::uint_fast32_t surrogate_to_wide(std::uint16_t leading_surrogate, std::uint16_t trailing_surrogate)
+						inline std::uint_fast32_t surrogate_to_wide(std::uint16_t leading_surrogate, std::uint16_t trailing_surrogate)
 						{
 							// Take care of surrogate pairs first
 							if (!is_lead_surrogate(leading_surrogate) || !is_trail_surrogate(trailing_surrogate))
@@ -116,34 +116,34 @@ namespace peli
 						}
 
 						template<typename Ch, typename std::enable_if<sizeof(Ch) == 2>::type...>
-						std::basic_string<Ch> wide_convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate)
+						inline std::basic_string<Ch> wide_convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate)
 						{
 							return std::basic_string<Ch> { static_cast<Ch>(leading_surrogate), static_cast<Ch>(trailing_surrogate) };
 						}
 
 						template<typename Ch, typename std::enable_if<sizeof(Ch) == 4>::type...>
-						std::basic_string<Ch> wide_convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate)
+						inline std::basic_string<Ch> wide_convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate)
 						{
 							return std::basic_string<Ch> { static_cast<Ch>(surrogate_to_wide(leading_surrogate, trailing_surrogate)) };
 						}
 					}
 
-					template<typename Ch> std::basic_string<Ch> convert(std::uint_fast16_t cp)
+					template<typename Ch> inline std::basic_string<Ch> convert(std::uint_fast16_t cp)
 					{
 						return std::basic_string<Ch> { static_cast<Ch>(cp) };
 					}
 
-					template<> std::basic_string<char> convert(std::uint_fast16_t cp)
+					template<> inline std::basic_string<char> convert(std::uint_fast16_t cp)
 					{
 						return detail::wide_to_char(cp);
 					}
 
-					template<typename Ch> std::basic_string<Ch> convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate)
+					template<typename Ch> inline std::basic_string<Ch> convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate)
 					{
 						return detail::wide_convert<Ch>(leading_surrogate, trailing_surrogate);
 					}
 
-					template<> std::basic_string<char> convert(uint_fast16_t leading_surrogate, uint_fast16_t trailing_surrogate)
+					template<> inline std::basic_string<char> convert(uint_fast16_t leading_surrogate, uint_fast16_t trailing_surrogate)
 					{
 						return detail::wide_to_char(detail::surrogate_to_wide(leading_surrogate, trailing_surrogate));
 					}
