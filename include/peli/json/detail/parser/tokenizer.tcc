@@ -78,7 +78,7 @@ template<typename Ch, typename Alloc> peli::json::value peli::json::detail::pars
 {
 	if (!typename std::basic_istream<Ch, Alloc>::sentry(is, true))
 	{
-		throw std::invalid_argument("");
+		return peli::json::value { };
 	}
 
 	return peli::json::detail::parser::tokenizer::tok(is.rdbuf());
