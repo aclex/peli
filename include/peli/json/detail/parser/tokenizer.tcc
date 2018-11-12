@@ -66,8 +66,21 @@ template<typename Ch> peli::json::value peli::json::detail::parser::tokenizer::t
 	case special_chars::f:
 		return value(parser<bool>::parse(rdbuf));
 
-	default:
+	case special_chars::minus:
+	case special_chars::d0:
+	case special_chars::d1:
+	case special_chars::d2:
+	case special_chars::d3:
+	case special_chars::d4:
+	case special_chars::d5:
+	case special_chars::d6:
+	case special_chars::d7:
+	case special_chars::d8:
+	case special_chars::d9:
 		return value(parser<number>::parse(rdbuf));
+
+	default:
+		return value();
 	}
 
 	assert("No way here");

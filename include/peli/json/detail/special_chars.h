@@ -57,7 +57,18 @@ namespace peli
 				constexpr const char t = 0x74; // 't'
 				constexpr const char u = 0x75; // 'u'
 
+				constexpr const char minus = 0x2d; // '-'
+
 				constexpr const char d0 = 0x30; // '0'
+				constexpr const char d1 = 0x31; // '1'
+				constexpr const char d2 = 0x32; // '2'
+				constexpr const char d3 = 0x33; // '3'
+				constexpr const char d4 = 0x34; // '4'
+				constexpr const char d5 = 0x35; // '5'
+				constexpr const char d6 = 0x36; // '6'
+				constexpr const char d7 = 0x37; // '7'
+				constexpr const char d8 = 0x38; // '8'
+				constexpr const char d9 = 0x39; // '9'
 			}
 		}
 	}
