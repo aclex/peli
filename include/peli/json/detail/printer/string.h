@@ -66,7 +66,6 @@ namespace peli
 						// special characters
 						case quote:
 						case backslash:
-						case slash:
 							os.rdbuf()->sputc(backslash);
 							os.rdbuf()->sputc(c);
 							break;
