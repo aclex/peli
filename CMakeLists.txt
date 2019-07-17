@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake/common/Modules/")
 
 include(GitVersion)
@@ -35,14 +36,6 @@ else()
 
 endif()
 
-
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-	target_compile_options(peli INTERFACE -Wall -Wextra -Wpedantic -Werror)
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-	target_compile_options(peli INTERFACE -Wall -Wextra -pedantic -Werror)
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-	target_compile_options(peli INTERFACE /W4 /wd4244 /wd4805 /wd4389 /WX)
-endif ()
 
 set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_INCLUDEDIR}")
 configure_file(${PROJECT_SOURCE_DIR}/cmake/peli-config.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/peli-config.cmake" @ONLY)

@@ -1,5 +1,9 @@
 include(NewTest)
 
+include(ApplyStrictCompileOptions)
+
+apply_strict_compile_options_to_this_directory()
+
 new_test(value_shell_default_ctor.cpp peli)
 new_test(value_shell_copy_ctor.cpp peli)
 new_test(value_shell_move_ctor.cpp peli)
