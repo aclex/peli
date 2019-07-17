@@ -36,14 +36,37 @@ else()
 
 endif()
 
+include(CMakePackageConfigHelpers)
+set(CONFIG_PACKAGE_INSTALL_DIR lib/cmake/${PROJECT_NAME})
 
-set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_INCLUDEDIR}")
-configure_file(${PROJECT_SOURCE_DIR}/cmake/peli-config.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/peli-config.cmake" @ONLY)
+write_basic_package_version_file(
+	${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
+	VERSION ${PROJECT_VERSION}
+	COMPATIBILITY SameMajorVersion
+	)
+
+install(TARGETS peli
+	EXPORT peli-targets
+	PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+configure_package_config_file(
+	${PROJECT_SOURCE_DIR}/cmake/config.cmake.in
+	${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
+	INSTALL_DESTINATION ${CONFIG_PACKAGE_INSTALL_DIR}
+	PATH_VARS CMAKE_INSTALL_FULL_INCLUDEDIR
+	)
+
+install(EXPORT ${PROJECT_NAME}-targets DESTINATION ${CONFIG_PACKAGE_INSTALL_DIR})
+install(FILES
+	${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
+	${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
+	DESTINATION ${CONFIG_PACKAGE_INSTALL_DIR}
+	)
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/peli DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(TARGETS peli EXPORT peli-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(EXPORT peli-targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/peli)
-install(FILES ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/peli-config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/peli)
+
+add_uninstall_target()
+
 
 if (BUILD_EXAMPLES)
 	add_subdirectory(example)
