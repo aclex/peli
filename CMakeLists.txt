@@ -29,7 +29,7 @@ if ("cxx_std_17" IN_LIST CMAKE_CXX_COMPILE_FEATURES AND NOT USE_INTERNAL_VARIANT
 else()
 	message("Using internal `variant`")
 	target_compile_features(peli INTERFACE cxx_std_14)
-	target_compile_definitions("-DINTERNAL_VARIANT")
+	target_compile_definitions(peli INTERFACE INTERNAL_VARIANT)
 
 endif()
 
