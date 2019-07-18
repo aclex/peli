@@ -98,6 +98,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
           packages:
+            - g++-5
             - clang-3.6
       env:
         - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
@@ -109,12 +110,12 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-8.0
+            - llvm-toolchain-trusty-7
           packages:
             - g++-8
-            - clang-8.0
+            - clang-7.0
       env:
-        - MATRIX_EVAL="CC=clang-8.0 && CXX=clang++-8.0"
+        - MATRIX_EVAL="CC=clang-7.0 && CXX=clang++-7.0"
         - BUILD_CONFIGURATION=Release
         - USE_INTERNAL_VARIANT=True
 
@@ -147,6 +148,33 @@ matrix:
         - BUILD_CONFIGURATION=Debug
         - USE_INTERNAL_VARIANT=False
 
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env:
+        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+        - BUILD_CONFIGURATION=Debug
+        - USE_INTERNAL_VARIANT=False
+        - CALC_COVERAGE=1
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-7
+          packages:
+            - g++-8
+            - clang-7.0
+      env:
+        - MATRIX_EVAL="CC=clang-7.0 && CXX=clang++-7.0"
+        - BUILD_CONFIGURATION=Debug
+        - USE_INTERNAL_VARIANT=False
+
     # 'Release' build type
     - os: linux
       addons:
@@ -171,6 +199,32 @@ matrix:
             - clang-4.0
       env:
         - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+        - BUILD_CONFIGURATION=Release
+        - USE_INTERNAL_VARIANT=False
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env:
+        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+        - BUILD_CONFIGURATION=Release
+        - USE_INTERNAL_VARIANT=False
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-7
+          packages:
+            - g++-8
+            - clang-7
+      env:
+        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
         - BUILD_CONFIGURATION=Release
         - USE_INTERNAL_VARIANT=False
 
