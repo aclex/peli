@@ -17,6 +17,7 @@
  *
  */
 
+#include <type_traits>
 #include <cassert>
 
 #include "peli/json/value.h"
@@ -33,7 +34,7 @@ int main(int, char**)
 
 	json::value v2;
 
-	static_assert(noexcept(declval<json::value>().operator=(std::move(v2))), "Move assignment isn't noexcept");
+	static_assert(std::is_nothrow_move_assignable<json::value>::value, "Move assignment isn't noexcept");
 
 	v2 = std::move(v1);
 

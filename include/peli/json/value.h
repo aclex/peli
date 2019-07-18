@@ -68,6 +68,7 @@ namespace peli
 				std::basic_string<Ch> operator()(U);
 			};
 
+		public:
 #ifdef INTERNAL_VARIANT
 			typedef detail::variant::variant
 			<
@@ -86,7 +87,6 @@ namespace peli
 
 			typedef deduction_helper deduction_helper_type;
 
-		public:
 			value() = default;
 
 			template<typename Ch> explicit value(const peli::json::basic_object<Ch>& obj) : m_variant(obj) { }

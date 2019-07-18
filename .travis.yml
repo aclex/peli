@@ -1,4 +1,5 @@
 dist: trusty
+# dist: xenial
 sudo: false
 
 language: cpp
@@ -123,18 +124,18 @@ matrix:
 
     # `std::variant` implementation
     # 'Debug' build type
-    # - os: linux
-    #   addons:
-    #     apt:
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-    #       packages:
-    #         - g++-7
-    #   env:
-    #     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-    #     - BUILD_CONFIGURATION=Debug
-    #     - USE_INTERNAL_VARIANT=False
-    #     - CALC_COVERAGE=1
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+        - BUILD_CONFIGURATION=Debug
+        - USE_INTERNAL_VARIANT=False
+        - CALC_COVERAGE=1
 
     # - os: linux
     #   addons:
@@ -150,32 +151,32 @@ matrix:
     #     - BUILD_CONFIGURATION=Debug
     #     - USE_INTERNAL_VARIANT=False
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-        - BUILD_CONFIGURATION=Debug
-        - USE_INTERNAL_VARIANT=False
-        - CALC_COVERAGE=1
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - g++-8
+    #   env:
+    #     - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+    #     - BUILD_CONFIGURATION=Debug
+    #     - USE_INTERNAL_VARIANT=False
+    #     - CALC_COVERAGE=1
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-7
-          packages:
-            - libstdc++-8-dev
-            - clang-7
-      env:
-        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
-        - BUILD_CONFIGURATION=Debug
-        - USE_INTERNAL_VARIANT=False
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #         - llvm-toolchain-trusty-7
+    #       packages:
+    #         - libstdc++-8-dev
+    #         - clang-7
+    #   env:
+    #     - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
+    #     - BUILD_CONFIGURATION=Debug
+    #     - USE_INTERNAL_VARIANT=False
 
     # 'Release' build type
     # - os: linux
