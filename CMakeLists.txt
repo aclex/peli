@@ -17,10 +17,13 @@ project(peli
 include(GNUInstallDirs)
 include(AddUninstallTarget)
 
+add_subdirectory(dep)
+
 set(USE_INTERNAL_VARIANT FALSE CACHE STRING "Force using the internal `variant` implementation, rather than `std::variant`, even if it's available.")
 
 add_library(peli INTERFACE)
 target_include_directories(peli INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
+target_link_libraries(peli INTERFACE floaxie)
 
 if ("cxx_std_17" IN_LIST CMAKE_CXX_COMPILE_FEATURES AND NOT USE_INTERNAL_VARIANT)
 	target_compile_features(peli INTERFACE cxx_std_17)

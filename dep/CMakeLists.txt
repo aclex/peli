@@ -1,0 +1,3 @@
+include(AddCleanTargetSubdirectory)
+
+add_clean_target_subdirectory(floaxie)
