@@ -33,7 +33,7 @@ int main(int, char**)
 
 	json::value v2;
 
-	static_assert(noexcept(json::value() = std::move(v2)), "Move assignment isn't noexcept");
+	static_assert(noexcept(declval<json::value>().operator=(std::move(v2))), "Move assignment isn't noexcept");
 
 	v2 = std::move(v1);
 
