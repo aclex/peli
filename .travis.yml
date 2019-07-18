@@ -46,6 +46,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
           packages:
+            - g++-5
             - clang-3.6
       env:
         - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
@@ -57,12 +58,12 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-8.0
+            - llvm-toolchain-trusty-7
           packages:
-            - g++-7
-            - clang-8.0
+            - g++-8
+            - clang-7
       env:
-        - MATRIX_EVAL="CC=clang-8.0 && CXX=clang++-8.0"
+        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
         - BUILD_CONFIGURATION=Debug
         - USE_INTERNAL_VARIANT=True
 
@@ -113,9 +114,9 @@ matrix:
             - llvm-toolchain-trusty-7
           packages:
             - g++-8
-            - clang-7.0
+            - clang-7
       env:
-        - MATRIX_EVAL="CC=clang-7.0 && CXX=clang++-7.0"
+        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
         - BUILD_CONFIGURATION=Release
         - USE_INTERNAL_VARIANT=True
 
@@ -169,9 +170,9 @@ matrix:
             - llvm-toolchain-trusty-7
           packages:
             - g++-8
-            - clang-7.0
+            - clang-7
       env:
-        - MATRIX_EVAL="CC=clang-7.0 && CXX=clang++-7.0"
+        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
         - BUILD_CONFIGURATION=Debug
         - USE_INTERNAL_VARIANT=False
 
