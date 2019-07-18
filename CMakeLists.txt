@@ -47,6 +47,7 @@ write_basic_package_version_file(
 
 install(TARGETS peli
 	EXPORT peli-targets
+	INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 configure_package_config_file(
