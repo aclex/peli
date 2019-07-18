@@ -1,6 +1,6 @@
 Peli
 ======
-[![Build Status in GCC/Clang](https://travis-ci.org/aclex/peli.svg?branch=master)](https://travis-ci.org/aclex/peli) [![Build status in Visual Studio](https://ci.appveyor.com/api/projects/status/nhidn1n2o66etirk?svg=true)](https://ci.appveyor.com/project/aclex/peli) [![Code coverage](https://codecov.io/gh/aclex/peli/branch/master/graph/badge.svg)](https://codecov.io/gh/aclex/peli)
+[![Build Status in GCC/Clang](https://travis-ci.org/aclex/peli.svg?branch=master)](https://travis-ci.org/aclex/peli) [![Build status in Visual Studio](https://ci.appveyor.com/api/projects/status/2d028d4f4lt67ejr?svg=true)](https://ci.appveyor.com/project/aclex/peli) [![Code coverage](https://codecov.io/gh/aclex/peli/branch/master/graph/badge.svg)](https://codecov.io/gh/aclex/peli)
 
 Peli is C++14/C++17 header-only library for parsing and printing files in [JSON](https://json.org/) format. It tries to use `std::variant`, if ever possible (i.e. when being built with C++17-enabled compiler), but can use internal variant type implementation otherwise.
 
