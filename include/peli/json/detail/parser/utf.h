@@ -115,13 +115,13 @@ namespace peli
 							return (leading_surrogate << 10) + trailing_surrogate + SURROGATE_OFFSET;
 						}
 
-						template<typename Ch, std::enable_if_t<sizeof(Ch) == 2, bool> = {}>
+						template<typename Ch, std::enable_if_t<sizeof(Ch) == 2, bool> = false>
 						inline std::basic_string<Ch> wide_convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate)
 						{
 							return std::basic_string<Ch> { static_cast<Ch>(leading_surrogate), static_cast<Ch>(trailing_surrogate) };
 						}
 
-						template<typename Ch, std::enable_if_t<sizeof(Ch) == 4, bool> = {}>
+						template<typename Ch, std::enable_if_t<sizeof(Ch) == 4, bool> = false>
 						inline std::basic_string<Ch> wide_convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate)
 						{
 							return std::basic_string<Ch> { static_cast<Ch>(surrogate_to_wide(leading_surrogate, trailing_surrogate)) };
