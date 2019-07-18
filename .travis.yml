@@ -15,140 +15,140 @@ matrix:
   include:
     # Internal variant implementation
     # 'Debug' build type
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-        - BUILD_CONFIGURATION=Debug
-        - USE_INTERNAL_VARIANT=True
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - g++-5
+    #   env:
+    #     - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+    #     - BUILD_CONFIGURATION=Debug
+    #     - USE_INTERNAL_VARIANT=True
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-        - BUILD_CONFIGURATION=Debug
-        - USE_INTERNAL_VARIANT=True
-        - CALC_COVERAGE=1
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - g++-8
+    #   env:
+    #     - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+    #     - BUILD_CONFIGURATION=Debug
+    #     - USE_INTERNAL_VARIANT=True
+    #     - CALC_COVERAGE=1
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-          packages:
-            - g++-5
-            - clang-3.6
-      env:
-        - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
-        - BUILD_CONFIGURATION=Debug
-        - USE_INTERNAL_VARIANT=True
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #         - llvm-toolchain-precise-3.6
+    #       packages:
+    #         - g++-5
+    #         - clang-3.6
+    #   env:
+    #     - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
+    #     - BUILD_CONFIGURATION=Debug
+    #     - USE_INTERNAL_VARIANT=True
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-7
-          packages:
-            - g++-8
-            - clang-7
-      env:
-        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
-        - BUILD_CONFIGURATION=Debug
-        - USE_INTERNAL_VARIANT=True
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #         - llvm-toolchain-trusty-7
+    #       packages:
+    #         - g++-8
+    #         - clang-7
+    #   env:
+    #     - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
+    #     - BUILD_CONFIGURATION=Debug
+    #     - USE_INTERNAL_VARIANT=True
 
     # 'Release' build type
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-        - BUILD_CONFIGURATION=Release
-        - USE_INTERNAL_VARIANT=True
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - g++-5
+    #   env:
+    #     - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+    #     - BUILD_CONFIGURATION=Release
+    #     - USE_INTERNAL_VARIANT=True
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-        - BUILD_CONFIGURATION=Release
-        - USE_INTERNAL_VARIANT=True
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - g++-8
+    #   env:
+    #     - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+    #     - BUILD_CONFIGURATION=Release
+    #     - USE_INTERNAL_VARIANT=True
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-          packages:
-            - g++-5
-            - clang-3.6
-      env:
-        - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
-        - BUILD_CONFIGURATION=Release
-        - USE_INTERNAL_VARIANT=True
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #         - llvm-toolchain-precise-3.6
+    #       packages:
+    #         - g++-5
+    #         - clang-3.6
+    #   env:
+    #     - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
+    #     - BUILD_CONFIGURATION=Release
+    #     - USE_INTERNAL_VARIANT=True
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-7
-          packages:
-            - g++-8
-            - clang-7
-      env:
-        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
-        - BUILD_CONFIGURATION=Release
-        - USE_INTERNAL_VARIANT=True
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #         - llvm-toolchain-trusty-7
+    #       packages:
+    #         - g++-8
+    #         - clang-7
+    #   env:
+    #     - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
+    #     - BUILD_CONFIGURATION=Release
+    #     - USE_INTERNAL_VARIANT=True
 
     # `std::variant` implementation
     # 'Debug' build type
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-      env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-        - BUILD_CONFIGURATION=Debug
-        - USE_INTERNAL_VARIANT=False
-        - CALC_COVERAGE=1
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - g++-7
+    #   env:
+    #     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    #     - BUILD_CONFIGURATION=Debug
+    #     - USE_INTERNAL_VARIANT=False
+    #     - CALC_COVERAGE=1
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-4.0
-          packages:
-            - g++-7
-            - clang-4.0
-      env:
-        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
-        - BUILD_CONFIGURATION=Debug
-        - USE_INTERNAL_VARIANT=False
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #         - llvm-toolchain-trusty-4.0
+    #       packages:
+    #         - g++-7
+    #         - clang-4.0
+    #   env:
+    #     - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+    #     - BUILD_CONFIGURATION=Debug
+    #     - USE_INTERNAL_VARIANT=False
 
     - os: linux
       addons:
@@ -178,57 +178,57 @@ matrix:
         - USE_INTERNAL_VARIANT=False
 
     # 'Release' build type
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-      env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-        - BUILD_CONFIGURATION=Release
-        - USE_INTERNAL_VARIANT=False
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - g++-7
+    #   env:
+    #     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    #     - BUILD_CONFIGURATION=Release
+    #     - USE_INTERNAL_VARIANT=False
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-4.0
-          packages:
-            - g++-7
-            - clang-4.0
-      env:
-        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
-        - BUILD_CONFIGURATION=Release
-        - USE_INTERNAL_VARIANT=False
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #         - llvm-toolchain-trusty-4.0
+    #       packages:
+    #         - g++-7
+    #         - clang-4.0
+    #   env:
+    #     - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+    #     - BUILD_CONFIGURATION=Release
+    #     - USE_INTERNAL_VARIANT=False
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-        - BUILD_CONFIGURATION=Release
-        - USE_INTERNAL_VARIANT=False
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - g++-8
+    #   env:
+    #     - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+    #     - BUILD_CONFIGURATION=Release
+    #     - USE_INTERNAL_VARIANT=False
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-7
-          packages:
-            - g++-8
-            - clang-7
-      env:
-        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
-        - BUILD_CONFIGURATION=Release
-        - USE_INTERNAL_VARIANT=False
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #         - llvm-toolchain-trusty-7
+    #       packages:
+    #         - g++-8
+    #         - clang-7
+    #   env:
+    #     - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
+    #     - BUILD_CONFIGURATION=Release
+    #     - USE_INTERNAL_VARIANT=False
 
 install:
     - DEPS_DIR="${HOME}/deps"
