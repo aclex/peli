@@ -63,7 +63,10 @@ install(FILES
 	DESTINATION ${CONFIG_PACKAGE_INSTALL_DIR}
 	)
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/peli DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY
+	${PROJECT_SOURCE_DIR}/include/peli
+	${PROJECT_SOURCE_DIR}/dep/floaxie/include/floaxie
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 add_uninstall_target()
 
