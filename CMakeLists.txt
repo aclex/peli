@@ -16,9 +16,6 @@ project(peli
 
 include(GNUInstallDirs)
 include(AddUninstallTarget)
-include(GeneratePcFile)
-include(VersionRoutines)
-include(PrefixSuffix)
 
 set(USE_INTERNAL_VARIANT FALSE CACHE STRING "Force using the internal `variant` implementation, rather than `std::variant`, even if it's available.")
 
