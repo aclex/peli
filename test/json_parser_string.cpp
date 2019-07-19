@@ -156,6 +156,4 @@ int main(int, char**)
 	const int ur = check_u_escapes();
 
 	return ur;
-
-	return 0;
 }

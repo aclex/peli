@@ -120,6 +120,4 @@ int main(int, char**)
 	const int tr = check_two();
 
 	return tr;
-
-	return 0;
 }

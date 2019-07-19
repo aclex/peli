@@ -82,8 +82,6 @@ template<typename Ch> peli::json::value peli::json::detail::parser::tokenizer::t
 	default:
 		return value();
 	}
-
-	assert("No way here");
 }
 
 

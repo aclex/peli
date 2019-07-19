@@ -154,6 +154,4 @@ int main(int, char**)
 	const int rr = check_redundant();
 
 	return rr;
-
-	return 0;
 }
