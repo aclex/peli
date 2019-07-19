@@ -17,6 +17,7 @@
  *
  */
 
+#include <type_traits>
 #include <cassert>
 
 #include "peli/json/value.h"
@@ -31,7 +32,7 @@ int main(int, char**)
 	json::object& obj1(v1);
 	obj1["test"] = json::value(52);
 
-	static_assert(noexcept(json::value(std::move(v1))), "Move constructor isn't noexcept");
+	static_assert(std::is_nothrow_move_constructible<json::value>::value, "Move constructor isn't noexcept");
 
 	json::value v2(std::move(v1));
 	json::object& obj2(v2);
