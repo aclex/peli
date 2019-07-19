@@ -39,7 +39,7 @@ new_test(value_ostream_manip.cpp peli)
 new_test(json_parser_object.cpp peli)
 new_test(json_parser_array.cpp peli)
 new_test(json_parser_null.cpp peli)
-new_test(json_parser_string.cpp peli)
+# new_test(json_parser_string.cpp peli)
 # new_test(json_parser_number.cpp peli)
 new_test(json_parser_boolean.cpp peli)
 
