@@ -32,6 +32,7 @@
 #include <memory>
 
 #include <peli/detail/template_snippets/contains.h>
+#include <peli/detail/template_snippets/check_in_pack.h>
 #include <peli/detail/template_snippets/templated_visitor.h>
 
 namespace peli
@@ -126,24 +127,8 @@ namespace peli
 					}
 
 				protected:
-					template<typename U,
-					bool Cond = std::is_trivial<U>::value,
-					typename std::enable_if<Cond, int>::type = 0>
-					explicit value_holder_template(U v) noexcept : m_value(v) { }
-
-					template<typename U,
-					bool Cond = !std::is_trivial<typename std::decay<U>::type>::value,
-					typename std::enable_if<Cond, int>::type = 0>
-					explicit value_holder_template(const U& v) noexcept(T(std::forward<U>(v))) : m_value(v) { }
-
-					template<typename U,
-					bool Cond = !std::is_trivial<typename std::decay<U>::type>::value,
-					typename std::enable_if<Cond, int>::type = 0>
-					explicit value_holder_template(U&& v) noexcept(internal::is_nothrow_swappable<U>())
-					{
-						using std::swap;
-						swap(this->m_value, v);
-					}
+					template<typename U>
+					explicit value_holder_template(U&& v) noexcept(noexcept(T(v))) : m_value(v) { }
 
 				private:
 					T m_value;
@@ -188,7 +173,7 @@ namespace peli
 				{
 					static_type_check<U>();
 
-					new (&m_data) proper_value_holder<typename std::decay<U>::type>(std::forward<U>(v));
+					new (&m_data) proper_value_holder<typename std::decay<U>::type>(std::forward<typename std::decay<U>::type>(v));
 				}
 
 				variant& operator=(const variant& v)
@@ -284,10 +269,20 @@ namespace peli
 				template<typename T, typename... Types> friend const T& get(const variant<Types...>& v);
 				template<typename T, typename... Types> friend T& get(variant<Types...>& v);
 
-				template<typename T> constexpr void static_type_check() const
+				template<typename U> struct try_construct_from
 				{
-					static_assert(template_snippets::contains<typename std::decay<T>::type, Ts...>::value,
-							"Type is not supported by this variant specialization");
+					template<typename F> using type = std::is_constructible<F, U>;
+				};
+
+				template<typename U> constexpr void static_type_check() const
+				{
+					static_assert(
+						::template_snippets::check_any_in_pack
+						<
+							try_construct_from<U>::template type,
+							Ts...
+						>::value,
+						"Type is not supported by this variant specialization");
 				}
 
 				template<typename T> void runtime_type_check() const

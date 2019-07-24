@@ -26,19 +26,19 @@ using namespace peli;
 int main(int, char**)
 {
 	json::object sample;
-	sample["test"] = json::value(52);
+	sample["test"] = json::number { 52 };
 
 	json::value v(sample);
-	json::object& obj(v);
+	json::object& obj(get<json::object>(v));
 
 	if (sample != obj)
 		return -1;
 
 	json::wobject wsample;
-	wsample[L"wtest"] = json::value(64);
+	wsample[L"wtest"] = json::number { 64 };
 
 	json::value wv(wsample);
-	json::wobject& wobj(wv);
+	json::wobject& wobj(get<json::wobject>(wv));
 
 	if (wsample != wobj)
 		return -2;

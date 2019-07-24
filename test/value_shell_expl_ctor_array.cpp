@@ -26,11 +26,11 @@ using namespace peli;
 int main(int, char**)
 {
 	json::array sample;
-	sample.push_back(json::value(42));
-	sample.push_back(json::value(L"wtest"));
+	sample.push_back(json::number { 42 });
+	sample.push_back(L"wtest");
 
 	json::value v(sample);
-	json::array& arr(v);
+	json::array& arr(get<json::array>(v));
 
 	if (sample != arr)
 		return -1;

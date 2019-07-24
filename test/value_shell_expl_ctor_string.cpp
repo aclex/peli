@@ -29,7 +29,7 @@ int main(int, char**)
 	sample = "test";
 
 	json::value v(sample);
-	std::string& str(v);
+	std::string& str(get<std::string>(v));
 
 	if (sample != str)
 		return -1;
@@ -38,7 +38,7 @@ int main(int, char**)
 	wsample = L"wtest";
 
 	json::value wv(wsample);
-	std::wstring& wstr(wv);
+	std::wstring& wstr(get<std::wstring>(wv));
 
 	if (wsample != wstr)
 		return -2;

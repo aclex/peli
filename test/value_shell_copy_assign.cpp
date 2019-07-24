@@ -30,12 +30,12 @@ int main(int, char**)
 	json::object obj;
 	obj["object"] = json::make_value<json::object>();
 
-	json::object& inner_obj(obj["object"]);
-	inner_obj["inner_number"] = json::value(42);
+	json::object& inner_obj(get<json::object>(obj["object"]));
+	inner_obj["inner_number"] = json::number { 42 };
 
 	json::value v1(json::make_value<json::object>());
-	json::object& obj1(v1);
-	obj1["test"] = json::value(52);
+	json::object& obj1(get<json::object>(v1));
+	obj1["test"] = json::number { 52 };
 
 	json::value v2;
 
@@ -43,7 +43,7 @@ int main(int, char**)
 
 	assert(v1 == v2);
 
-	json::object& obj2(v2);
+	json::object& obj2(get<json::object>(v2));
 	auto c = obj2["test"];
 
 	assert(&obj1 != &obj2);

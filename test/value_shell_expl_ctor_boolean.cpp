@@ -28,7 +28,7 @@ int main(int, char**)
 	bool sample(true);
 
 	json::value v(sample);
-	bool b(v);
+	bool b(get<bool>(v));
 
 	if (sample != b)
 		return -1;

@@ -29,15 +29,15 @@ int main(int, char**)
 {
 	json::object a;
 	json::value v1(a);
-	json::object& obj1(v1);
-	obj1["test"] = json::value(52);
+	json::object& obj1(get<json::object>(v1));
+	obj1["test"] = json::number { 52 };
 
 	json::value v2(v1);
 
 	assert(v1 == v2);
 
-	json::object& obj2(v2);
-	obj2["test"] = json::value(53);
+	json::object& obj2(get<json::object>(v2));
+	obj2["test"] = json::number { 53 };
 
 	assert(v1 != v2);
 
