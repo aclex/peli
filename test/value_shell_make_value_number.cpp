@@ -33,7 +33,7 @@ int main(int, char**)
 
 	try
 	{
-		json::number n(v);
+		json::number n(get<json::number>(v));
 		n = 42;
 		cout << n << endl;
 	}

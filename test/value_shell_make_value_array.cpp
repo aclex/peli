@@ -31,7 +31,7 @@ int main(int, char**)
 
 	try
 	{
-		json::array arr(v);
+		json::array arr(get<json::array>(v));
 	}
 	catch(...)
 	{

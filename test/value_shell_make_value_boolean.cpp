@@ -32,7 +32,7 @@ int main(int, char**)
 
 	try
 	{
-		bool s(v);
+		bool s(get<bool>(v));
 		s = false;
 		cout << s << endl;
 	}

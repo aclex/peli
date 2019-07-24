@@ -28,17 +28,17 @@ using namespace peli;
 int main(int, char**)
 {
 	json::object obj1;
-	obj1["test"] = json::value(52);
+	obj1["test"] = json::number { 52 };
 	const json::value v1(obj1);
 
-	json::object& obj2(v1);
+	json::object& obj2(get<json::object>(v1));
 	json::object obj3(obj2);
 
 	assert(obj2 == obj1);
 	assert(&obj2 == &obj1);
 	assert(obj3 == obj1);
 
-	obj2["foo"] = json::value("bar");
+	obj2["foo"] = "bar";
 
 	assert(obj2 == obj1);
 	assert(obj3 != obj2);

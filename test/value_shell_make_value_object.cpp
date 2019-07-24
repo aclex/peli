@@ -31,7 +31,7 @@ int main(int, char**)
 
 	try
 	{
-		json::object obj(v);
+		json::object obj(get<json::object>(v));
 	}
 	catch(...)
 	{

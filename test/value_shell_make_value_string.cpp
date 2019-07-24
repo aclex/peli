@@ -33,8 +33,8 @@ int main(int, char**)
 
 	try
 	{
-		string s(v);
-		wstring ws(wv);
+		string s(get<string>(v));
+		wstring ws(get<wstring>(wv));
 	}
 	catch(...)
 	{

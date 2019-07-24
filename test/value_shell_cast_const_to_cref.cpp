@@ -26,11 +26,11 @@ using namespace peli;
 int main(int, char**)
 {
 	json::object obj1;
-	obj1["test"] = json::value(52);
+	obj1["test"] = json::number { 52 };
 	const json::value v1(obj1);
 
-	const json::object& obj2(v1);
-	json::object obj3(v1);
+	const json::object& obj2(get<json::object>(v1));
+	json::object obj3(get<json::object>(v1));
 
 	if (obj2 != obj1)
 		return -1;
@@ -38,7 +38,7 @@ int main(int, char**)
 	if (obj3 != obj1)
 		return -2;
 
-	obj3["foo"] = json::value("bar");
+	obj3["foo"] = "bar";
 
 	if (obj3 == obj1)
 		return -3;
