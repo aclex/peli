@@ -188,25 +188,12 @@ namespace peli
 						v.holder()->placement_move(&m_data);
 				}
 
-				template<typename U,
-				bool Cond = std::is_trivial<U>::value,
-				typename std::enable_if<Cond, int>::type = 0>
-				explicit variant(U v) noexcept : m_valid(true)
+				template<typename U>
+				variant(U&& v) noexcept(noexcept(proper_value_holder<typename std::decay<U>::type>(std::forward<typename std::decay<U>::type>(v)))) : m_valid(true)
 				{
 					static_type_check<U>();
 
-					new (&m_data) proper_value_holder<U>(v);
-				}
-
-				template<typename U,
-				typename DecayedU = typename std::decay<U>::type,
-				bool Cond = !std::is_trivial<DecayedU>::value,
-				typename std::enable_if<Cond, int>::type = 0>
-				explicit variant(U&& v) noexcept(noexcept(proper_value_holder<DecayedU>(std::forward<U>(v)))) : m_valid(true)
-				{
-					static_type_check<U>();
-
-					new (&m_data) proper_value_holder<DecayedU>(std::forward<U>(v));
+					new (&m_data) proper_value_holder<typename std::decay<U>::type>(std::forward<U>(v));
 				}
 
 				variant& operator=(const variant& v)
@@ -235,6 +222,12 @@ namespace peli
 					m_valid = v.m_valid;
 
 					return *this;
+				}
+
+				template<typename U>
+				variant& operator=(U&& v) noexcept(noexcept(variant(std::forward<U>(v))))
+				{
+					return this->operator=(variant(std::forward<U>(v)));
 				}
 
 				constexpr bool valid() const noexcept
