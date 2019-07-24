@@ -30,9 +30,9 @@ using namespace peli;
 int main(int, char**)
 {
 	json::value v = json::make_value<json::object>();
-	json::object& obj(v);
-	obj["привет"] = json::value("мир");
-	obj["ты"] = json::value("добр");
+	json::object& obj(get<json::object>(v));
+	obj["привет"] = "мир";
+	obj["ты"] = "добр";
 
 	cout << "проверка:" << endl << v << endl;
 	cout << "проверка манипуляцией:" << endl << json::pretty << v << endl;

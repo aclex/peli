@@ -30,25 +30,28 @@ int main(int, char**)
 	json::object obj;
 	obj["object"] = json::make_value<json::object>();
 
-	json::object& inner_obj(obj["object"]);
-	inner_obj["inner_number"] = json::value(42);
-	obj["array"] = json::value(json::array { json::value(433.52), json::value("string_value") });
+	json::object& inner_obj(get<json::object>(obj["object"]));
+	inner_obj["inner_number"] = json::number { 42 };
+	obj["array"] = json::array { json::number { 433.52 }, "string_value"s };
 
-	json::array& arr(obj["array"]);
+	json::array& arr(get<json::array>(obj["array"]));
 
 	obj["boolean"] = json::make_value<bool>();
-	obj["boolean"] = json::value(true);
+	obj["boolean"] = true;
 
 	obj["null"] = json::value();
 
-	if (!obj["boolean"])
+	if (!get<bool>(obj["boolean"]))
 		return -1;
 
-	if (static_cast<string>(arr[1]) != "string_value")
+	if (get<json::number>(inner_obj["inner_number"]) != 42)
 		return -2;
 
-	if (static_cast<int>(inner_obj["inner_number"]) != 42)
+	if (get<json::number>(arr[0]) != 433.52)
 		return -3;
+
+	if (get<string>(arr[1]) != "string_value")
+		return -4;
 
 	return 0;
 }

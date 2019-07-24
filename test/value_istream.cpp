@@ -33,11 +33,11 @@ int main(int, char**)
 	json::value v;
 	istr >> v;
 
-	const auto& obj = static_cast<peli::json::object>(v);
+	const auto& obj = get<json::object>(v);
 
 	for (const auto& p : obj)
 	{
-		const auto& str = p.second;
+		const auto& str = get<string>(p.second);
 		cout << "проверка: " << p.first << " : " << str << endl;
 	}
 
