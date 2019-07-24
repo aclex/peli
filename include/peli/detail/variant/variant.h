@@ -86,6 +86,10 @@ namespace peli
 					value_holder_template(const value_holder_template&) = default;
 					value_holder_template(value_holder_template&& v) = default;
 
+					template<typename U>
+					explicit value_holder_template(U&& v) noexcept(noexcept(T(v))) : m_value(v) { }
+
+
 					void placement_copy(void* dest) const noexcept(std::is_nothrow_copy_constructible<T>::value) override
 					{
 						new (dest) value_holder_template(*this);
@@ -126,31 +130,11 @@ namespace peli
 						return typeid(T);
 					}
 
-				protected:
-					template<typename U>
-					explicit value_holder_template(U&& v) noexcept(noexcept(T(v))) : m_value(v) { }
-
 				private:
 					T m_value;
 				};
 
-				template<typename T> class trivial_value_holder : public value_holder_template<T>
-				{
-				public:
-					using value_holder_template<T>::value_holder_template;
-					explicit trivial_value_holder(T v) : value_holder_template<T>(v) { }
-				};
-
-				template<class T> class complex_value_holder : public value_holder_template<T>
-				{
-				public:
-					using value_holder_template<T>::value_holder_template;
-					explicit complex_value_holder(const T& v) : value_holder_template<T>(v) { }
-					explicit complex_value_holder(T&& v) noexcept : value_holder_template<T>(std::move(v)) { }
-				};
-
-				template<typename T> using proper_value_holder =
-					typename std::conditional<std::is_trivial<T>::value, trivial_value_holder<T>, complex_value_holder<T>>::type;
+				template<typename T> using proper_value_holder = value_holder_template<T>;
 
 				using data_t = typename std::aligned_union<0, proper_value_holder<typename std::decay<Ts>::type>...>::type;
 
@@ -169,11 +153,11 @@ namespace peli
 				}
 
 				template<typename U>
-				variant(U&& v) noexcept(noexcept(proper_value_holder<typename std::decay<U>::type>(std::forward<typename std::decay<U>::type>(v)))) : m_valid(true)
+				variant(U&& v) noexcept(noexcept(proper_value_holder<typename std::decay<U>::type>(std::forward<typename std::remove_reference<U>::type>(v)))) : m_valid(true)
 				{
 					static_type_check<U>();
 
-					new (&m_data) proper_value_holder<typename std::decay<U>::type>(std::forward<typename std::decay<U>::type>(v));
+					new (&m_data) proper_value_holder<typename std::decay<U>::type>(std::forward<typename std::remove_reference<U>::type>(v));
 				}
 
 				variant& operator=(const variant& v)
