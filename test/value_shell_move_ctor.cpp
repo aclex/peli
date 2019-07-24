@@ -29,14 +29,15 @@ using namespace peli;
 int main(int, char**)
 {
 	json::value v1(json::make_value<json::object>());
-	json::object& obj1(v1);
-	obj1["test"] = json::value(52);
+	json::object& obj1(get<json::object>(v1));
+	obj1["test"] = json::number { 52 };
 
-	static_assert(std::is_nothrow_move_constructible<json::value>::value, "Move constructor isn't noexcept");
+	// not guaranteed in Standard, though passes in GCC and Clang (not in MSVC)
+	// static_assert(std::is_nothrow_move_constructible<json::value>::value, "Move constructor isn't noexcept");
 
 	json::value v2(std::move(v1));
-	json::object& obj2(v2);
-	obj2["tost"] = json::value(false);
+	json::object& obj2(get<json::object>(v2));
+	obj2["tost"] = false;
 
 	return 0;
 }
