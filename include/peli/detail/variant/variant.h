@@ -83,19 +83,14 @@ namespace peli
 				public:
 					value_holder_template() = default;
 					value_holder_template(const value_holder_template&) = default;
+					value_holder_template(value_holder_template&& v) = default;
 
-					value_holder_template(value_holder_template&& v) noexcept
-					{
-						using std::swap;
-						swap(m_value, v.m_value);
-					}
-
-					void placement_copy(void* dest) const noexcept(std::is_nothrow_copy_constructible<value_holder_template>::value) override
+					void placement_copy(void* dest) const noexcept(std::is_nothrow_copy_constructible<T>::value) override
 					{
 						new (dest) value_holder_template(*this);
 					}
 
-					void placement_move(void* dest) noexcept override
+					void placement_move(void* dest) noexcept(std::is_nothrow_move_constructible<T>::value) override
 					{
 						new (dest) value_holder_template(std::move(*this));
 					}
@@ -139,7 +134,7 @@ namespace peli
 					template<typename U,
 					bool Cond = !std::is_trivial<typename std::decay<U>::type>::value,
 					typename std::enable_if<Cond, int>::type = 0>
-					explicit value_holder_template(const U& v) noexcept(std::is_nothrow_copy_constructible<U>::value) : m_value(v) { }
+					explicit value_holder_template(const U& v) noexcept(T(std::forward<U>(v))) : m_value(v) { }
 
 					template<typename U,
 					bool Cond = !std::is_trivial<typename std::decay<U>::type>::value,
