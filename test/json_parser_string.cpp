@@ -41,10 +41,10 @@ int check_empty()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& arr1(v1);
-	const json::array& arr2(v2);
-	json::array ch1 { json::value("") };
-	json::array ch2 { json::value(L"") };
+	const json::array& arr1(get<json::array>(v1));
+	const json::array& arr2(get<json::array>(v2));
+	json::array ch1 { ""s };
+	json::array ch2 { L""s };
 
 	if (arr1 != ch1)
 		return -1;
@@ -68,10 +68,10 @@ int check_plain()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& arr1(v1);
-	const json::array& arr2(v2);
-	json::array ch1 { json::value("проверка обычной Unicode-строки") };
-	json::array ch2 { json::value(L"проверка обычной Unicode-строки") };
+	const json::array& arr1(get<json::array>(v1));
+	const json::array& arr2(get<json::array>(v2));
+	json::array ch1 { "проверка обычной Unicode-строки"s };
+	json::array ch2 { L"проверка обычной Unicode-строки"s };
 
 	if (arr1 != ch1)
 		return -3;
@@ -95,10 +95,10 @@ int check_verbal_escapes()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& arr1(v1);
-	const json::array& arr2(v2);
-	json::array ch1 { json::value("   check all the verbal escapes: \" \\ / \b \f \n \r \t \"") };
-	json::array ch2 { json::value(L"   check all the verbal escapes: \" \\ / \b \f \n \r \t \"") };
+	const json::array& arr1(get<json::array>(v1));
+	const json::array& arr2(get<json::array>(v2));
+	json::array ch1 { "   check all the verbal escapes: \" \\ / \b \f \n \r \t \""s };
+	json::array ch2 { L"   check all the verbal escapes: \" \\ / \b \f \n \r \t \""s };
 
 	if (arr1 != ch1)
 		return -5;
@@ -122,10 +122,10 @@ int check_u_escapes()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& arr1(v1);
-	const json::array& arr2(v2);
-	json::array ch1 { json::value("check unicode escapes: привет, 𐅵 𝄞 мир! ") };
-	json::array ch2 { json::value(L"check unicode escapes: привет, 𐅵 𝄞 мир!") };
+	const json::array& arr1(get<json::array>(v1));
+	const json::array& arr2(get<json::array>(v2));
+	json::array ch1 { "check unicode escapes: привет, 𐅵 𝄞 мир! "s };
+	json::array ch2 { L"check unicode escapes: привет, 𐅵 𝄞 мир!"s };
 
 	if (arr1 != ch1)
 		return -7;

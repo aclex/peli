@@ -41,9 +41,9 @@ int check_zero()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& arr1(v1);
-	const json::array& arr2(v2);
-	json::array ch1 { json::value(0) };
+	const json::array& arr1(get<json::array>(v1));
+	const json::array& arr2(get<json::array>(v2));
+	json::array ch1 { json::number(0) };
 
 	if (arr1 != ch1)
 		return -1;
@@ -67,9 +67,9 @@ int check_integer()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& arr1(v1);
-	const json::array& arr2(v2);
-	json::array ch1 { json::value(-123456), json::value(123456) };
+	const json::array& arr1(get<json::array>(v1));
+	const json::array& arr2(get<json::array>(v2));
+	json::array ch1 { json::number { -123456 }, json::number { 123456 } };
 
 	if (arr1 != ch1)
 		return -3;
@@ -93,22 +93,22 @@ int check_decimal_fraction()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& arr1(v1);
-	const json::array& arr2(v2);
+	const json::array& arr1(get<json::array>(v1));
+	const json::array& arr2(get<json::array>(v2));
 	json::array ch1
 	{
-		json::value(3.4375),
-		json::value(-3.4375),
+		json::number(3.4375),
+		json::number(-3.4375),
 		json::value(json::number(0.04)),
 		json::value(json::number(-0.04))
 	};
 
 	json::number precision = pow(10, -1 * (numeric_limits<json::number>::digits10 - 2));
 
-	if (abs(static_cast<json::number>(arr1[2]) - static_cast<json::number>(ch1[2])) < precision)
+	if (abs(get<json::number>(arr1[2]) - get<json::number>(ch1[2])) < precision)
 		ch1[2] = arr1[2];
 
-	if (abs(static_cast<json::number>(arr1[3]) - static_cast<json::number>(ch1[3])) < precision)
+	if (abs(get<json::number>(arr1[3]) - get<json::number>(ch1[3])) < precision)
 		ch1[3] = arr1[3];
 
 	if (arr1 != ch1)
@@ -133,24 +133,24 @@ int check_engineer_fraction()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& arr1(v1);
-	const json::array& arr2(v2);
+	const json::array& arr1(get<json::array>(v1));
+	const json::array& arr2(get<json::array>(v2));
 	json::array ch1
 	{
-		json::value(3.4375),
-		json::value(-3.4375),
-		json::value(3.4375),
-		json::value(-3.4375),
+		json::number { 3.4375 },
+		json::number { -3.4375 },
+		json::number { 3.4375 },
+		json::number { -3.4375 },
 		json::value(json::number(4e-2)),
 		json::value(json::number(-4e-2))
 	};
 
 	json::number precision = pow(10, -1 * (numeric_limits<json::number>::digits10 - 2));
 
-	if (fabs(static_cast<json::number>(arr1[4]) - static_cast<json::number>(ch1[4])) < precision)
+	if (fabs(get<json::number>(arr1[4]) - get<json::number>(ch1[4])) < precision)
 		ch1[4] = arr1[4];
 
-	if (fabs(static_cast<json::number>(arr1[5]) - static_cast<json::number>(ch1[5])) < precision)
+	if (fabs(get<json::number>(arr1[5]) - get<json::number>(ch1[5])) < precision)
 		ch1[5] = arr1[5];
 
 	if (arr1 != ch1)

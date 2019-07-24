@@ -39,14 +39,14 @@ int check_boolean()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& obj1(v1);
-	const json::array& obj2(v2);
+	const json::array& arr1(get<json::array>(v1));
+	const json::array& arr2(get<json::array>(v2));
 	json::array ch1 { json::value(true), json::value(false), json::value(true), json::value(true) };
 
-	if (obj1 != ch1)
+	if (arr1 != ch1)
 		return -1;
 
-	if (obj2 != ch1)
+	if (arr2 != ch1)
 		return -2;
 
 	return 0;

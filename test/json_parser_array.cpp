@@ -39,8 +39,8 @@ int check_empty()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& obj1(v1);
-	const json::array& obj2(v2);
+	const json::array& obj1(get<json::array>(v1));
+	const json::array& obj2(get<json::array>(v2));
 	json::array ch1;
 
 	if (obj1 != ch1)
@@ -65,8 +65,8 @@ int check_one()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& obj1(v1);
-	const json::array& obj2(v2);
+	const json::array& obj1(get<json::array>(v1));
+	const json::array& obj2(get<json::array>(v2));
 	json::array ch1 { json::value() };
 
 	if (obj1 != ch1)
@@ -91,10 +91,10 @@ int check_two()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& obj1(v1);
-	const json::array& obj2(v2);
-	json::array ch1 { json::value("a"), json::value(), json::value("b"), json::value() };
-	json::array ch2 { json::value(L"a"), json::value(), json::value(L"b"), json::value() };
+	const json::array& obj1(get<json::array>(v1));
+	const json::array& obj2(get<json::array>(v2));
+	json::array ch1 { "a"s, json::value(), "b"s, json::value() };
+	json::array ch2 { L"a"s, json::value(), L"b"s, json::value() };
 
 	if (obj1 != ch1)
 		return -5;

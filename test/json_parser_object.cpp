@@ -39,8 +39,8 @@ int check_empty()
 	json::value v2;
 	is2 >> v2;
 
-	const json::object& obj1(v1);
-	const json::wobject& obj2(v2);
+	const json::object& obj1(get<json::object>(v1));
+	const json::wobject& obj2(get<json::wobject>(v2));
 	json::object ch1;
 	json::wobject ch2;
 
@@ -66,10 +66,10 @@ int check_one()
 	json::value v2;
 	is2 >> v2;
 
-	const json::object& obj1(v1);
-	const json::wobject& obj2(v2);
-	json::object ch1 { { "a", json::value() } };
-	json::wobject ch2 { { L"a", json::value() } };
+	const json::object& obj1(get<json::object>(v1));
+	const json::wobject& obj2(get<json::wobject>(v2));
+	json::object ch1 { { "a"s, json::value() } };
+	json::wobject ch2 { { L"a"s, json::value() } };
 
 	if (obj1 != ch1)
 		return -3;
@@ -93,10 +93,10 @@ int check_two()
 	json::value v2;
 	is2 >> v2;
 
-	const json::object& obj1(v1);
-	const json::wobject& obj2(v2);
-	json::object ch1 { { "a", json::value() }, { "b", json::value() } };
-	json::wobject ch2 { { L"a", json::value() }, { L"b", json::value() } };
+	const json::object& obj1(get<json::object>(v1));
+	const json::wobject& obj2(get<json::wobject>(v2));
+	json::object ch1 { { "a"s, json::value() }, { "b"s, json::value() } };
+	json::wobject ch2 { { L"a"s, json::value() }, { L"b"s, json::value() } };
 
 	if (obj1 != ch1)
 		return -5;
@@ -120,10 +120,10 @@ int check_redundant()
 	json::value v2;
 	is2 >> v2;
 
-	const json::object& obj1(v1);
-	const json::wobject& obj2(v2);
-	json::object ch1 { { "a", json::value() }, { "b", json::value() } };
-	json::wobject ch2 { { L"a", json::value() }, { L"b", json::value() } };
+	const json::object& obj1(get<json::object>(v1));
+	const json::wobject& obj2(get<json::wobject>(v2));
+	json::object ch1 { { "a"s, json::value() }, { "b"s, json::value() } };
+	json::wobject ch2 { { L"a"s, json::value() }, { L"b"s, json::value() } };
 
 	if (obj1 != ch1)
 		return -7;

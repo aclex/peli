@@ -39,8 +39,8 @@ int check()
 	json::value v2;
 	is2 >> v2;
 
-	const json::array& obj1(v1);
-	const json::array& obj2(v2);
+	const json::array& obj1(get<json::array>(v1));
+	const json::array& obj2(get<json::array>(v2));
 	json::array ch1 { json::value() };
 
 	if (obj1 != ch1)
