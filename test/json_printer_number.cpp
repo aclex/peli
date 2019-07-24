@@ -37,7 +37,7 @@ void check_zero()
 	ostringstream os1;
 	wostringstream os2;
 
-	json::array ch1 { json::value(0) };
+	json::array ch1 { json::number { } };
 	json::value v1(ch1);
 
 	os1 << v1;
@@ -55,7 +55,7 @@ void check_integer()
 	ostringstream os1;
 	wostringstream os2;
 
-	json::array ch1 { json::value(-123456), json::value(123456) };
+	json::array ch1 { json::number { -123456 }, json::number { 123456 } };
 	json::value v1(ch1);
 
 	os1 << v1;
@@ -75,8 +75,8 @@ void check_decimal_fraction()
 
 	json::array ch1
 	{
-		json::value(3.4375),
-		json::value(-3.4375),
+		json::number { 3.4375 },
+		json::number { -3.4375 },
 		json::value(json::number(0.04)),
 		json::value(json::number(-0.04))
 	};
@@ -102,12 +102,12 @@ void check_engineer_fraction()
 
 	json::array ch1
 	{
-		json::value(0.34375e1),
-		json::value(-0.34375e1),
-		json::value(0.34375e1),
-		json::value(-0.34375e1),
-		json::value(4e-2),
-		json::value(-4e-2)
+		json::number(0.34375e1),
+		json::number(-0.34375e1),
+		json::number(0.34375e1),
+		json::number(-0.34375e1),
+		json::number(4e-2),
+		json::number(-4e-2)
 	};
 	json::value v1(ch1);
 
