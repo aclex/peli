@@ -23,11 +23,7 @@
 #include <string>
 #include <type_traits>
 
-#ifdef INTERNAL_VARIANT
-#include <peli/detail/variant/variant.h>
-#else
-#include <variant>
-#endif
+#include <peli/value_basics.h>
 
 #include <peli/json/object.h>
 #include <peli/json/array.h>
@@ -37,140 +33,58 @@ namespace peli
 {
 	namespace json
 	{
-		class value;
-		template<typename T> value make_value();
-
-		class value
+		class value : public peli::variant_type
+		<
+			bool,
+			json::number,
+			std::string, std::wstring,
+			json::array,
+			json::object, json::wobject
+		>
 		{
-			struct deduction_helper
-			{
-				array operator()(array);
-				number operator()(number);
-				bool operator()(bool);
-
-				template<typename Ch> basic_object<Ch> operator()(basic_object<Ch>);
-				template<typename Ch> std::basic_string<Ch> operator()(std::basic_string<Ch>);
-
-				template<typename U,
-				class = typename std::enable_if<std::is_convertible<array, U>::value>::type>
-				array operator()(U);
-
-				template<typename U,
-				class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
-				number operator()(U);
-
-				template<typename U, typename Ch,
-				class = typename std::enable_if<std::is_convertible<basic_object<Ch>, U>::value>::type>
-				basic_object<Ch> operator()(U);
-
-				template<typename U, typename Ch,
-				class = typename std::enable_if<std::is_convertible<std::basic_string<Ch>, U>::value>::type>
-				std::basic_string<Ch> operator()(U);
-			};
-
 		public:
-#ifdef INTERNAL_VARIANT
-			typedef detail::variant::variant
+			using variant_type = peli::variant_type
 			<
-#else
-			typedef std::variant
-			<
-				std::monostate,
-#endif
-				bool,
-				json::number,
-				std::string, std::wstring,
-				json::array,
-				json::object, json::wobject
-			>
-			variant_type;
+			bool,
+			json::number,
+			std::string, std::wstring,
+			json::array,
+			json::object, json::wobject
+			>;
 
-			typedef deduction_helper deduction_helper_type;
-
-			value() = default;
-
-			template<typename Ch> explicit value(const peli::json::basic_object<Ch>& obj) : m_variant(obj) { }
-			template<typename Ch> explicit value(peli::json::basic_object<Ch>&& obj) noexcept : m_variant(std::move(obj)) { }
-			explicit value(const peli::json::array& arr) : m_variant(arr) { }
-			explicit value(peli::json::array&& arr) noexcept : m_variant(std::move(arr)) { }
-			template<typename Ch> explicit value(const std::basic_string<Ch>& str) : m_variant(str) { }
-			template<typename Ch> explicit value(std::basic_string<Ch>&& str) noexcept : m_variant(std::move(str)) { }
-			template<typename Ch> explicit value(const Ch* str) : value(std::basic_string<Ch>(str)) { }
-			explicit value(bool b) : m_variant(b) { }
-			explicit value(json::number i) : m_variant(i) { }
-
-			template<typename U,
-			class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
-			explicit value(U i) : value(static_cast<json::number>(i)) { }
+			using variant_type::variant_type;
 
 			bool null() const noexcept
 			{
-#ifdef INTERNAL_VARIANT
-				return !m_variant.valid();
-#else
-				return !m_variant.index();
-#endif
+				return peli::is_empty(*this);
 			}
 
-			bool operator==(const value& rhs) const noexcept
-			{
-				return m_variant == rhs.m_variant;
-			}
-
-			bool operator!=(const value& rhs) const noexcept
-			{
-				return m_variant != rhs.m_variant;
-			}
-
-			template<typename T,
-			typename DeductedType = typename std::result_of<deduction_helper_type(T)>::type>
-			explicit operator T() const
-			{
-#ifdef INTERNAL_VARIANT
-				namespace ns = detail::variant;
-#else
-				namespace ns = std;
-#endif
-				return static_cast<T>(ns::get<DeductedType>(m_variant));
-			}
-
-			template<typename T>
-			explicit operator const T&() const
-			{
-#ifdef INTERNAL_VARIANT
-				namespace ns = detail::variant;
-#else
-				namespace ns = std;
-#endif
-				return static_cast<const T&>(ns::get<T>(m_variant));
-			}
-
-			template<typename T,
-			typename DeductedType = typename std::result_of<deduction_helper_type(T)>::type,
-			class = typename std::enable_if<std::is_same<T, DeductedType>::value>::type>
-			explicit operator T&()
-			{
-#ifdef INTERNAL_VARIANT
-				namespace ns = detail::variant;
-#else
-				namespace ns = std;
-#endif
-				return ns::get<T>(m_variant);
-			}
-
-			template<typename Ch> friend std::basic_ostream<Ch>& operator<<(std::basic_ostream<Ch>& os, const value& v);
-
-			template<typename T> friend inline value make_value()
-			{
-				return value(T());
-			}
-
-		private:
-			variant_type m_variant;
+			// template<class Visitor> friend
+			// constexpr auto visit(Visitor&& vis, value& v);
+			// template<class Visitor> friend
+			// constexpr auto visit(Visitor&& vis, const value& v);
 		};
+
+		template<typename T> inline value make_value()
+		{
+			return value(T());
+		}
+
+		// template<class Visitor>
+		// constexpr auto visit(Visitor&& vis, value& v)
+		// {
+		// 	return detail::value_basics::visit(vis, static_cast<value::parent_type&>(v));
+		// }
+
+		// template<class Visitor>
+		// constexpr auto visit(Visitor&& vis, const value& v)
+		// {
+		// 	return detail::value_basics::visit(vis, static_cast<const value::parent_type&>(v));
+		// }
+
 	}
 }
 
-#include "peli/json/value.tcc"
+#include <peli/json/value.tcc>
 
 #endif // PELI_JSON_VALUE_H

@@ -23,13 +23,13 @@ int main(int, char**)
 
 	// list all keys in root element, assuming root is object
 	cout << "Root keys:" << endl;
-	for (const auto& p : static_cast<json::object&>(v))
+	for (const auto& p : get<json::object>(v))
 	{
 		cout << p.first << '\n';
 	}
 
 	// add another integer element to root object
-	static_cast<json::object&>(v)["addme"] = json::value(42);
+	get<json::object>(v)["addme"] = json::number { 42 };
 
 	ofstream output_file("output.json");
 	// save to output file stream

@@ -17,13 +17,7 @@ namespace peli
 		{
 			peli::json::detail::printer::visitor<Ch> print_visitor(os);
 
-#ifdef INTERNAL_VARIANT
-			namespace ns = peli::detail::variant;
-#else
-			namespace ns = std;
-#endif
-
-			ns::visit(print_visitor, v.m_variant);
+			peli::visit(print_visitor, v);
 
 			return os;
 		}
