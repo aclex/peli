@@ -18,7 +18,6 @@
  */
 
 #include <type_traits>
-#include <cassert>
 
 #include "peli/json/value.h"
 
@@ -31,7 +30,8 @@ int main(int, char**)
 	json::value v;
 
 	static_assert(std::is_nothrow_constructible<json::value>::value, "Default constructor isn't noexcept");
-	assert(v.null());
+	if (!v.null())
+		return 1;
 
 	return 0;
 }

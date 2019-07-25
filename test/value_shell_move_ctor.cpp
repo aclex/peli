@@ -18,7 +18,6 @@
  */
 
 #include <type_traits>
-#include <cassert>
 
 #include "peli/json/value.h"
 

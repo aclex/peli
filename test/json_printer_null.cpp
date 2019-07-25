@@ -18,7 +18,6 @@
  */
 
 #include <sstream>
-#include <cassert>
 #include <iostream>
 
 #include "peli/json/value.h"
@@ -27,7 +26,7 @@ using namespace std;
 
 using namespace peli;
 
-void check()
+bool check()
 {
 	const string str1 = "[null]";
 	const wstring str2 = L"[null]";
@@ -43,13 +42,19 @@ void check()
 	os1 << v1;
 	os2 << v2;
 
-	assert(os1.str() == str1);
-	assert(os2.str() == str2);
+	if (os1.str() != str1)
+		return false;
+
+	if (os2.str() != str2)
+		return false;
+
+	return true;
 }
 
 int main(int, char**)
 {
-	check();
+	if (!check())
+		return 1;
 
 	return 0;
 }

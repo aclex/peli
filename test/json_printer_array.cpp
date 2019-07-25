@@ -18,7 +18,6 @@
  */
 
 #include <sstream>
-#include <cassert>
 #include <iostream>
 
 #include "peli/json/value.h"
@@ -28,7 +27,7 @@ using namespace std;
 
 using namespace peli;
 
-void check_empty()
+bool check_empty()
 {
 	const string str1 = "[]";
 	const wstring str2 = L"[]";
@@ -48,8 +47,11 @@ void check_empty()
 	os1 << v1;
 	os2 << v2;
 
-	assert(os1.str() == str1);
-	assert(os2.str() == str2);
+	if (os1.str() != str1)
+		return false;
+
+	if (os2.str() != str2)
+		return false;
 
 	os1.clear();
 	os1.seekp(0);
@@ -59,11 +61,16 @@ void check_empty()
 	os1 << json::pretty << v1;
 	os2 << json::pretty << v2;
 
-	assert(os1.str() == str1_pretty);
-	assert(os2.str() == str2_pretty);
+	if (os1.str() != str1_pretty)
+		return false;
+
+	if (os2.str() != str2_pretty)
+		return false;
+
+	return true;
 }
 
-void check_one()
+bool check_one()
 {
 	const string str1 = "[null]";
 	const wstring str2 = L"[null]";
@@ -82,8 +89,12 @@ void check_one()
 
 	os1 << v1;
 	os2 << v2;
-	assert(os1.str() == str1);
-	assert(os2.str() == str2);
+
+	if (os1.str() != str1)
+		return false;
+
+	if (os2.str() != str2)
+		return false;
 
 	os1.clear();
 	os1.seekp(0);
@@ -96,11 +107,16 @@ void check_one()
 
 	cout << "test:" << endl;
 	cout << os1.str() << endl;
-	assert(os1.str() == str1_pretty);
-	assert(os2.str() == str2_pretty);
+	if (os1.str() != str1_pretty)
+		return false;
+
+	if (os2.str() != str2_pretty)
+		return false;
+
+	return true;
 }
 
-void check_two()
+bool check_two()
 {
 	const string str1 = "[null,null]";
 	const wstring str2 = L"[null,null]";
@@ -118,8 +134,11 @@ void check_two()
 
 	os1 << v1;
 	os2 << v2;
-	assert(os1.str() == str1);
-	assert(os2.str() == str2);
+	if (os1.str() != str1)
+		return false;
+
+	if (os2.str() != str2)
+		return false;
 
 	os1.clear();
 	os1.seekp(0);
@@ -129,11 +148,16 @@ void check_two()
 	os1 << json::pretty << v1;
 	os2 << json::pretty << v2;
 
-	assert(os1.str() == str1_pretty);
-	assert(os2.str() == str2_pretty);
+	if (os1.str() != str1_pretty)
+		return false;
+
+	if (os2.str() != str2_pretty)
+		return false;
+
+	return true;
 }
 
-void check_nested()
+bool check_nested()
 {
 	const string str1 = "[null,[null],null]";
 	const wstring str2 = L"[null,[null],null]";
@@ -151,8 +175,11 @@ void check_nested()
 
 	os1 << v1;
 	os2 << v2;
-	assert(os1.str() == str1);
-	assert(os2.str() == str2);
+	if (os1.str() != str1)
+		return false;
+
+	if (os2.str() != str2)
+		return false;
 
 	os1.clear();
 	os1.seekp(0);
@@ -166,16 +193,28 @@ void check_nested()
 	cout << os1.str() << endl;
 	cout << "str:" << endl;
 	cout << str1_pretty << endl;
-	assert(os1.str() == str1_pretty);
-	assert(os2.str() == str2_pretty);
+	if (os1.str() != str1_pretty)
+		return false;
+
+	if (os2.str() != str2_pretty)
+		return false;
+
+	return true;
 }
 
 int main(int, char**)
 {
-	check_empty();
-	check_one();
-	check_two();
-	check_nested();
+	if (!check_empty())
+		return 1;
+
+	if (!check_one())
+		return 2;
+
+	if (!check_two())
+		return 3;
+
+	if (!check_nested())
+		return 4;
 
 	return 0;
 }

@@ -17,8 +17,6 @@
  *
  */
 
-#include <cassert>
-
 #include "peli/json/value.h"
 
 using namespace std;
@@ -34,14 +32,22 @@ int main(int, char**)
 	json::object& obj2(get<json::object>(v1));
 	json::object obj3(obj2);
 
-	assert(obj2 == obj1);
-	assert(&obj2 == &obj1);
-	assert(obj3 == obj1);
+	if (obj2 != obj1)
+		return 1;
+
+	if (&obj2 != &obj1)
+		return 2;
+
+	if (obj3 != obj1)
+		return 3;
 
 	obj2["foo"] = "bar"s;
 
-	assert(obj2 == obj1);
-	assert(obj3 != obj2);
+	if (obj2 != obj1)
+		return 4;
+
+	if (obj3 != obj2)
+		return 5;
 
 	return 0;
 }

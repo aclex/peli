@@ -18,7 +18,6 @@
  */
 
 #include <sstream>
-#include <cassert>
 #include <iostream>
 
 #include "peli/json/value.h"
@@ -27,7 +26,7 @@ using namespace std;
 
 using namespace peli;
 
-void check()
+bool check()
 {
 	const string str1 = "[\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\b\\t\\n\\u000b\\f\\r\\u000e\\u000f"
 			"\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001a\\u001b\\u001c\\u001d\\u001e\\u001f"
@@ -59,13 +58,19 @@ void check()
 	os1 << v1;
 	os2 << v2;
 
-	assert(os1.str() == str1);
-	assert(os2.str() == str2);
+	if (os1.str() != str1)
+		return false;
+
+	if (os2.str() != str2)
+		return false;
+
+	return true;
 }
 
 int main(int, char**)
 {
-	check();
+	if (!check())
+		return 1;
 
 	return 0;
 }

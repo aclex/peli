@@ -18,7 +18,6 @@
  */
 
 #include <sstream>
-#include <cassert>
 #include <iostream>
 #include <cmath>
 #include <limits>
@@ -29,7 +28,7 @@ using namespace std;
 
 using namespace peli;
 
-void check_zero()
+bool check_zero()
 {
 	const string str1 = "[0]";
 	const wstring str2 = L"[0]";
@@ -45,11 +44,16 @@ void check_zero()
 	os1 << v1;
 	os2 << v2;
 
-	assert(os1.str() == str1);
-	assert(os2.str() == str2);
+	if (os1.str() != str1)
+		return false;
+
+	if (os2.str() != str2)
+		return false;
+
+	return true;
 }
 
-void check_integer()
+bool check_integer()
 {
 	const string str1 = "[-123456,123456]";
 	const wstring str2 = L"[-123456,123456]";
@@ -65,11 +69,15 @@ void check_integer()
 	os1 << v1;
 	os2 << v2;
 
-	assert(os1.str() == str1);
-	assert(os2.str() == str2);
+	if (os1.str() != str1)
+		return false;
+	if (os2.str() != str2)
+		return false;
+
+	return true;
 }
 
-void check_decimal_fraction()
+bool check_decimal_fraction()
 {
 	const string str1 = "[3.4375,-3.4375,0.04,-0.04]";
 	const wstring str2 = L"[3.4375,-3.4375,0.04,-0.04]";
@@ -101,11 +109,16 @@ void check_decimal_fraction()
 	cout << "test:" << endl;
 	cout << os1.str() << endl;
     std::cout << "The default precision is " << std::cout.precision() << '\n';
-	assert(os1.str() == str1);
-	assert(os2.str() == str2);
+	if (os1.str() != str1)
+		return false;
+
+	if (os2.str() != str2)
+		return false;
+
+	return true;
 }
 
-void check_engineer_fraction()
+bool check_engineer_fraction()
 {
 	const string str1 = "[3.4375,-3.4375,3.4375,-3.4375,0.04,-0.04]";
 	const wstring str2 = L"[3.4375,-3.4375,3.4375,-3.4375,0.04,-0.04]";
@@ -141,16 +154,28 @@ void check_engineer_fraction()
 	cout << "test:" << endl;
 	cout << os1.str() << endl;
     std::cout << "The default precision is " << std::cout.precision() << '\n';
-	assert(os1.str() == str1);
-	assert(os2.str() == str2);
+	if (os1.str() != str1)
+		return false;
+
+	if (os2.str() != str2)
+		return false;
+
+	return true;
 }
 
 int main(int, char**)
 {
-	check_zero();
-	check_integer();
-	check_decimal_fraction();
-	check_engineer_fraction();
+	if (!check_zero())
+		return 1;
+
+	if (!check_integer())
+		return 2;
+
+	if (!check_decimal_fraction())
+		return 3;
+
+	if (!check_engineer_fraction())
+		return 4;
 
 	return 0;
 }
