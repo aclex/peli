@@ -58,30 +58,12 @@ namespace peli
 			{
 				return peli::is_empty(*this);
 			}
-
-			// template<class Visitor> friend
-			// constexpr auto visit(Visitor&& vis, value& v);
-			// template<class Visitor> friend
-			// constexpr auto visit(Visitor&& vis, const value& v);
 		};
 
 		template<typename T> inline value make_value()
 		{
 			return value(T());
 		}
-
-		// template<class Visitor>
-		// constexpr auto visit(Visitor&& vis, value& v)
-		// {
-		// 	return detail::value_basics::visit(vis, static_cast<value::parent_type&>(v));
-		// }
-
-		// template<class Visitor>
-		// constexpr auto visit(Visitor&& vis, const value& v)
-		// {
-		// 	return detail::value_basics::visit(vis, static_cast<const value::parent_type&>(v));
-		// }
-
 	}
 }
 
