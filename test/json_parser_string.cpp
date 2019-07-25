@@ -19,6 +19,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 #include <cstdlib>
 
@@ -131,7 +132,12 @@ int check_u_escapes()
 		return 7;
 
 	if (arr2 != ch2)
+	{
+		wcout << L"strings are equal: " << (get<wstring>(arr2[0]) == get<wstring>(ch2[0])) << endl;
+		wcout << L"arr: " << get<wstring>(arr2[0]) << endl;
+		wcout << L"ch:  " << get<wstring>(ch2[0]) << endl;
 		return 8;
+	}
 
 	return 0;
 }
