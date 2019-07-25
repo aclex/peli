@@ -36,7 +36,7 @@ int check_empty()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::object& obj1(get<json::object>(v1));
@@ -63,13 +63,13 @@ int check_one()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::object& obj1(get<json::object>(v1));
 	const json::wobject& obj2(get<json::wobject>(v2));
 	json::object ch1 { { "a"s, json::value() } };
-	json::wobject ch2 { { L"a"s, json::value() } };
+	json::wobject ch2 { { L"a"s, json::wvalue() } };
 
 	if (obj1 != ch1)
 		return -3;
@@ -90,13 +90,13 @@ int check_two()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::object& obj1(get<json::object>(v1));
 	const json::wobject& obj2(get<json::wobject>(v2));
 	json::object ch1 { { "a"s, json::value() }, { "b"s, json::value() } };
-	json::wobject ch2 { { L"a"s, json::value() }, { L"b"s, json::value() } };
+	json::wobject ch2 { { L"a"s, json::wvalue() }, { L"b"s, json::wvalue() } };
 
 	if (obj1 != ch1)
 		return -5;
@@ -117,13 +117,13 @@ int check_redundant()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::object& obj1(get<json::object>(v1));
 	const json::wobject& obj2(get<json::wobject>(v2));
 	json::object ch1 { { "a"s, json::value() }, { "b"s, json::value() } };
-	json::wobject ch2 { { L"a"s, json::value() }, { L"b"s, json::value() } };
+	json::wobject ch2 { { L"a"s, json::wvalue() }, { L"b"s, json::wvalue() } };
 
 	if (obj1 != ch1)
 		return -7;

@@ -26,9 +26,12 @@ namespace peli
 {
 	namespace json
 	{
-		class value;
+		template<typename Ch> class basic_value;
 
-		typedef std::vector<value> array;
+		template<typename Ch> using basic_array = std::vector<basic_value<Ch>>;
+
+		typedef basic_array<char> array;
+		typedef basic_array<wchar_t> warray;
 	}
 }
 

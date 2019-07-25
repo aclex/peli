@@ -29,7 +29,7 @@ using namespace peli;
 int main(int, char**)
 {
 	json::value v(json::make_value<string>());
-	json::value wv(json::make_value<wstring>());
+	json::wvalue wv(json::make_value<wstring, json::wvalue>());
 
 	try
 	{

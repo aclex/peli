@@ -37,7 +37,7 @@ int main(int, char**)
 	json::wobject wsample;
 	wsample[L"wtest"] = json::number { 64 };
 
-	json::value wv(wsample);
+	json::wvalue wv(wsample);
 	json::wobject& wobj(get<json::wobject>(wv));
 
 	if (wsample != wobj)

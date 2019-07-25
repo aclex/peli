@@ -37,7 +37,7 @@ int main(int, char**)
 	std::wstring wsample;
 	wsample = L"wtest";
 
-	json::value wv(wsample);
+	json::wvalue wv(wsample);
 	std::wstring& wstr(get<std::wstring>(wv));
 
 	if (wsample != wstr)

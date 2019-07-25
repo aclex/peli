@@ -38,13 +38,13 @@ int check_empty()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& arr1(get<json::array>(v1));
-	const json::array& arr2(get<json::array>(v2));
+	const json::warray& arr2(get<json::warray>(v2));
 	json::array ch1 { ""s };
-	json::array ch2 { L""s };
+	json::warray ch2 { L""s };
 
 	if (arr1 != ch1)
 		return -1;
@@ -65,13 +65,13 @@ int check_plain()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& arr1(get<json::array>(v1));
-	const json::array& arr2(get<json::array>(v2));
+	const json::warray& arr2(get<json::warray>(v2));
 	json::array ch1 { "проверка обычной Unicode-строки"s };
-	json::array ch2 { L"проверка обычной Unicode-строки"s };
+	json::warray ch2 { L"проверка обычной Unicode-строки"s };
 
 	if (arr1 != ch1)
 		return -3;
@@ -92,13 +92,13 @@ int check_verbal_escapes()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& arr1(get<json::array>(v1));
-	const json::array& arr2(get<json::array>(v2));
+	const json::warray& arr2(get<json::warray>(v2));
 	json::array ch1 { "   check all the verbal escapes: \" \\ / \b \f \n \r \t \""s };
-	json::array ch2 { L"   check all the verbal escapes: \" \\ / \b \f \n \r \t \""s };
+	json::warray ch2 { L"   check all the verbal escapes: \" \\ / \b \f \n \r \t \""s };
 
 	if (arr1 != ch1)
 		return -5;
@@ -119,13 +119,13 @@ int check_u_escapes()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& arr1(get<json::array>(v1));
-	const json::array& arr2(get<json::array>(v2));
+	const json::warray& arr2(get<json::warray>(v2));
 	json::array ch1 { "check unicode escapes: привет, 𐅵 𝄞 мир! "s };
-	json::array ch2 { L"check unicode escapes: привет, 𐅵 𝄞 мир!"s };
+	json::warray ch2 { L"check unicode escapes: привет, 𐅵 𝄞 мир!"s };
 
 	if (arr1 != ch1)
 		return -7;

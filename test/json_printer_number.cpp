@@ -39,9 +39,11 @@ void check_zero()
 
 	json::array ch1 { json::number { } };
 	json::value v1(ch1);
+	json::warray ch2 { json::number { } };
+	json::wvalue v2(ch2);
 
 	os1 << v1;
-	os2 << v1;
+	os2 << v2;
 
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);
@@ -57,9 +59,11 @@ void check_integer()
 
 	json::array ch1 { json::number { -123456 }, json::number { 123456 } };
 	json::value v1(ch1);
+	json::warray ch2 { json::number { -123456 }, json::number { 123456 } };
+	json::wvalue v2(ch2);
 
 	os1 << v1;
-	os2 << v1;
+	os2 << v2;
 
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);
@@ -82,8 +86,17 @@ void check_decimal_fraction()
 	};
 	json::value v1(ch1);
 
+	json::warray ch2
+	{
+		json::number { 3.4375 },
+		json::number { -3.4375 },
+		json::wvalue(json::number(0.04)),
+		json::wvalue(json::number(-0.04))
+	};
+	json::wvalue v2(ch2);
+
 	os1 << v1;
-	os2 << v1;
+	os2 << v2;
 
 	cout << "test:" << endl;
 	cout << os1.str() << endl;
@@ -111,8 +124,19 @@ void check_engineer_fraction()
 	};
 	json::value v1(ch1);
 
+	json::warray ch2
+	{
+		json::number(0.34375e1),
+		json::number(-0.34375e1),
+		json::number(0.34375e1),
+		json::number(-0.34375e1),
+		json::number(4e-2),
+		json::number(-4e-2)
+	};
+	json::wvalue v2(ch2);
+
 	os1 << v1;
-	os2 << v1;
+	os2 << v2;
 
 	cout << "test:" << endl;
 	cout << os1.str() << endl;

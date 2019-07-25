@@ -27,9 +27,9 @@ namespace peli
 {
 	namespace json
 	{
-		class value;
+		template<typename Ch> class basic_value;
 
-		template<typename Ch> using basic_object = std::map<std::basic_string<Ch>, value>;
+		template<typename Ch> using basic_object = std::map<std::basic_string<Ch>, basic_value<Ch>>;
 
 		typedef basic_object<char> object;
 		typedef basic_object<wchar_t> wobject;

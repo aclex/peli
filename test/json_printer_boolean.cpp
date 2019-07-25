@@ -38,9 +38,11 @@ void check_boolean()
 
 	json::array ch1 { json::value(true), json::value(false), json::value(true), json::value(true) };
 	json::value v1(ch1);
+	json::warray ch2 { json::wvalue(true), json::wvalue(false), json::wvalue(true), json::wvalue(true) };
+	json::wvalue v2(ch2);
 
 	os1 << v1;
-	os2 << v1;
+	os2 << v2;
 
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);

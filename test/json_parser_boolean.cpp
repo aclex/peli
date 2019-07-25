@@ -36,17 +36,18 @@ int check_boolean()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& arr1(get<json::array>(v1));
-	const json::array& arr2(get<json::array>(v2));
+	const json::warray& arr2(get<json::warray>(v2));
 	json::array ch1 { json::value(true), json::value(false), json::value(true), json::value(true) };
+	json::warray ch2 { json::wvalue(true), json::wvalue(false), json::wvalue(true), json::wvalue(true) };
 
 	if (arr1 != ch1)
 		return -1;
 
-	if (arr2 != ch1)
+	if (arr2 != ch2)
 		return -2;
 
 	return 0;

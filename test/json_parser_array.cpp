@@ -36,17 +36,18 @@ int check_empty()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& obj1(get<json::array>(v1));
-	const json::array& obj2(get<json::array>(v2));
+	const json::warray& obj2(get<json::warray>(v2));
 	json::array ch1;
+	json::warray ch2;
 
 	if (obj1 != ch1)
 		return -1;
 
-	if (obj2 != ch1)
+	if (obj2 != ch2)
 		return -2;
 
 	return 0;
@@ -62,17 +63,18 @@ int check_one()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& obj1(get<json::array>(v1));
-	const json::array& obj2(get<json::array>(v2));
+	const json::warray& obj2(get<json::warray>(v2));
 	json::array ch1 { json::value() };
+	json::warray ch2 { json::wvalue() };
 
 	if (obj1 != ch1)
 		return -3;
 
-	if (obj2 != ch1)
+	if (obj2 != ch2)
 		return -4;
 
 	return 0;
@@ -88,13 +90,13 @@ int check_two()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& obj1(get<json::array>(v1));
-	const json::array& obj2(get<json::array>(v2));
+	const json::warray& obj2(get<json::warray>(v2));
 	json::array ch1 { "a"s, json::value(), "b"s, json::value() };
-	json::array ch2 { L"a"s, json::value(), L"b"s, json::value() };
+	json::warray ch2 { L"a"s, json::wvalue(), L"b"s, json::wvalue() };
 
 	if (obj1 != ch1)
 		return -5;

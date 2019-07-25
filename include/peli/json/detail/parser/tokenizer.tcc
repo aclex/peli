@@ -32,7 +32,7 @@
 
 #include "peli/json/detail/parser/stream_routines.h"
 
-template<typename Ch> peli::json::value peli::json::detail::parser::tokenizer::tok(std::basic_streambuf<Ch>* rdbuf)
+template<typename Ch> peli::json::basic_value<Ch> peli::json::detail::parser::tokenizer::tok(std::basic_streambuf<Ch>* rdbuf)
 {
 	using namespace peli::json;
 
@@ -50,21 +50,21 @@ template<typename Ch> peli::json::value peli::json::detail::parser::tokenizer::t
 	switch (next_char)
 	{
 	case special_chars::left_curly:
-		return value(parser<basic_object<Ch>>::parse(rdbuf));
+		return basic_value<Ch>(parser<basic_object<Ch>>::parse(rdbuf));
 
 	case special_chars::left_square:
-		return value(parser<array>::parse(rdbuf));
+		return basic_value<Ch>(parser<basic_array<Ch>>::parse(rdbuf));
 
 	case special_chars::quote:
-		return value(parser<std::basic_string<Ch>>::parse(rdbuf));
+		return basic_value<Ch>(parser<std::basic_string<Ch>>::parse(rdbuf));
 
 	case special_chars::n:
 		parser<void>::parse(rdbuf);
-		return value();
+		return basic_value<Ch>();
 
 	case special_chars::t:
 	case special_chars::f:
-		return value(parser<bool>::parse(rdbuf));
+		return basic_value<Ch>(parser<bool>::parse(rdbuf));
 
 	case special_chars::minus:
 	case special_chars::d0:
@@ -77,19 +77,19 @@ template<typename Ch> peli::json::value peli::json::detail::parser::tokenizer::t
 	case special_chars::d7:
 	case special_chars::d8:
 	case special_chars::d9:
-		return value(parser<number>::parse(rdbuf));
+		return basic_value<Ch>(parser<number>::parse(rdbuf));
 
 	default:
-		return value();
+		return basic_value<Ch>();
 	}
 }
 
 
-template<typename Ch, typename Alloc> peli::json::value peli::json::detail::parser::tokenizer::gentle_stream(std::basic_istream<Ch, Alloc>& is)
+template<typename Ch, typename Alloc> peli::json::basic_value<Ch> peli::json::detail::parser::tokenizer::gentle_stream(std::basic_istream<Ch, Alloc>& is)
 {
 	if (!typename std::basic_istream<Ch, Alloc>::sentry(is, true))
 	{
-		return peli::json::value { };
+		return peli::json::basic_value<Ch> { };
 	}
 
 	return peli::json::detail::parser::tokenizer::tok(is.rdbuf());

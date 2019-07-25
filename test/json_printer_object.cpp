@@ -42,7 +42,7 @@ void check_empty()
 	const json::object ch1;
 	json::value v1(ch1);
 	const json::wobject ch2;
-	json::value v2(ch2);
+	json::wvalue v2(ch2);
 
 	os1 << v1;
 	os2 << v2;
@@ -75,8 +75,8 @@ void check_one()
 
 	const json::object ch1 { { "a"s, json::value() } };
 	json::value v1(ch1);
-	const json::wobject ch2 { { L"a"s, json::value() } };
-	json::value v2(ch2);
+	const json::wobject ch2 { { L"a"s, json::wvalue() } };
+	json::wvalue v2(ch2);
 
 	os1 << v1;
 	os2 << v2;
@@ -107,8 +107,8 @@ void check_two()
 
 	json::object ch1 { { "a"s, json::value() }, { "b"s, json::value() } };
 	json::value v1(ch1);
-	json::wobject ch2 { { L"a"s, json::value() }, { L"b"s, json::value() } };
-	json::value v2(ch2);
+	json::wobject ch2 { { L"a"s, json::wvalue() }, { L"b"s, json::wvalue() } };
+	json::wvalue v2(ch2);
 
 	os1 << v1;
 	os2 << v2;
@@ -139,8 +139,8 @@ void check_nested()
 
 	json::object ch1 { { "a"s, json::value() }, { "b"s, json::object { { "ba"s, json::value() } } }, { "c"s, json::value() } };
 	json::value v1(ch1);
-	json::wobject ch2 { { L"a"s, json::value() }, { L"b"s, json::wobject { { L"ba"s, json::value() } } }, { L"c"s, json::value() } };
-	json::value v2(ch2);
+	json::wobject ch2 { { L"a"s, json::wvalue() }, { L"b"s, json::wobject { { L"ba"s, json::wvalue() } } }, { L"c"s, json::wvalue() } };
+	json::wvalue v2(ch2);
 
 	os1 << v1;
 	os2 << v2;

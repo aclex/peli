@@ -39,13 +39,12 @@ namespace peli
 		{
 			namespace parser
 			{
-				template<> class parser<peli::json::array>
+				template<typename Ch> class parser<peli::json::basic_array<Ch>>
 				{
 				public:
-					template<typename Ch>
-					static typename peli::json::array parse(std::basic_streambuf<Ch>* rdbuf)
+					static typename peli::json::basic_array<Ch> parse(std::basic_streambuf<Ch>* rdbuf)
 					{
-						peli::json::array arr;
+						peli::json::basic_array<Ch> arr;
 
 						typename std::basic_streambuf<Ch>::int_type t = rdbuf->sgetc();
 						if (t != special_chars::left_square)

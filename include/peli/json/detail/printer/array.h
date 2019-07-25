@@ -36,9 +36,9 @@ namespace peli
 		{
 			namespace printer
 			{
-				template<> struct head<json::array>
+				template<typename Ch> struct head<json::basic_array<Ch>>
 				{
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const peli::json::array& arr)
+					static void print(std::basic_ostream<Ch>& os, const peli::json::basic_array<Ch>& arr)
 					{
 						using namespace special_chars;
 

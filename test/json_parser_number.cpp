@@ -38,17 +38,18 @@ int check_zero()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& arr1(get<json::array>(v1));
-	const json::array& arr2(get<json::array>(v2));
+	const json::warray& arr2(get<json::warray>(v2));
 	json::array ch1 { json::number(0) };
+	json::warray ch2 { json::number(0) };
 
 	if (arr1 != ch1)
 		return -1;
 
-	if (arr2 != ch1)
+	if (arr2 != ch2)
 		return -2;
 
 	return 0;
@@ -64,17 +65,18 @@ int check_integer()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& arr1(get<json::array>(v1));
-	const json::array& arr2(get<json::array>(v2));
+	const json::warray& arr2(get<json::warray>(v2));
 	json::array ch1 { json::number { -123456 }, json::number { 123456 } };
+	json::warray ch2 { json::number { -123456 }, json::number { 123456 } };
 
 	if (arr1 != ch1)
 		return -3;
 
-	if (arr2 != ch1)
+	if (arr2 != ch2)
 		return -4;
 
 	return 0;
@@ -90,17 +92,25 @@ int check_decimal_fraction()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& arr1(get<json::array>(v1));
-	const json::array& arr2(get<json::array>(v2));
+	const json::warray& arr2(get<json::warray>(v2));
 	json::array ch1
 	{
 		json::number(3.4375),
 		json::number(-3.4375),
 		json::value(json::number(0.04)),
 		json::value(json::number(-0.04))
+	};
+
+	json::warray ch2
+	{
+		json::number(3.4375),
+		json::number(-3.4375),
+		json::wvalue(json::number(0.04)),
+		json::wvalue(json::number(-0.04))
 	};
 
 	json::number precision = pow(10, -1 * (numeric_limits<json::number>::digits10 - 2));
@@ -114,7 +124,7 @@ int check_decimal_fraction()
 	if (arr1 != ch1)
 		return -5;
 
-	if (arr2 != ch1)
+	if (arr2 != ch2)
 		return -6;
 
 	return 0;
@@ -130,11 +140,11 @@ int check_engineer_fraction()
 	is1 >> v1;
 
 	wistringstream is2(str2);
-	json::value v2;
+	json::wvalue v2;
 	is2 >> v2;
 
 	const json::array& arr1(get<json::array>(v1));
-	const json::array& arr2(get<json::array>(v2));
+	const json::warray& arr2(get<json::warray>(v2));
 	json::array ch1
 	{
 		json::number { 3.4375 },
@@ -143,6 +153,16 @@ int check_engineer_fraction()
 		json::number { -3.4375 },
 		json::value(json::number(4e-2)),
 		json::value(json::number(-4e-2))
+	};
+
+	json::warray ch2
+	{
+		json::number { 3.4375 },
+		json::number { -3.4375 },
+		json::number { 3.4375 },
+		json::number { -3.4375 },
+		json::wvalue(json::number(4e-2)),
+		json::wvalue(json::number(-4e-2))
 	};
 
 	json::number precision = pow(10, -1 * (numeric_limits<json::number>::digits10 - 2));
@@ -156,7 +176,7 @@ int check_engineer_fraction()
 	if (arr1 != ch1)
 		return -7;
 
-	if (arr2 != ch1)
+	if (arr2 != ch2)
 		return -8;
 
 	return 0;

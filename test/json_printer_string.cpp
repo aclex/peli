@@ -53,8 +53,8 @@ void check()
 
 	json::array ch1 { json::value(tst1) };
 	json::value v1(ch1);
-	json::array ch2 { json::value(tst2) };
-	json::value v2(ch2);
+	json::warray ch2 { json::wvalue(tst2) };
+	json::wvalue v2(ch2);
 
 	os1 << v1;
 	os2 << v2;

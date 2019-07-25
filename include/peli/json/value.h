@@ -33,13 +33,13 @@ namespace peli
 {
 	namespace json
 	{
-		class value : public peli::variant_type
+		template<typename Ch> class basic_value : public peli::variant_type
 		<
 			bool,
 			json::number,
-			std::string, std::wstring,
-			json::array,
-			json::object, json::wobject
+			std::basic_string<Ch>,
+			json::basic_array<Ch>,
+			json::basic_object<Ch>
 		>
 		{
 		public:
@@ -47,9 +47,9 @@ namespace peli
 			<
 				bool,
 				json::number,
-				std::string, std::wstring,
-				json::array,
-				json::object, json::wobject
+				std::basic_string<Ch>,
+				json::basic_array<Ch>,
+				json::basic_object<Ch>
 			>;
 
 			using variant_type::variant_type;
@@ -60,9 +60,12 @@ namespace peli
 			}
 		};
 
-		template<typename T> inline value make_value()
+		typedef basic_value<char> value;
+		typedef basic_value<wchar_t> wvalue;
+
+		template<typename T, class ValueType = value> inline ValueType make_value()
 		{
-			return value(T());
+			return ValueType(T());
 		}
 	}
 }

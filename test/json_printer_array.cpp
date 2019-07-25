@@ -42,8 +42,11 @@ void check_empty()
 	const json::array ch1;
 	json::value v1(ch1);
 
+	const json::warray ch2;
+	json::wvalue v2(ch2);
+
 	os1 << v1;
-	os2 << v1;
+	os2 << v2;
 
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);
@@ -54,7 +57,7 @@ void check_empty()
 	os2.seekp(0);
 
 	os1 << json::pretty << v1;
-	os2 << json::pretty << v1;
+	os2 << json::pretty << v2;
 
 	assert(os1.str() == str1_pretty);
 	assert(os2.str() == str2_pretty);
@@ -74,8 +77,11 @@ void check_one()
 	const json::array ch1 { json::value() };
 	json::value v1(ch1);
 
+	const json::warray ch2 { json::wvalue() };
+	json::wvalue v2(ch2);
+
 	os1 << v1;
-	os2 << v1;
+	os2 << v2;
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);
 
@@ -85,7 +91,7 @@ void check_one()
 	os2.seekp(0);
 
 	os1 << json::pretty << v1;
-	os2 << json::pretty << v1;
+	os2 << json::pretty << v2;
 
 
 	cout << "test:" << endl;
@@ -107,8 +113,11 @@ void check_two()
 	json::array ch1 { json::value(), json::value() };
 	json::value v1(ch1);
 
+	json::warray ch2 { json::wvalue(), json::wvalue() };
+	json::wvalue v2(ch2);
+
 	os1 << v1;
-	os2 << v1;
+	os2 << v2;
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);
 
@@ -118,7 +127,7 @@ void check_two()
 	os2.seekp(0);
 
 	os1 << json::pretty << v1;
-	os2 << json::pretty << v1;
+	os2 << json::pretty << v2;
 
 	assert(os1.str() == str1_pretty);
 	assert(os2.str() == str2_pretty);
@@ -137,8 +146,11 @@ void check_nested()
 	json::array ch1 { json::value(), json::value(json::array {json::value() }), json::value() };
 	json::value v1(ch1);
 
+	json::warray ch2 { json::wvalue(), json::wvalue(json::warray {json::wvalue() }), json::wvalue() };
+	json::wvalue v2(ch2);
+
 	os1 << v1;
-	os2 << v1;
+	os2 << v2;
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);
 
@@ -148,7 +160,7 @@ void check_nested()
 	os2.seekp(0);
 
 	os1 << json::pretty << v1;
-	os2 << json::pretty << v1;
+	os2 << json::pretty << v2;
 
 	cout << "test:" << endl;
 	cout << os1.str() << endl;

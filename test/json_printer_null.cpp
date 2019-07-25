@@ -37,9 +37,11 @@ void check()
 
 	json::array ch1 { json::value() };
 	json::value v1(ch1);
+	json::warray ch2 { json::wvalue() };
+	json::wvalue v2(ch2);
 
 	os1 << v1;
-	os2 << v1;
+	os2 << v2;
 
 	assert(os1.str() == str1);
 	assert(os2.str() == str2);

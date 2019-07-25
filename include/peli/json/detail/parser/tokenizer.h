@@ -34,8 +34,8 @@ namespace peli
 				class tokenizer
 				{
 				public:
-					template<typename Ch> static json::value tok(std::basic_streambuf<Ch>* rdbuf);
-					template<typename Ch, typename Alloc> static json::value gentle_stream(std::basic_istream<Ch, Alloc>& is);
+					template<typename Ch> static json::basic_value<Ch> tok(std::basic_streambuf<Ch>* rdbuf);
+					template<typename Ch, typename Alloc> static json::basic_value<Ch> gentle_stream(std::basic_istream<Ch, Alloc>& is);
 				};
 			}
 		}
