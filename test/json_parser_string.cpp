@@ -133,9 +133,13 @@ int check_u_escapes()
 
 	if (arr2 != ch2)
 	{
-		wcout << L"strings are equal: " << (get<wstring>(arr2[0]) == get<wstring>(ch2[0])) << endl;
-		wcout << L"arr: " << get<wstring>(arr2[0]) << endl;
-		wcout << L"ch:  " << get<wstring>(ch2[0]) << endl;
+		const auto& s1 { get<wstring>(arr2[0]) };
+		const auto& s2 { get<wstring>(ch2[0]) };
+
+		wcout << L"strings are equal: " << (s1 == s2) << endl;
+		wcout << L"sizes: s1: " << s1.size() << L", s2: " << s2.size() << endl;
+		const auto& mm { mismatch(begin(s1), end(s1), begin(s2)) };
+		wcout << L"mismatch pos: " << distance(mm.first, begin(s1)) << L' ' << distance(mm.second, begin(s2)) << endl;
 		return 8;
 	}
 
