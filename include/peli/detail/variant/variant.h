@@ -280,7 +280,31 @@ namespace peli
 				}
 
 			private:
-				template<typename T, class Variant> friend decltype(auto) get(Variant&& v)
+				template<typename T> friend T& get(variant& v)
+				{
+					v.template static_type_check<T>();
+					v.template runtime_type_check<T>();
+
+					return v.template holder<T>()->value();
+				}
+
+				template<typename T> friend const T& get(const variant& v)
+				{
+					v.template static_type_check<T>();
+					v.template runtime_type_check<T>();
+
+					return v.template holder<T>()->value();
+				}
+
+				template<typename T> friend T&& get(variant&& v)
+				{
+					v.template static_type_check<T>();
+					v.template runtime_type_check<T>();
+
+					return v.template holder<T>()->value();
+				}
+
+				template<typename T> friend const T&& get(const variant&& v)
 				{
 					v.template static_type_check<T>();
 					v.template runtime_type_check<T>();
