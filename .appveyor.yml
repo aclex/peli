@@ -26,9 +26,5 @@ before_build:
 build:
   project: $(APPVEYOR_BUILD_FOLDER)\$(APPVEYOR_PROJECT_NAME).sln
 
-after_build:
-  - test/json_parser_string
-  - echo Exit code is %errorlevel%
-
 test_script:
   - ctest --output-on-failure
