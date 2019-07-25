@@ -45,11 +45,11 @@ namespace peli
 		public:
 			using variant_type = peli::variant_type
 			<
-			bool,
-			json::number,
-			std::string, std::wstring,
-			json::array,
-			json::object, json::wobject
+				bool,
+				json::number,
+				std::string, std::wstring,
+				json::array,
+				json::object, json::wobject
 			>;
 
 			using variant_type::variant_type;
