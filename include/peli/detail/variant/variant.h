@@ -84,7 +84,7 @@ namespace peli
 				public:
 					struct deducer
 					{
-						static constexpr T apply(T) noexcept;
+						static T apply(T) noexcept;
 					};
 
 					value_holder_template() = default;
