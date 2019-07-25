@@ -47,10 +47,10 @@ int check_empty()
 	json::warray ch2 { L""s };
 
 	if (arr1 != ch1)
-		return -1;
+		return 1;
 
 	if (arr2 != ch2)
-		return -2;
+		return 2;
 
 	return 0;
 }
@@ -74,10 +74,10 @@ int check_plain()
 	json::warray ch2 { L"проверка обычной Unicode-строки"s };
 
 	if (arr1 != ch1)
-		return -3;
+		return 3;
 
 	if (arr2 != ch2)
-		return -4;
+		return 4;
 
 	return 0;
 }
@@ -101,10 +101,10 @@ int check_verbal_escapes()
 	json::warray ch2 { L"   check all the verbal escapes: \" \\ / \b \f \n \r \t \""s };
 
 	if (arr1 != ch1)
-		return -5;
+		return 5;
 
 	if (arr2 != ch2)
-		return -6;
+		return 6;
 
 	return 0;
 }
@@ -128,10 +128,10 @@ int check_u_escapes()
 	json::warray ch2 { L"check unicode escapes: привет, 𐅵 𝄞 мир!"s };
 
 	if (arr1 != ch1)
-		return -7;
+		return 7;
 
 	if (arr2 != ch2)
-		return -8;
+		return 8;
 
 	return 0;
 }
