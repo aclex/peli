@@ -136,7 +136,7 @@ namespace peli
 
 				template<typename T> using proper_value_holder = value_holder_template<T>;
 
-				using data_t = typename std::aligned_union<0, proper_value_holder<typename std::decay<Ts>::type>...>::type;
+				using data_t = std::aligned_union_t<0, proper_value_holder<std::decay_t<Ts>>...>;
 
 			public:
 				variant() noexcept : m_valid(false) { }
@@ -153,11 +153,11 @@ namespace peli
 				}
 
 				template<typename U>
-				variant(U&& v) noexcept(noexcept(proper_value_holder<typename std::decay<U>::type>(std::forward<typename std::remove_reference<U>::type>(v)))) : m_valid(true)
+				variant(U&& v) noexcept(noexcept(proper_value_holder<std::decay_t<U>>(std::forward<std::remove_reference_t<U>>(v)))) : m_valid(true)
 				{
 					static_type_check<U>();
 
-					new (&m_data) proper_value_holder<typename std::decay<U>::type>(std::forward<typename std::remove_reference<U>::type>(v));
+					new (&m_data) proper_value_holder<std::decay_t<U>>(std::forward<std::remove_reference_t<U>>(v));
 				}
 
 				variant& operator=(const variant& v)
@@ -274,7 +274,7 @@ namespace peli
 					if (!m_valid)
 						throw std::invalid_argument("Not initialized.");
 
-					if (typeid(typename std::decay<T>::type) != holder()->type_info())
+					if (typeid(std::decay_t<T>) != holder()->type_info())
 						throw std::bad_cast();
 				}
 
@@ -289,14 +289,14 @@ namespace peli
 				}
 
 				template<typename T,
-				typename DecayedT = typename std::decay<T>::type>
+				typename DecayedT = std::decay_t<T>>
 				constexpr const proper_value_holder<DecayedT>* holder() const
 				{
 					return internal::safe_cast<const proper_value_holder<DecayedT>*>(&m_data);
 				}
 
 				template<typename T,
-				typename DecayedT = typename std::decay<T>::type>
+				typename DecayedT = std::decay_t<T>>
 				inline proper_value_holder<DecayedT>* holder()
 				{
 					return internal::safe_cast<proper_value_holder<DecayedT>*>(&m_data);
