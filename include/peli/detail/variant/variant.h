@@ -180,14 +180,16 @@ namespace peli
 						v.holder()->placement_move(&m_data);
 				}
 
-				template<typename U>
-				variant(U&& v) noexcept(noexcept(proper_value_holder<std::decay_t<U>>(std::forward<std::remove_reference_t<U>>(v)))) : m_valid(true)
+				template
+				<
+					typename U,
+					typename DeducedType = decltype(common_deducer<Ts...>::apply(std::declval<U>()))
+				>
+				variant(U&& v) noexcept(noexcept(proper_value_holder<DeducedType>(std::forward<std::remove_reference_t<U>>(v)))) : m_valid(true)
 				{
 					static_type_check<U>();
 
-					typedef decltype(common_deducer<Ts...>::apply(v)) deduced_type;
-
-					new (&m_data) proper_value_holder<deduced_type>(std::forward<std::remove_reference_t<U>>(v));
+					new (&m_data) proper_value_holder<DeducedType>(std::forward<std::remove_reference_t<U>>(v));
 				}
 
 				variant& operator=(const variant& v)
