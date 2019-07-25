@@ -30,7 +30,7 @@ int main(int, char**)
 {
 	json::value v = json::make_value<json::object>();
 	json::object& obj(get<json::object>(v));
-	obj["привет"] = "мир";
+	obj["привет"] = "мир"s;
 
 	cout << "проверка: " << v << endl;
 

@@ -41,7 +41,7 @@ int main(int, char**)
 	if (obj3 != obj1)
 		return -3;
 
-	obj2["foo"] = "bar";
+	obj2["foo"] = "bar"s;
 
 	if (obj2 != obj1)
 		return -4;

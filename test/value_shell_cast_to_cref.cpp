@@ -38,7 +38,7 @@ int main(int, char**)
 	if (obj3 != obj1)
 		return -2;
 
-	obj3["foo"] = "bar";
+	obj3["foo"] = "bar"s;
 
 	if (obj3 == obj1)
 		return -3;

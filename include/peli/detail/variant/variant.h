@@ -82,6 +82,11 @@ namespace peli
 				template<typename T> class value_holder_template : public value_holder
 				{
 				public:
+					struct deducer
+					{
+						static constexpr T apply(T) noexcept;
+					};
+
 					value_holder_template() = default;
 					value_holder_template(const value_holder_template&) = default;
 					value_holder_template(value_holder_template&& v) = default;
@@ -139,6 +144,24 @@ namespace peli
 					T m_value;
 				};
 
+				template<typename... As> struct common_deducer;
+
+				template<typename A1, typename... As> struct common_deducer<A1, As...> :
+					value_holder_template<A1>::deducer, common_deducer<As...>
+				{
+					typedef common_deducer type;
+
+					using value_holder_template<A1>::deducer::apply;
+					using common_deducer<As...>::type::apply;
+				};
+
+				template<typename A> struct common_deducer<A> : value_holder_template<A>::deducer
+				{
+					typedef typename value_holder_template<A>::deducer type;
+
+					using value_holder_template<A>::deducer::apply;
+				};
+
 				template<typename T> using proper_value_holder = value_holder_template<T>;
 
 				using data_t = std::aligned_union_t<0, proper_value_holder<std::decay_t<Ts>>...>;
@@ -162,7 +185,9 @@ namespace peli
 				{
 					static_type_check<U>();
 
-					new (&m_data) proper_value_holder<std::decay_t<U>>(std::forward<std::remove_reference_t<U>>(v));
+					typedef decltype(common_deducer<Ts...>::apply(v)) deduced_type;
+
+					new (&m_data) proper_value_holder<deduced_type>(std::forward<std::remove_reference_t<U>>(v));
 				}
 
 				variant& operator=(const variant& v)

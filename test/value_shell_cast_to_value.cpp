@@ -37,7 +37,7 @@ int main(int, char**)
 	assert(obj2 == obj1);
 	assert(obj3 == obj1);
 
-	obj3["foo"] = "bar";
+	obj3["foo"] = "bar"s;
 
 	assert(obj3 != obj1);
 	assert(obj3 != obj2);

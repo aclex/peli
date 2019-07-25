@@ -27,7 +27,7 @@ int main(int, char**)
 {
 	json::array sample;
 	sample.push_back(json::number { 42 });
-	sample.push_back(L"wtest");
+	sample.push_back(L"wtest"s);
 
 	json::value v(sample);
 	json::array& arr(get<json::array>(v));
