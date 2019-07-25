@@ -100,12 +100,17 @@ namespace peli
 						new (dest) value_holder_template(std::move(*this));
 					}
 
-					constexpr const T& value() const noexcept
+					constexpr const T& value() const& noexcept
 					{
 						return m_value;
 					}
 
-					inline T& value() noexcept // constexpr in C++14
+					constexpr T& value() & noexcept
+					{
+						return m_value;
+					}
+
+					constexpr T&& value() && noexcept
 					{
 						return m_value;
 					}
@@ -250,8 +255,13 @@ namespace peli
 				}
 
 			private:
-				template<typename T, typename... Types> friend const T& get(const variant<Types...>& v);
-				template<typename T, typename... Types> friend T& get(variant<Types...>& v);
+				template<typename T, class Variant> friend decltype(auto) get(Variant&& v)
+				{
+					v.template static_type_check<T>();
+					v.template runtime_type_check<T>();
+
+					return v.template holder<T>()->value();
+				}
 
 				template<typename U> struct try_construct_from
 				{
@@ -305,22 +315,6 @@ namespace peli
 				bool m_valid;
 				data_t m_data;
 			};
-
-			template<typename T, typename... Ts> const T& get(const variant<Ts...>& v)
-			{
-				v.template static_type_check<T>();
-				v.template runtime_type_check<T>();
-
-				return v.template holder<T>()->value();
-			}
-
-			template<typename T, typename... Ts> T& get(variant<Ts...>& v)
-			{
-				v.template static_type_check<T>();
-				v.template runtime_type_check<T>();
-
-				return v.template holder<T>()->value();
-			}
 
 			template
 			<

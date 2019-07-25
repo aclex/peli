@@ -23,18 +23,6 @@ namespace peli
 		Types...
 	>;
 
-	template<typename T, class Variant>
-	constexpr decltype(auto) get(Variant&& v)
-	{
-#ifdef INTERNAL_VARIANT
-		namespace ns = detail::variant;
-#else
-		namespace ns = std;
-#endif
-		// slicing is considered harmless here
-		return ns::get<T>(std::forward<Variant>(v));
-	}
-
 	template<class Visitor, class Variant>
 	constexpr decltype(auto) visit(Visitor&& vis, Variant&& v)
 	{
