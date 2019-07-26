@@ -26,6 +26,28 @@ using namespace std;
 
 using namespace peli;
 
+namespace
+{
+	template<class ExceptionType> bool has_thrown_on(const string& text)
+	{
+		bool thrown { };
+
+		istringstream is(text);
+		json::value v;
+
+		try
+		{
+			is >> v;
+		}
+		catch (const ExceptionType&)
+		{
+			thrown = true;
+		}
+
+		return thrown;
+	}
+}
+
 int check_empty()
 {
 	const string str1 = "   {\n\t   }\r\n  ";
@@ -134,6 +156,20 @@ int check_redundant()
 	return 0;
 }
 
+int check_typos()
+{
+	if (!has_thrown_on<invalid_argument>("{true : false}"))
+		return -9;
+
+	if (!has_thrown_on<invalid_argument>("{\"a\" - false}"))
+		return -10;
+
+	if (!has_thrown_on<invalid_argument>("{\"a\" : false. \"b\" : true}"))
+		return -11;
+
+	return 0;
+}
+
 int main(int, char**)
 {
 	const int er = check_empty();
@@ -153,5 +189,10 @@ int main(int, char**)
 
 	const int rr = check_redundant();
 
-	return rr;
+	if (rr)
+		return rr;
+
+	const int sr = check_typos();
+
+	return sr;
 }
