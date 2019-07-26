@@ -60,16 +60,18 @@ namespace peli
 
 						Ch* rest;
 
-						json::number ret = floaxie::atof<double>(buf.data(), &rest);
+						const auto& conv_result { floaxie::atof<double>(buf.data(), &rest) };
 
-						if (errno == ERANGE)
-							throw std::invalid_argument(std::strerror(errno));
+						if (conv_result.status != floaxie::conversion_status::success)
+						{
+							throw std::invalid_argument("");
+						}
 
 						typename std::basic_streambuf<Ch>::off_type chars_parsed = rest - buf.data();
 
 						rdbuf->pubseekpos(curr_pos + chars_parsed, std::ios_base::in);
 
-						return ret;
+						return conv_result.value;
 					}
 				};
 			}
