@@ -26,6 +26,28 @@ using namespace std;
 
 using namespace peli;
 
+namespace
+{
+	template<class ExceptionType> bool has_thrown_on(const string& text)
+	{
+		bool thrown { };
+
+		istringstream is(text);
+		json::value v;
+
+		try
+		{
+			is >> v;
+		}
+		catch (const ExceptionType&)
+		{
+			thrown = true;
+		}
+
+		return thrown;
+	}
+}
+
 int check_boolean()
 {
 	const string str1 = "   [\n\ttrue, false, true, true   ]\r\n  ";
@@ -53,7 +75,31 @@ int check_boolean()
 	return 0;
 }
 
+int check_typos()
+{
+	if (!has_thrown_on<invalid_argument>("tee"))
+		return -3;
+
+	if (!has_thrown_on<invalid_argument>("tree"))
+		return -4;
+
+	if (!has_thrown_on<invalid_argument>("truu"))
+		return -5;
+
+	return 0;
+}
+
 int main(int, char**)
 {
-	return check_boolean();
+	if (auto r = check_boolean())
+	{
+		return r;
+	}
+
+	if (auto r = check_typos())
+	{
+		return r;
+	}
+
+	return 0;
 }
