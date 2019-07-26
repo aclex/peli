@@ -19,7 +19,6 @@
 
 #include <sstream>
 #include <iostream>
-#include <algorithm>
 
 #include <cstdlib>
 
@@ -132,16 +131,7 @@ int check_u_escapes()
 		return 7;
 
 	if (arr2 != ch2)
-	{
-		const auto& s1 { get<wstring>(arr2[0]) };
-		const auto& s2 { get<wstring>(ch2[0]) };
-
-		wcout << L"strings are equal: " << (s1 == s2) << endl;
-		wcout << L"sizes: s1: " << s1.size() << L", s2: " << s2.size() << endl;
-		const auto& mm { mismatch(begin(s1), end(s1), begin(s2)) };
-		wcout << L"mismatch pos: " << distance(mm.first, begin(s1)) << L' ' << distance(mm.second, begin(s2)) << endl;
 		return 8;
-	}
 
 	return 0;
 }
