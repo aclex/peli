@@ -50,6 +50,16 @@ namespace peli
 
 			return thrown;
 		}
+
+		bool has_null_return(const string& text)
+		{
+			istringstream is(text);
+			json::value v;
+
+			is >> v;
+
+			return v.null();
+		}
 	}
 }
 
