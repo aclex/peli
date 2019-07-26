@@ -67,13 +67,13 @@ int check()
 	json::warray ch2 { json::wvalue() };
 
 	if (obj1 != ch1)
-		return -1;
+		return 1;
 
 	if (obj2 != ch2)
-		return -2;
+		return 2;
 
 	if (!obj1[0].null())
-		return -3;
+		return 3;
 
 	return 0;
 }
@@ -81,13 +81,13 @@ int check()
 int check_typos()
 {
 	if (!has_thrown_on<invalid_argument>("nil"))
-		return -4;
+		return 4;
 
 	if (!has_thrown_on<invalid_argument>("nuul"))
-		return -5;
+		return 5;
 
 	if (!has_thrown_on<invalid_argument>("nul"))
-		return -6;
+		return 6;
 
 	return 0;
 }
