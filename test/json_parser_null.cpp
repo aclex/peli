@@ -22,31 +22,12 @@
 
 #include "peli/json/value.h"
 
+#include "exception_check.h"
+
 using namespace std;
 
 using namespace peli;
-
-namespace
-{
-	template<class ExceptionType> bool has_thrown_on(const string& text)
-	{
-		bool thrown { };
-
-		istringstream is(text);
-		json::value v;
-
-		try
-		{
-			is >> v;
-		}
-		catch (const ExceptionType&)
-		{
-			thrown = true;
-		}
-
-		return thrown;
-	}
-}
+using namespace peli::test;
 
 int check()
 {
