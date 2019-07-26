@@ -26,6 +26,28 @@ using namespace std;
 
 using namespace peli;
 
+namespace
+{
+	template<class ExceptionType> bool has_thrown_on(const string& text)
+	{
+		bool thrown { };
+
+		istringstream is(text);
+		json::value v;
+
+		try
+		{
+			is >> v;
+		}
+		catch (const ExceptionType&)
+		{
+			thrown = true;
+		}
+
+		return thrown;
+	}
+}
+
 int check()
 {
 	const string str1 = "   [\n\tnull   ]\r\n  ";
@@ -56,7 +78,31 @@ int check()
 	return 0;
 }
 
+int check_typos()
+{
+	if (!has_thrown_on<invalid_argument>("nil"))
+		return -4;
+
+	if (!has_thrown_on<invalid_argument>("nuul"))
+		return -5;
+
+	if (!has_thrown_on<invalid_argument>("nul"))
+		return -6;
+
+	return 0;
+}
+
 int main(int, char**)
 {
-	return check();
+	if (const auto r = check())
+	{
+		return r;
+	}
+
+	if (const auto r = check_typos())
+	{
+		return r;
+	}
+
+	return 0;
 }
