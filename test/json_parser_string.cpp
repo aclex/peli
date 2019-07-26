@@ -24,9 +24,12 @@
 
 #include "peli/json/value.h"
 
+#include "exception_check.h"
+
 using namespace std;
 
 using namespace peli;
+using namespace peli::test;
 
 int check_empty()
 {
@@ -136,6 +139,14 @@ int check_u_escapes()
 	return 0;
 }
 
+int check_typos()
+{
+	if (!has_thrown_on<invalid_argument>("[\"test]"))
+		return 9;
+
+	return 0;
+}
+
 int main(int, char**)
 {
 	if (const auto r = check_empty())
@@ -148,6 +159,9 @@ int main(int, char**)
 		return r;
 
 	if (const auto r = check_u_escapes())
+		return r;
+
+	if (const auto r = check_typos())
 		return r;
 
 	return 0;
