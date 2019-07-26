@@ -138,22 +138,17 @@ int check_u_escapes()
 
 int main(int, char**)
 {
-	const int er = check_empty();
+	if (const auto r = check_empty())
+		return r;
 
-	if (er)
-		return er;
+	if (const auto r = check_plain())
+		return r;
 
-	const int pr = check_plain();
+	if (const auto r = check_verbal_escapes())
+		return r;
 
-	if (pr)
-		return pr;
+	if (const auto r = check_u_escapes())
+		return r;
 
-	const int vr = check_verbal_escapes();
-
-	if (vr)
-		return vr;
-
-	const int ur = check_u_escapes();
-
-	return ur;
+	return 0;
 }
