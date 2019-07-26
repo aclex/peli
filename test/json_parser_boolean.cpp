@@ -67,10 +67,10 @@ int check_boolean()
 	json::warray ch2 { json::wvalue(true), json::wvalue(false), json::wvalue(true), json::wvalue(true) };
 
 	if (arr1 != ch1)
-		return -1;
+		return 1;
 
 	if (arr2 != ch2)
-		return -2;
+		return 2;
 
 	return 0;
 }
@@ -78,13 +78,13 @@ int check_boolean()
 int check_typos()
 {
 	if (!has_thrown_on<invalid_argument>("tee"))
-		return -3;
+		return 3;
 
 	if (!has_thrown_on<invalid_argument>("tree"))
-		return -4;
+		return 4;
 
 	if (!has_thrown_on<invalid_argument>("truu"))
-		return -5;
+		return 5;
 
 	return 0;
 }
