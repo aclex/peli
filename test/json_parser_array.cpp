@@ -67,10 +67,10 @@ int check_empty()
 	json::warray ch2;
 
 	if (obj1 != ch1)
-		return -1;
+		return 1;
 
 	if (obj2 != ch2)
-		return -2;
+		return 2;
 
 	return 0;
 }
@@ -94,10 +94,10 @@ int check_one()
 	json::warray ch2 { json::wvalue() };
 
 	if (obj1 != ch1)
-		return -3;
+		return 3;
 
 	if (obj2 != ch2)
-		return -4;
+		return 4;
 
 	return 0;
 }
@@ -121,10 +121,10 @@ int check_two()
 	json::warray ch2 { L"a"s, json::wvalue(), L"b"s, json::wvalue() };
 
 	if (obj1 != ch1)
-		return -5;
+		return 5;
 
 	if (obj2 != ch2)
-		return -6;
+		return 6;
 
 	return 0;
 }
@@ -132,29 +132,24 @@ int check_two()
 int check_typos()
 {
 	if (!has_thrown_on<invalid_argument>("[true. false]"))
-		return -7;
+		return 7;
 
 	return 0;
 }
 
 int main(int, char**)
 {
-	const int er = check_empty();
+	if (const auto r = check_empty())
+		return r;
 
-	if (er)
-		return er;
+	if (const auto r = check_one())
+		return r;
 
-	const int nr = check_one();
+	if (const auto r = check_two())
+		return r;
 
-	if (nr)
-		return nr;
+	if (const auto r = check_typos())
+		return r;
 
-	const int tr = check_two();
-
-	if (tr)
-		return tr;
-
-	const int sr = check_typos();
-
-	return sr;
+	return 0;
 }
