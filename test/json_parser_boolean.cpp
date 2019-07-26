@@ -86,6 +86,18 @@ int check_typos()
 	if (!has_thrown_on<invalid_argument>("truu"))
 		return 5;
 
+	if (!has_thrown_on<invalid_argument>("filse"))
+		return 6;
+
+	if (!has_thrown_on<invalid_argument>("faasl"))
+		return 7;
+
+	if (!has_thrown_on<invalid_argument>("falce"))
+		return 8;
+
+	if (!has_thrown_on<invalid_argument>("falsa"))
+		return 9;
+
 	return 0;
 }
 
