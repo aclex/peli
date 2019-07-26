@@ -50,10 +50,10 @@ int check_zero()
 	json::warray ch2 { json::number(0) };
 
 	if (arr1 != ch1)
-		return -1;
+		return 1;
 
 	if (arr2 != ch2)
-		return -2;
+		return 2;
 
 	return 0;
 }
@@ -77,10 +77,10 @@ int check_integer()
 	json::warray ch2 { json::number { -123456 }, json::number { 123456 } };
 
 	if (arr1 != ch1)
-		return -3;
+		return 3;
 
 	if (arr2 != ch2)
-		return -4;
+		return 4;
 
 	return 0;
 }
@@ -125,10 +125,10 @@ int check_decimal_fraction()
 		ch1[3] = arr1[3];
 
 	if (arr1 != ch1)
-		return -5;
+		return 5;
 
 	if (arr2 != ch2)
-		return -6;
+		return 6;
 
 	return 0;
 }
@@ -177,10 +177,10 @@ int check_engineer_fraction()
 		ch1[5] = arr1[5];
 
 	if (arr1 != ch1)
-		return -7;
+		return 7;
 
 	if (arr2 != ch2)
-		return -8;
+		return 8;
 
 	return 0;
 }
@@ -188,29 +188,27 @@ int check_engineer_fraction()
 int check_overflow()
 {
 	if (!has_thrown_on<invalid_argument>("[45e+1459823]"))
-		return -9;
+		return 9;
 
 	return 0;
 }
 
 int main(int, char**)
 {
-	const int zr = check_zero();
+	if (const auto r = check_zero())
+		return r;
 
-	if (zr)
-		return zr;
+	if (const auto r = check_integer())
+		return r;
 
-	const int ir = check_integer();
+	if (const auto r = check_decimal_fraction())
+		return r;
 
-	if (ir)
-		return ir;
+	if (const auto r = check_engineer_fraction())
+		return r;
 
-	const int dr = check_decimal_fraction();
+	if (const auto r = check_overflow())
+		return r;
 
-	if (dr)
-		return dr;
-
-	const int er = check_engineer_fraction();
-
-	return er;
+	return 0;
 }
