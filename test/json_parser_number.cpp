@@ -24,9 +24,12 @@
 
 #include "peli/json/value.h"
 
+#include "exception_check.h"
+
 using namespace std;
 
 using namespace peli;
+using namespace peli::test;
 
 int check_zero()
 {
@@ -178,6 +181,14 @@ int check_engineer_fraction()
 
 	if (arr2 != ch2)
 		return -8;
+
+	return 0;
+}
+
+int check_overflow()
+{
+	if (!has_thrown_on<invalid_argument>("[45e+1459823]"))
+		return -9;
 
 	return 0;
 }
