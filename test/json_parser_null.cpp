@@ -89,6 +89,9 @@ int check_typos()
 	if (!has_thrown_on<invalid_argument>("[nul]"))
 		return 6;
 
+	if (!has_thrown_on<invalid_argument>("cde"))
+		return 7;
+
 	return 0;
 }
 
