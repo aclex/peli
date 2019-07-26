@@ -126,7 +126,7 @@ int check_u_escapes()
 	const json::array& arr1(get<json::array>(v1));
 	const json::warray& arr2(get<json::warray>(v2));
 	json::array ch1 { "check unicode escapes: привет, 𐅵 𝄞 мир! "s };
-	json::warray ch2 { L"check unicode escapes: привет, 𐅵 𝄞 мир!"s };
+	json::warray ch2 { L"check unicode escapes: \u043f\u0440\u0438\u0432\u0435\u0442, \U00010175 \U0001D11E \u043C\u0438\u0440!"s };
 
 	if (arr1 != ch1)
 		return 7;
