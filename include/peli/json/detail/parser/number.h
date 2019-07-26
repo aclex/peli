@@ -60,7 +60,7 @@ namespace peli
 
 						Ch* rest;
 
-						const auto& conv_result { floaxie::atof<double>(buf.data(), &rest) };
+						const auto& conv_result = floaxie::atof<double>(buf.data(), &rest);
 
 						if (conv_result.status != floaxie::conversion_status::success)
 						{
