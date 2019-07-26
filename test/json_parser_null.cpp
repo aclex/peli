@@ -80,13 +80,13 @@ int check()
 
 int check_typos()
 {
-	if (!has_thrown_on<invalid_argument>("nil"))
+	if (!has_thrown_on<invalid_argument>("[nil]"))
 		return 4;
 
-	if (!has_thrown_on<invalid_argument>("nuul"))
+	if (!has_thrown_on<invalid_argument>("[nuul]"))
 		return 5;
 
-	if (!has_thrown_on<invalid_argument>("nul"))
+	if (!has_thrown_on<invalid_argument>("[nul]"))
 		return 6;
 
 	return 0;
