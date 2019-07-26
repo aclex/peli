@@ -67,10 +67,10 @@ int check_empty()
 	json::wobject ch2;
 
 	if (obj1 != ch1)
-		return -1;
+		return 1;
 
 	if (obj2 != ch2)
-		return -2;
+		return 2;
 
 	return 0;
 }
@@ -94,10 +94,10 @@ int check_one()
 	json::wobject ch2 { { L"a"s, json::wvalue() } };
 
 	if (obj1 != ch1)
-		return -3;
+		return 3;
 
 	if (obj2 != ch2)
-		return -4;
+		return 4;
 
 	return 0;
 }
@@ -121,10 +121,10 @@ int check_two()
 	json::wobject ch2 { { L"a"s, json::wvalue() }, { L"b"s, json::wvalue() } };
 
 	if (obj1 != ch1)
-		return -5;
+		return 5;
 
 	if (obj2 != ch2)
-		return -6;
+		return 6;
 
 	return 0;
 }
@@ -148,10 +148,10 @@ int check_redundant()
 	json::wobject ch2 { { L"a"s, json::wvalue() }, { L"b"s, json::wvalue() } };
 
 	if (obj1 != ch1)
-		return -7;
+		return 7;
 
 	if (obj2 != ch2)
-		return -8;
+		return 8;
 
 	return 0;
 }
@@ -159,40 +159,33 @@ int check_redundant()
 int check_typos()
 {
 	if (!has_thrown_on<invalid_argument>("{true : false}"))
-		return -9;
+		return 9;
 
 	if (!has_thrown_on<invalid_argument>("{\"a\" - false}"))
-		return -10;
+		return 10;
 
 	if (!has_thrown_on<invalid_argument>("{\"a\" : false. \"b\" : true}"))
-		return -11;
+		return 11;
 
 	return 0;
 }
 
 int main(int, char**)
 {
-	const int er = check_empty();
+	if (const auto r = check_empty())
+		return r;
 
-	if (er)
-		return er;
+	if (const auto r = check_one())
+		return r;
 
-	const int nr = check_one();
+	if (const auto r = check_two())
+		return r;
 
-	if (nr)
-		return nr;
+	if (const auto r = check_redundant())
+		return r;
 
-	const int tr = check_two();
+	if (const auto r = check_typos())
+		return r;
 
-	if (tr)
-		return tr;
-
-	const int rr = check_redundant();
-
-	if (rr)
-		return rr;
-
-	const int sr = check_typos();
-
-	return sr;
+	return 0;
 }
