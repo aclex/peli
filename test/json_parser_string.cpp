@@ -178,5 +178,8 @@ int main(int, char**)
 	if (const auto r = check_typos())
 		return r;
 
+	if (const auto r = check_illegal_surrogate_pairs())
+		return r;
+
 	return 0;
 }
