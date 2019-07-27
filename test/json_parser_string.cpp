@@ -147,6 +147,17 @@ int check_typos()
 	return 0;
 }
 
+int check_illegal_surrogate_pairs()
+{
+	if (!has_thrown_on<invalid_argument>("[\"\\ud800amc\"]"))
+		return 10;
+
+	if (!has_thrown_on<invalid_argument>("[\"\\ud800\\UDD1E\"]"))
+		return 11;
+
+	return 0;
+}
+
 int main(int, char**)
 {
 	if (const auto r = check_empty())
