@@ -155,6 +155,9 @@ int check_illegal_surrogate_pairs()
 	if (!has_thrown_on<invalid_argument>("[\"\\ud800\\UDD1E\"]"))
 		return 11;
 
+	if (!has_thrown_on<invalid_argument>("[\"\\k\""))
+		return 12;
+
 	return 0;
 }
 
