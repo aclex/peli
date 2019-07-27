@@ -2,17 +2,30 @@ Peli
 ======
 [![Build Status in GCC/Clang](https://travis-ci.org/aclex/peli.svg?branch=master)](https://travis-ci.org/aclex/peli) [![Build status in Visual Studio](https://ci.appveyor.com/api/projects/status/2d028d4f4lt67ejr?svg=true)](https://ci.appveyor.com/project/aclex/peli) [![Code coverage](https://codecov.io/gh/aclex/peli/branch/master/graph/badge.svg)](https://codecov.io/gh/aclex/peli)
 
-Peli is C++14/C++17 header-only library for parsing and printing files in [JSON](https://json.org/) format. It tries to use `std::variant`, if ever possible (i.e. when being built with C++17-enabled compiler), but can use internal variant type implementation otherwise.
+Peli is C++14/C++17 header-only library for parsing and printing files in [JSON](https://json.org/) format.
+
+Why yet another JSON library, please?
+-------------------------------------
+
+Yes, right! In short, for two reasons: first class performance and modern C++ interface and use idioms. With no need to choose only one of the two.
 
 What is it for?
 ---------------
 
-The main aim of writing yet another JSON interation library is to have general purpose, yet fast, library for loading, processing and saving JSON files utilizing modern C++ facilities to avoid excessive overhead preserving simple and consise API. Appearance of `std::variant` in latest C++17 standard also allows keeping the codebase minimal.
+The aim is general purpose, yet fast, library for loading, processing and saving JSON files utilizing modern C++ facilities to avoid performance and programming overhead preserving simple and consise API. `std::variant` in the latest C++17 standard also helps a lot to keep things simple and consistent.
 
-General goals of the project are:
+Here're the general goals of the project:
 - API as simple and short, as possible, based on native C++ and Standard Library types and idioms
-- robust and correct [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)-compliant neat implementation without ghosts under the hood
-- fast, as much, as possible, operations, with no sacrifice on API side
+- robust and correct [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)-compliant implementation without ghosts under the hood
+- comparable performance among the top-speed JSON libraries out there
+- easy to use in the project (hence, header-only format is preferred)
+
+Features
+--------
+1. Per-format `basic_value<>` type to store values of all possible entities. It's literally a specialization of either `std::variant` (with C++17 on) or internal variant implementation (for C++14) (in fact it's derived without data members added to allow recurrent use). Variant's very own functions like `get()` or `visit()` is there for your accessing pleasure, too.
+2. [`floaxie`](https://github.com/aclex/floaxie)-driven number parsing and printing for maximum speed.
+3. Template-based parsing and printing code for better inlining and compile-time calculations.
+4. Dense test coverage to improve correctness and stability in most possible set of use cases.
 
 Compiler compatibility
 ----------------------
@@ -54,13 +67,13 @@ int main(int, char**)
 
 	// list all keys in root element, assuming root is object
 	cout << "Root keys:" << endl;
-	for (const auto& p : static_cast<json::object&>(v))
+	for (const auto& p : get<json::object>(v))
 	{
 		cout << p.first << '\n';
 	}
 
 	// add another integer element to root object
-	static_cast<json::object&>(v)["addme"] = json::value(42);
+	get<json::object>(v)["addme"] = json::number { 42 };
 
 	ofstream output_file("output.json");
 	// save to output file stream
@@ -84,7 +97,7 @@ project(foo)
 
 cmake_minimum_required(VERSION 3.13)
 
-add_subdirectory(peli)
+add_subdirectory(peli EXCLUDE_FROM_ALL) # `EXCLUDE_FOR_ALL` also to exclude supplementary targets like `install` from the main project
 
 add_executable(foo_main foo_main.cpp)
 target_link_libraries(foo_main PUBLIC peli)
