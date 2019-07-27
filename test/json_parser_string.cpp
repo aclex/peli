@@ -114,8 +114,8 @@ int check_verbal_escapes()
 
 int check_u_escapes()
 {
-	const string str1 = "   [\n\t\"check unicode escapes: \\u043f\\u0440\\u0438\\u0432\\u0435\\u0442, \\ud800\\udd75 \\ud834\\udd1e \\u043C\\u0438\\u0440! \"   ]\r\n  ";
-	const wstring str2 = L"[  \r\t\"check unicode escapes: \\u043f\\u0440\\u0438\\u0432\\u0435\\u0442, \\ud800\\udd75 \\ud834\\udd1e \\u043C\\u0438\\u0440!\"   ]\n\t  \n  \n\r  ";
+	const string str1 = "   [\n\t\"check unicode escapes: \\u043f\\u0440\\u0438\\u0432\\u0435\\u0442, \\ud800\\udd75 \\ud834\\udd1e \\u10da \\u043C\\u0438\\u0440! \"   ]\r\n  ";
+	const wstring str2 = L"[  \r\t\"check unicode escapes: \\u043f\\u0440\\u0438\\u0432\\u0435\\u0442, \\ud800\\udd75 \\ud834\\udd1e \\u10da \\u043C\\u0438\\u0440!\"   ]\n\t  \n  \n\r  ";
 
 	istringstream is1(str1);
 	json::value v1;
@@ -127,8 +127,8 @@ int check_u_escapes()
 
 	const json::array& arr1(get<json::array>(v1));
 	const json::warray& arr2(get<json::warray>(v2));
-	json::array ch1 { "check unicode escapes: привет, 𐅵 𝄞 мир! "s };
-	json::warray ch2 { L"check unicode escapes: \u043f\u0440\u0438\u0432\u0435\u0442, \U00010175 \U0001D11E \u043C\u0438\u0440!"s };
+	json::array ch1 { "check unicode escapes: привет, 𐅵 𝄞 ლ мир! "s };
+	json::warray ch2 { L"check unicode escapes: \u043f\u0440\u0438\u0432\u0435\u0442, \U00010175 \U0001D11E \u10da \u043C\u0438\u0440!"s };
 
 	if (arr1 != ch1)
 		return 7;
