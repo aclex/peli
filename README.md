@@ -7,7 +7,7 @@ Peli is C++14/C++17 header-only library for parsing and printing files in [JSON]
 Why yet another JSON library, please?
 -------------------------------------
 
-Yes, right! In short, for two reasons: first class performance and modern C++ interface and use idioms. With no need to choose only one of the two.
+Oh yes, indeed… In short, for two reasons: first class performance and modern C++ interface and use idioms. With no need to choose only one of the two.
 
 What is it for?
 ---------------
@@ -97,7 +97,9 @@ project(foo)
 
 cmake_minimum_required(VERSION 3.13)
 
-add_subdirectory(peli EXCLUDE_FROM_ALL) # `EXCLUDE_FOR_ALL` also to exclude supplementary targets like `install` from the main project
+# `EXCLUDE_FOR_ALL` here to exclude supplementary targets
+# like `install` from the main project target set
+add_subdirectory(peli EXCLUDE_FROM_ALL) 
 
 add_executable(foo_main foo_main.cpp)
 target_link_libraries(foo_main PUBLIC peli)
