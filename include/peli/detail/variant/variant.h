@@ -52,12 +52,6 @@ namespace peli
 				{
 					return static_cast<T>(ptr);
 				}
-
-				template<typename T> constexpr bool is_nothrow_swappable() noexcept
-				{
-					using std::swap;
-					return noexcept(swap(std::declval<T&>(), std::declval<T&>()));
-				}
 			}
 
 			template<typename... Ts> class variant
