@@ -91,3 +91,7 @@ if (BUILD_TESTS)
 	add_subdirectory(test)
 
 endif (BUILD_TESTS)
+
+if (BUILD_DOCUMENTATION)
+	add_subdirectory(doc)
+endif (BUILD_DOCUMENTATION)
