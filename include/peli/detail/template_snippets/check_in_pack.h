@@ -22,6 +22,15 @@
 
 namespace template_snippets
 {
+	/** \brief Checks if the predicate is true for any of the types in the pack.
+	 *
+	 * Another C++17 feature workaround, for checking the value of
+	 * predicate on all the types in the list. Returns true, if the
+	 * predicate succeeds for any of the types.
+	 *
+	 * \tparam Pred predicate type to check.
+	 * \tparam List types to apply the predicate to.
+	 */
 	template<template<class> class Pred, typename... List> struct check_any_in_pack;
 
 	template<template<class> class Pred, typename Head, typename... Rest>
@@ -40,6 +49,15 @@ namespace template_snippets
 
 	template<template<class> class Pred, typename... List> struct check_all_in_pack;
 
+	/** \brief Checks if the predicate is true for all the types in the pack.
+	 *
+	 * Another C++17 feature workaround, for checking the value of
+	 * predicate on all the types in the list. Returns true, if the
+	 * predicate succeeds for all of the types.
+	 *
+	 * \tparam Pred predicate type to check.
+	 * \tparam List types to apply the predicate to.
+	 */
 	template<template<class> class Pred, typename Head, typename... Rest>
 	struct check_all_in_pack<Pred, Head, Rest...> :
 		std::conditional
