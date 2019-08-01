@@ -9,6 +9,10 @@ Why yet another JSON library, please?
 
 Oh yes, indeed… In short, for two reasons: first class performance and modern C++ interface and use idioms. With no need to choose only one of the two.
 
+But why 'peli'?
+---------------
+After [Pelias](https://en.wikipedia.org/wiki/Pelias). As Wiki reads: "He was the one who sent Jason on the quest for the Golden Fleece.", while the JSON to "Jason" allegory can often be seen both in pronunciation and in the related projects titles.
+
 What is it for?
 ---------------
 
