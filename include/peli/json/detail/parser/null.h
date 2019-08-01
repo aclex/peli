@@ -38,6 +38,9 @@ namespace peli
 		{
 			namespace parser
 			{
+				/** \brief `parser` specialization for [JSON](https://json.org) null terms.
+				 * \see `parser`
+				 */
 				template<> class parser<void>
 				{
 				public:

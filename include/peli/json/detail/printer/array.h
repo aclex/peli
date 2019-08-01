@@ -36,6 +36,9 @@ namespace peli
 		{
 			namespace printer
 			{
+				/** \brief `head` specialization for [JSON](https://json.org) array.
+				 * \see `head`
+				 */
 				template<typename Ch> struct head<json::basic_array<Ch>>
 				{
 					static void print(std::basic_ostream<Ch>& os, const peli::json::basic_array<Ch>& arr)

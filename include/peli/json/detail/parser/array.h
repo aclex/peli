@@ -39,6 +39,9 @@ namespace peli
 		{
 			namespace parser
 			{
+				/** \brief `parser` specialization for [JSON](https://json.org) array.
+				 * \see `parser`
+				 */
 				template<typename Ch> class parser<peli::json::basic_array<Ch>>
 				{
 				public:

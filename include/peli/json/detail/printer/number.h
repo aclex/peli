@@ -35,6 +35,9 @@ namespace peli
 		{
 			namespace printer
 			{
+				/** \brief `head` specialization for [JSON](https://json.org) number.
+				 * \see `head`
+				 */
 				template<> struct head<json::number>
 				{
 				public:

@@ -43,6 +43,9 @@ namespace peli
 		{
 			namespace parser
 			{
+				/** \brief `parser` specialization for [JSON](https://json.org) number.
+				 * \see `parser`
+				 */
 				template<> class parser<peli::json::number>
 				{
 					static constexpr const std::size_t s_buf_size = std::numeric_limits<json::number>::max_digits10 + 1;

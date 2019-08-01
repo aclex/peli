@@ -30,25 +30,52 @@ namespace peli
 		{
 			namespace printer
 			{
+				/** \brief Returns index for flag storage in stream register. */
 				inline int flag_storage_index()
 				{
 					static int i { std::ios_base::xalloc() };
 					return i;
 				}
 
+				/** \brief Returns index for tab level storage in stream register. */
 				inline int tab_level_storage_index()
 				{
 					static int i { std::ios_base::xalloc() };
 					return i;
 				}
 
+				/** \brief Flags used in printing. */
 				namespace flag
 				{
+					/** \brief Pretty printing switch. */
 					const long pretty = 0x01;
+					/** \brief Structure newline switch */
 					const long structure_newline = 0x02;
 
+					/** \brief Gets the flag value.
+					 *
+					 * \param flag_word stream register word to read.
+					 * \param flag index of flag to read.
+					 *
+					 * \return Current flag status.
+					 *
+					 */
 					constexpr bool get(const long& flag_word, long flag) { return flag_word & flag; }
+
+					/** \brief Sets the flag value.
+					 *
+					 * \param flag_word stream register word to read.
+					 * \param flag index of flag to read.
+					 *
+					 */
 					inline void set(long& flag_word, long flag) { flag_word |= flag; }
+
+					/** \brief Resets the flag value.
+					 *
+					 * \param flag_word stream register word to read.
+					 * \param flag index of flag to read.
+					 *
+					 */
 					inline void unset(long& flag_word, long flag) { flag_word &= ~flag; }
 				}
 			}

@@ -33,6 +33,9 @@ namespace peli
 		{
 			namespace printer
 			{
+				/** \brief `head` specialization for [JSON](https://json.org) boolean value.
+				 * \see `head`
+				 */
 				template<> struct head<bool>
 				{
 				public:

@@ -31,15 +31,17 @@ namespace peli
 		{
 			namespace parser
 			{
+				/** \brief UTF-related constants and functions. */
 				namespace utf
 				{
+					/** \brief Several internal details */
 					namespace detail
 					{
 						// Unicode constants
 						// Leading (high) surrogates: 0xd800 - 0xdbff
-						// Trailing (low) surrogates: 0xdc00 - 0xdfff
 						constexpr const uint16_t LEAD_SURROGATE_MIN  = 0xd800u;
 						constexpr const uint16_t LEAD_SURROGATE_MAX  = 0xdbffu;
+						// Trailing (low) surrogates: 0xdc00 - 0xdfff
 						constexpr const uint16_t TRAIL_SURROGATE_MIN = 0xdc00u;
 						constexpr const uint16_t TRAIL_SURROGATE_MAX = 0xdfffu;
 						constexpr const uint16_t LEAD_OFFSET         = LEAD_SURROGATE_MIN - (0x10000 >> 10);
@@ -73,6 +75,7 @@ namespace peli
 
 					namespace detail
 					{
+						/** \brief Converts one wider character to [`std::string`](https://en.cppreference.com/w/cpp/string/basic_string). */
 						template<typename UtfCp> std::basic_string<char> wide_to_char(UtfCp cp)
 						{
 							std::basic_string<char> result;
@@ -106,6 +109,7 @@ namespace peli
 							return result;
 						}
 
+						/** \brief Converts surrogate pair to one full-length character. */
 						inline std::uint_fast32_t surrogate_to_wide(std::uint16_t leading_surrogate, std::uint16_t trailing_surrogate)
 						{
 							// Take care of surrogate pairs first
@@ -115,6 +119,7 @@ namespace peli
 							return (leading_surrogate << 10) + trailing_surrogate + SURROGATE_OFFSET;
 						}
 
+						/** \brief Converts `wchar_t` of implementation-defined length to [`std::basic_string`](https://en.cppreference.com/w/cpp/string/basic_string) of the given character type. */
 						template<typename Ch, std::enable_if_t<sizeof(Ch) == 2, bool> = false>
 						inline std::basic_string<Ch> wide_convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate)
 						{
@@ -128,6 +133,7 @@ namespace peli
 						}
 					}
 
+					/** \brief Converts one 16-bit character to [`std::basic_string`](https://en.cppreference.com/w/cpp/string/basic_string) of the specified character type. */
 					template<typename Ch> inline std::basic_string<Ch> convert(std::uint_fast16_t cp)
 					{
 						return std::basic_string<Ch> { static_cast<Ch>(cp) };
@@ -138,6 +144,7 @@ namespace peli
 						return detail::wide_to_char(cp);
 					}
 
+					/** \brief Converts a split surrogate pair to [`std::basic_string`](https://en.cppreference.com/w/cpp/string/basic_string) of the specified character type. */
 					template<typename Ch> inline std::basic_string<Ch> convert(std::uint_fast16_t leading_surrogate, std::uint_fast16_t trailing_surrogate)
 					{
 						return detail::wide_convert<Ch>(leading_surrogate, trailing_surrogate);

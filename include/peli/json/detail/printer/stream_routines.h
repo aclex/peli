@@ -34,33 +34,44 @@ namespace peli
 		{
 			namespace printer
 			{
+				/** \brief Checks if pretty printing is enabled. */
 				template<typename Ch> inline bool is_pretty_printing(std::basic_ostream<Ch>& os)
 				{
 					return flag::get(os.iword(flag_storage_index()), flag::pretty);
 				}
 
+				/** \brief Checks if period is needed according to the local document structure. */
 				template<typename Ch> inline bool needs_structure_period(std::basic_ostream<Ch>& os)
 				{
 					return flag::get(os.iword(flag_storage_index()), flag::structure_newline);
 				}
 
+				/** \brief Sets the flag, that period is needed in this document structure context.
+				 *
+				 * Used to pass document structure metainformation between entity printers.
+				 *
+				 * \see `needs_structure_period`
+				 */
 				template<typename Ch> inline void set_needs_structure_period(std::basic_ostream<Ch>& os, bool value)
 				{
 					value ? flag::set(os.iword(flag_storage_index()), flag::structure_newline) :
 						flag::unset(os.iword(flag_storage_index()), flag::structure_newline);
 				}
 
+				/** \brief Returns current tab level. */
 				template<typename Ch> inline long& tab_level(std::basic_ostream<Ch>& os)
 				{
 					return os.iword(tab_level_storage_index());
 				}
 
+				/** \brief Puts space, if pretty-printing. */
 				template<typename Ch> inline void put_space(std::basic_ostream<Ch>& os)
 				{
 					if (is_pretty_printing(os))
 						os.rdbuf()->sputc(special_chars::space);
 				}
 
+				/** \brief Puts tab indentation, if pretty-printing. */
 				template<typename Ch> inline void put_tab_spacing(std::basic_ostream<Ch>& os)
 				{
 					if (is_pretty_printing(os))
@@ -71,12 +82,17 @@ namespace peli
 					}
 				}
 
+				/** \brief Puts tab new line, if pretty-printing. */
 				template<typename Ch> inline void put_newline(std::basic_ostream<Ch>& os)
 				{
 					if (is_pretty_printing(os))
 						os.rdbuf()->sputc(special_chars::lf);
 				}
 
+				/** \brief Puts tab new line, if local document structure context
+				 * requires and if pretty-printing.
+				 *
+				 */
 				template<typename Ch> inline void put_structure_newline(std::basic_ostream<Ch>& os)
 				{
 					if (needs_structure_period(os))
@@ -87,6 +103,10 @@ namespace peli
 					}
 				}
 
+				/** \brief Puts space, if local document structure context
+				 * requires and if pretty-printing.
+				 *
+				 */
 				template<typename Ch> inline void put_structure_space(std::basic_ostream<Ch>& os)
 				{
 					if (needs_structure_period(os))

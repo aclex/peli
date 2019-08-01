@@ -24,8 +24,10 @@ namespace peli
 {
 	namespace json
 	{
+		/** \brief Implementation detail of [JSON](https://json.org) part */
 		namespace detail
 		{
+			/** \brief Constants for some often used characters. */
 			namespace special_chars
 			{
 				constexpr const char backspace = 0x08; // '\b'

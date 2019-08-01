@@ -42,6 +42,9 @@ namespace peli
 		{
 			namespace parser
 			{
+				/** \brief `parser` specialization for [JSON](https://json.org) string.
+				 * \see `parser`
+				 */
 				template<typename Ch> class parser<std::basic_string<Ch>>
 				{
 				public:

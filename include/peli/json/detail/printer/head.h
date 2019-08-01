@@ -28,13 +28,29 @@ namespace peli
 	{
 		namespace detail
 		{
+			/** \brief [JSON](https://json.org) printing part. */
 			namespace printer
 			{
+				/** \brief Printing head template.
+				 *
+				 * Its per-type specializations used to print [JSON](https://json.org) textual
+				 * representation of the corresponding type value.
+				 *
+				 * \tparam T type to print.
+				 */
 				template<typename T> class head
 				{
+					/** \brief Fake dependency type to run `static_assert` correctly. */
 					template<class> struct fake_dependency : public std::false_type { };
 
 				public:
+					/** \brief Printing function.
+					 *
+					 * Fails to compiled, if called for anything other than
+					 * [JSON](https://json.org) type.
+					 *
+					 * \tparam Ch character type of the output stream.
+					 */
 					template<typename Ch> static void print(std::basic_ostream<Ch>&, const T&)
 					{
 						static_assert(fake_dependency<T>::value, "Type is not supported for printing");

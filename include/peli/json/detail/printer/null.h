@@ -36,6 +36,9 @@ namespace peli
 		{
 			namespace printer
 			{
+				/** \brief `head` specialization for [JSON](https://json.org) null entity.
+				 * \see `head`
+				 */
 				template<> struct head<void>
 				{
 				public:

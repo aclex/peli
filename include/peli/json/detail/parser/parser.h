@@ -31,11 +31,24 @@ namespace peli
 		{
 			namespace parser
 			{
+				/** \brief [JSON](https://json.org) entity parser template.
+				 *
+				 * Per-type specializations of this template define the parsing
+				 * process of the corresponding types.
+				 */
 				template<class JsonType> class parser
 				{
+					/** \brief Fake dependency type to run `static_assert` correctly. */
 					template<class> struct fake_dependency : public std::false_type { };
 
 				public:
+					/** \brief Parsing function.
+					 *
+					 * Fails to compiled, if called for anything other than
+					 * [JSON](https://json.org) type.
+					 *
+					 * \tparam Ch character type of the input stream.
+					 */
 					template<typename Ch>
 					static JsonType parse(std::basic_streambuf<Ch>*)
 					{

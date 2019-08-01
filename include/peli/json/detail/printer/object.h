@@ -37,6 +37,9 @@ namespace peli
 		{
 			namespace printer
 			{
+				/** \brief `head` specialization for [JSON](https://json.org) object.
+				 * \see `head`
+				 */
 				template<typename Ch> struct head<json::basic_object<Ch>>
 				{
 					template<typename StreamCh> static void print(std::basic_ostream<StreamCh>& os, const json::basic_object<Ch>& obj)

@@ -34,6 +34,9 @@ namespace peli
 		{
 			namespace printer
 			{
+				/** \brief `head` specialization for [JSON](https://json.org) string.
+				 * \see `head`
+				 */
 				template<typename Ch> class head<std::basic_string<Ch>>
 				{
 				public:

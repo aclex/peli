@@ -34,6 +34,9 @@ namespace peli
 		{
 			namespace parser
 			{
+				/** \brief `parser` specialization for [JSON](https://json.org) boolean values.
+				 * \see `parser`
+				 */
 				template<> class parser<bool>
 				{
 				public:
