@@ -51,7 +51,7 @@ namespace peli
 	 */
 	template<typename... Types> using variant_type =
 #ifdef INTERNAL_VARIANT
-	detail::variant::variant
+	detail::variant
 	<
 #else
 	std::variant
@@ -82,7 +82,7 @@ namespace peli
 	constexpr decltype(auto) visit(Visitor&& vis, Variant&& v)
 	{
 #ifdef INTERNAL_VARIANT
-		namespace ns = peli::detail::variant;
+		namespace ns = peli::detail;
 #else
 		namespace ns = std;
 #endif
