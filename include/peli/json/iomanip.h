@@ -28,28 +28,15 @@ namespace peli
 {
 	namespace json
 	{
-		namespace detail
-		{
-			template<typename Ch> void pretty_template(std::basic_ostream<Ch>& os)
-			{
-				os.iword(printer::flag_storage_index()) |= printer::flag::pretty;
-			}
-
-			template<typename Ch> void nopretty_template(std::basic_ostream<Ch>& os)
-			{
-				os.iword(printer::flag_storage_index()) &= !printer::flag::pretty;
-			}
-		}
-
 		template<typename Ch> std::basic_ostream<Ch>& pretty(std::basic_ostream<Ch>& os)
 		{
-			detail::pretty_template(os);
+			os.iword(detail::printer::flag_storage_index()) |= detail::printer::flag::pretty;
 			return os;
 		}
 
 		template<typename Ch> std::basic_ostream<Ch>& nopretty(std::basic_ostream<Ch>& os)
 		{
-			detail::nopretty_template(os);
+			os.iword(detail::printer::flag_storage_index()) &= !detail::printer::flag::pretty;
 			return os;
 		}
 	}

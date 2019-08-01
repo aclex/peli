@@ -31,7 +31,6 @@
 #include <utility>
 #include <memory>
 
-#include <peli/detail/template_snippets/contains.h>
 #include <peli/detail/template_snippets/check_in_pack.h>
 #include <peli/detail/template_snippets/templated_visitor.h>
 
