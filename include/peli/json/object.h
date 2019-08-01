@@ -29,9 +29,20 @@ namespace peli
 	{
 		template<typename Ch> class basic_value;
 
+		/** \brief [JSON](http://json.org/) array representation template.
+		 *
+		 * Just an alias of
+		 * [`std::map`](https://en.cppreference.com/w/cpp/container/map)
+		 * of `basic_value`. Depends on the character type used for the value
+		 * hierarchy.
+		 *
+		 * \tparam Ch character type.
+		 */
 		template<typename Ch> using basic_object = std::map<std::basic_string<Ch>, basic_value<Ch>>;
 
+		/** \brief `basic_object` specialization for `char`. */
 		typedef basic_object<char> object;
+		/** \brief `basic_object` specialization for `wchar_t`. */
 		typedef basic_object<wchar_t> wobject;
 	}
 }

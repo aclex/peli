@@ -28,9 +28,20 @@ namespace peli
 	{
 		template<typename Ch> class basic_value;
 
+		/** \brief [JSON](http://json.org/) array representation template.
+		 *
+		 * Just an alias of
+		 * [`std::vector`](https://en.cppreference.com/w/cpp/container/vector)
+		 * of `basic_value`. Depends on the character type used for the value
+		 * hierarchy.
+		 *
+		 * \tparam Ch character type.
+		 */
 		template<typename Ch> using basic_array = std::vector<basic_value<Ch>>;
 
+		/** \brief `basic_array` specialization for `char`. */
 		typedef basic_array<char> array;
+		/** \brief `basic_array` specialization for `wchar_t`. */
 		typedef basic_array<wchar_t> warray;
 	}
 }

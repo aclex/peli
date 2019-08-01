@@ -24,6 +24,7 @@ namespace peli
 {
 	namespace json
 	{
+		/** \brief [JSON](http://json.org/) number representation. */
 		typedef long double number;
 	}
 }

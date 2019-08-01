@@ -31,8 +31,16 @@
 
 namespace peli
 {
+	/** \brief Types and functions for [JSON](http://json.org/) interaction. */
 	namespace json
 	{
+		/** [JSON](http://json.org/) value uniform representation.
+		 *
+		 * In fact it's just a tiny shell around variant type used, and
+		 * this is to allow recursive inclusion of variants.
+		 *
+		 * \tparam Ch character type used.
+		 */
 		template<typename Ch> class basic_value : public peli::variant_type
 		<
 			bool,
@@ -43,6 +51,7 @@ namespace peli
 		>
 		{
 		public:
+			/** \brief Underlying variant type. */
 			using variant_type = peli::variant_type
 			<
 				bool,
@@ -54,15 +63,24 @@ namespace peli
 
 			using variant_type::variant_type;
 
+			/** \brief Checks if the value is null (as per [JSON](http://json.org/) specification). */
 			bool null() const noexcept
 			{
 				return peli::is_empty(*this);
 			}
 		};
 
+		/** \brief `basic_value` specialization for `char`. */
 		typedef basic_value<char> value;
+		/** \brief `basic_value` specialization for `wchar_t`. */
 		typedef basic_value<wchar_t> wvalue;
 
+		/** \brief Small factory method to create uninitialized value of the given type.
+		 *
+		 * \tparam T type the value to construct of.
+		 * \tparam ValueType value type to create (e.g. some character specialization
+		 * of `basic_value<>`).
+		 */
 		template<typename T, class ValueType = value> inline ValueType make_value()
 		{
 			return ValueType(T());
