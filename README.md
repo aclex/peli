@@ -91,6 +91,27 @@ int main(int, char**)
 }
 ```
 
+Building
+--------
+
+Building is not required and completely optional, unless you would like to try the examples or tests or build the local documentation. Inside `git` project tree it can be done like this:
+
+```shell
+git submodule update --init --recursive # to check out `floaxie` and nested submodules
+mkdir build && cd build
+cmake -DBUILD_EXAMPLES=1 -DBUILD_TESTS=1 -DBUILD_DOCUMENTATION=1 ../ # switch on the desired flags
+cmake --build . # or just `make` on systems with it
+```
+
+Adding to the project
+---------------------
+
+```shell
+git submodule add https://github.com/aclex/peli <desired-path-in-your-project>
+```
+
+Don't forget to do `git submodule update --init --recursive` out of your project tree as well to pull the required submodules.
+
 Including to CMake project as a subproject
 -------
 Peli can be included in any CMake project as a subproject fairly easily thanks to modern CMake `INTERFACE_LIBRARY` target facilities. Unfortunately, this works fully since CMake 3.13 (no way to use targets out of directory scope before this version, which makes the whole deal pretty useless).
