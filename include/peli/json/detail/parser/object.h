@@ -21,7 +21,8 @@
 #define PELI_DETAIL_PARSER_OBJECT_H
 
 #include <string>
-#include <stdexcept>
+
+#include "peli/except.h"
 
 #include "peli/json/value.h"
 #include "peli/json/object.h"
@@ -53,7 +54,7 @@ namespace peli
 						typename std::basic_streambuf<Ch>::int_type t = rdbuf->sgetc();
 
 						if (t != special_chars::left_curly)
-							throw std::invalid_argument("");
+							throw parse_error("Left curly bracket is expected.");
 
 						rdbuf->sbumpc();
 
@@ -63,7 +64,7 @@ namespace peli
 						if (t != special_chars::right_curly)
 						{
 							if (t != special_chars::quote)
-								throw std::invalid_argument("");
+								throw parse_error("Quotation mark is expected.");
 
 							while (t != std::basic_streambuf<Ch>::traits_type::eof())
 							{
@@ -73,7 +74,7 @@ namespace peli
 
 								t = rdbuf->sgetc();
 								if (t != special_chars::colon)
-									throw std::invalid_argument("");
+									throw parse_error("Colon is expected.");
 
 								rdbuf->sbumpc();
 
@@ -91,7 +92,7 @@ namespace peli
 								}
 
 								if (t != special_chars::comma)
-									throw std::invalid_argument("");
+									throw parse_error("Comma or right curly bracket is expected.");
 
 								rdbuf->sbumpc();
 

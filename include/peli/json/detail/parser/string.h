@@ -21,10 +21,11 @@
 #define PELI_DETAIL_PARSER_STRING_H
 
 #include <string>
-#include <stdexcept>
 #include <tuple>
 #include <array>
 #include <cstdint>
+
+#include "peli/except.h"
 
 #include "peli/json/array.h"
 
@@ -63,7 +64,7 @@ namespace peli
 						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 
 						if (c != special_chars::quote)
-							throw std::invalid_argument("No starting quote found while parsing a string");
+							throw parse_error("No starting quotation mark found while parsing a string.");
 
 						c = rdbuf->snextc();
 
@@ -88,7 +89,7 @@ namespace peli
 							}
 						}
 
-						throw std::invalid_argument("No ending quote found while parsing a string");
+						throw parse_error("No ending quotation mark found while parsing a string.");
 					}
 
 					static inline void stream_char(std::basic_streambuf<Ch>* rdbuf, std::basic_string<Ch>& ret)
@@ -135,7 +136,7 @@ namespace peli
 							break;
 
 						default:
-							throw std::invalid_argument("Invalid escape sequence");
+							throw parse_error("Invalid escape sequence found.");
 						}
 					}
 
@@ -148,12 +149,12 @@ namespace peli
 							typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 
 							if (c != special_chars::backslash)
-								throw std::invalid_argument("Incorrect surrogate pair");
+								throw parse_error("Incorrect surrogate pair found.");
 
 							c = rdbuf->snextc();
 
 							if (c != special_chars::u)
-								throw std::invalid_argument("Incorrect surrogate pair");
+								throw parse_error("Incorrect surrogate pair found.");
 
 							rdbuf->sbumpc();
 

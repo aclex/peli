@@ -20,7 +20,7 @@
 #ifndef PELI_DETAIL_PARSER_ARRAY_H
 #define PELI_DETAIL_PARSER_ARRAY_H
 
-#include <stdexcept>
+#include "peli/except.h"
 
 #include "peli/json/value.h"
 #include "peli/json/array.h"
@@ -51,7 +51,7 @@ namespace peli
 
 						typename std::basic_streambuf<Ch>::int_type t = rdbuf->sgetc();
 						if (t != special_chars::left_square)
-							throw std::runtime_error("");
+							throw parse_error("Left square bracket is expected.");
 
 						rdbuf->sbumpc();
 
@@ -78,7 +78,7 @@ namespace peli
 							}
 
 							if (t != special_chars::comma)
-								throw std::runtime_error("");
+								throw parse_error("Right square bracket or comma is expected.");
 
 							rdbuf->sbumpc();
 

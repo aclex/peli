@@ -21,7 +21,8 @@
 #define PELI_DETAIL_PARSER_NULL_H
 
 #include <string>
-#include <stdexcept>
+
+#include "peli/except.h"
 
 #include "peli/json/value.h"
 #include "peli/json/object.h"
@@ -48,22 +49,22 @@ namespace peli
 					{
 						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
 						if (c != special_chars::n)
-							throw std::invalid_argument("");
+							throw parse_error("Failed to parse null token.");
 
 						c = rdbuf->snextc();
 
 						if (c != special_chars::u)
-							throw std::invalid_argument("");
+							throw parse_error("Failed to parse null token.");
 
 						c = rdbuf->snextc();
 
 						if (c != special_chars::l)
-							throw std::invalid_argument("");
+							throw parse_error("Failed to parse null token.");
 
 						c = rdbuf->snextc();
 
 						if (c != special_chars::l)
-							throw std::invalid_argument("");
+							throw parse_error("Failed to parse null token.");
 
 						rdbuf->sbumpc();
 					}

@@ -141,7 +141,7 @@ int check_u_escapes()
 
 int check_typos()
 {
-	if (!has_thrown_on<invalid_argument>("[\"test]"))
+	if (!has_thrown_on<parse_error>("[\"test]"))
 		return 9;
 
 	return 0;
@@ -149,13 +149,13 @@ int check_typos()
 
 int check_illegal_surrogate_pairs()
 {
-	if (!has_thrown_on<invalid_argument>("[\"\\ud800amc\"]"))
+	if (!has_thrown_on<parse_error>("[\"\\ud800amc\"]"))
 		return 10;
 
-	if (!has_thrown_on<invalid_argument>("[\"\\ud800\\UDD1E\"]"))
+	if (!has_thrown_on<parse_error>("[\"\\ud800\\UDD1E\"]"))
 		return 11;
 
-	if (!has_thrown_on<invalid_argument>("[\"\\k\""))
+	if (!has_thrown_on<parse_error>("[\"\\k\""))
 		return 12;
 
 	if (!has_thrown_on<invalid_argument>("[\"\\udc01\""))

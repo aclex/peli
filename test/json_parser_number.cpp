@@ -187,7 +187,7 @@ int check_engineer_fraction()
 
 int check_overflow()
 {
-	if (!has_thrown_on<invalid_argument>("[45e+1459823]"))
+	if (!has_thrown_on<parse_error>("[45e+1459823]"))
 		return 9;
 
 	return 0;

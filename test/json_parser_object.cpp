@@ -139,13 +139,13 @@ int check_redundant()
 
 int check_typos()
 {
-	if (!has_thrown_on<invalid_argument>("{true : false}"))
+	if (!has_thrown_on<parse_error>("{true : false}"))
 		return 9;
 
-	if (!has_thrown_on<invalid_argument>("{\"a\" - false}"))
+	if (!has_thrown_on<parse_error>("{\"a\" - false}"))
 		return 10;
 
-	if (!has_thrown_on<invalid_argument>("{\"a\" : false. \"b\" : true}"))
+	if (!has_thrown_on<parse_error>("{\"a\" : false. \"b\" : true}"))
 		return 11;
 
 	return 0;

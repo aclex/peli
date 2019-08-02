@@ -20,7 +20,7 @@
 #ifndef PELI_DETAIL_PARSER_BOOLEAN_H
 #define PELI_DETAIL_PARSER_BOOLEAN_H
 
-#include <stdexcept>
+#include "peli/except.h"
 
 #include "peli/json/detail/parser/parser.h"
 
@@ -50,17 +50,17 @@ namespace peli
 						case special_chars::t:
 							c = rdbuf->snextc();
 							if (c != special_chars::r)
-								throw std::invalid_argument("");
+								throw parse_error("Failed to parse 'true' boolean token.");
 
 							c = rdbuf->snextc();
 
 							if (c != special_chars::u)
-								throw std::invalid_argument("");
+								throw parse_error("Failed to parse 'true' boolean token.");
 
 							c = rdbuf->snextc();
 
 							if (c != special_chars::e)
-								throw std::invalid_argument("");
+								throw parse_error("Failed to parse 'true' boolean token.");
 
 							rdbuf->sbumpc();
 
@@ -70,22 +70,22 @@ namespace peli
 						case special_chars::f:
 							c = rdbuf->snextc();
 							if (c != special_chars::a)
-								throw std::invalid_argument("");
+								throw parse_error("Failed to parse 'false' boolean token.");
 
 							c = rdbuf->snextc();
 
 							if (c != special_chars::l)
-								throw std::invalid_argument("");
+								throw parse_error("Failed to parse 'false' boolean token.");
 
 							c = rdbuf->snextc();
 
 							if (c != special_chars::s)
-								throw std::invalid_argument("");
+								throw parse_error("Failed to parse 'false' boolean token.");
 
 							c = rdbuf->snextc();
 
 							if (c != special_chars::e)
-								throw std::invalid_argument("");
+								throw parse_error("Failed to parse 'false' boolean token.");
 
 							rdbuf->sbumpc();
 
@@ -93,7 +93,7 @@ namespace peli
 							break;
 
 						default:
-							throw std::invalid_argument("");
+							throw parse_error("Unexpected character while parsing boolean.");
 						}
 
 						return ret;

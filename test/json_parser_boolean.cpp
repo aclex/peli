@@ -58,25 +58,25 @@ int check_boolean()
 
 int check_typos()
 {
-	if (!has_thrown_on<invalid_argument>("tee"))
+	if (!has_thrown_on<parse_error>("tee"))
 		return 3;
 
-	if (!has_thrown_on<invalid_argument>("tree"))
+	if (!has_thrown_on<parse_error>("tree"))
 		return 4;
 
-	if (!has_thrown_on<invalid_argument>("truu"))
+	if (!has_thrown_on<parse_error>("truu"))
 		return 5;
 
-	if (!has_thrown_on<invalid_argument>("filse"))
+	if (!has_thrown_on<parse_error>("filse"))
 		return 6;
 
-	if (!has_thrown_on<invalid_argument>("faasl"))
+	if (!has_thrown_on<parse_error>("faasl"))
 		return 7;
 
-	if (!has_thrown_on<invalid_argument>("falce"))
+	if (!has_thrown_on<parse_error>("falce"))
 		return 8;
 
-	if (!has_thrown_on<invalid_argument>("falsa"))
+	if (!has_thrown_on<parse_error>("falsa"))
 		return 9;
 
 	return 0;

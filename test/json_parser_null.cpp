@@ -61,13 +61,13 @@ int check()
 
 int check_typos()
 {
-	if (!has_thrown_on<invalid_argument>("[nil]"))
+	if (!has_thrown_on<parse_error>("[nil]"))
 		return 4;
 
-	if (!has_thrown_on<invalid_argument>("[nuul]"))
+	if (!has_thrown_on<parse_error>("[nuul]"))
 		return 5;
 
-	if (!has_thrown_on<invalid_argument>("[nul]"))
+	if (!has_thrown_on<parse_error>("[nul]"))
 		return 6;
 
 	if (!has_null_return("cde"))

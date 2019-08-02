@@ -1,6 +1,6 @@
 /*
  * This file is part of Peli - universal JSON interaction library
- * Copyright (C) 2019  Alexey Chernov <4ernov@gmail.com>
+ * Copyright (C) 2014-2019  Alexey Chernov <4ernov@gmail.com>
  *
  * Peli is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,52 +17,27 @@
  *
  */
 
-#ifndef PELI_TEST_EXCEPTION_CHECK_H
-#define PELI_TEST_EXCEPTION_CHECK_H
+#ifndef PELI_EXCEPT_H
+#define PELI_EXCEPT_H
 
-#include <sstream>
-
-#include "peli/except.h"
-
-#include "peli/json/value.h"
-
-using namespace std;
-
-using namespace peli;
+#include <stdexcept>
 
 namespace peli
 {
-	namespace test
+	class parse_error : public std::exception
 	{
-		template<class ExceptionType> bool has_thrown_on(const string& text)
+	public:
+		parse_error() noexcept { }
+		parse_error(const std::string& what_arg) : m_what(what_arg) { }
+
+		const char* what() const noexcept override
 		{
-			bool thrown { };
-
-			istringstream is(text);
-			json::value v;
-
-			try
-			{
-				is >> v;
-			}
-			catch (const ExceptionType&)
-			{
-				thrown = true;
-			}
-
-			return thrown;
+			return m_what.c_str();
 		}
 
-		bool has_null_return(const string& text)
-		{
-			istringstream is(text);
-			json::value v;
-
-			is >> v;
-
-			return v.null();
-		}
-	}
+	private:
+		const std::string m_what;
+	};
 }
 
-#endif // PELI_TEST_EXCEPTION_CHECK_H
+#endif // PELI_EXCEPT_H

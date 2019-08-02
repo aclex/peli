@@ -112,7 +112,7 @@ int check_two()
 
 int check_typos()
 {
-	if (!has_thrown_on<runtime_error>("[true. false]"))
+	if (!has_thrown_on<parse_error>("[true. false]"))
 		return 7;
 
 	return 0;

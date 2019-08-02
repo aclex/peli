@@ -24,15 +24,15 @@
 #include <cstring>
 #include <cerrno>
 #include <limits>
-#include <iostream>
 #include <array>
 
 #include "floaxie/atof.h"
 
+#include "peli/except.h"
+
 #include "peli/json/number.h"
 
 #include "peli/json/detail/parser/parser.h"
-
 #include "peli/json/detail/parser/stream_routines.h"
 
 namespace peli
@@ -67,7 +67,7 @@ namespace peli
 
 						if (conv_result.status != floaxie::conversion_status::success)
 						{
-							throw std::invalid_argument("");
+							throw parse_error("Number representation parsing failed.");
 						}
 
 						typename std::basic_streambuf<Ch>::off_type chars_parsed = rest - buf.data();
