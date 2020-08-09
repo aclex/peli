@@ -193,6 +193,22 @@ int check_overflow()
 	return 0;
 }
 
+int check_long_enough()
+{
+	if (has_thrown_on<parse_error>("[1.0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123, 23]"))
+		return 10;
+
+	return 0;
+}
+
+int check_longer()
+{
+	if (has_thrown_on<parse_error>("[1.01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789, 23]"))
+		return 11;
+
+	return 0;
+}
+
 int main(int, char**)
 {
 	if (const auto r = check_zero())
@@ -208,6 +224,12 @@ int main(int, char**)
 		return r;
 
 	if (const auto r = check_overflow())
+		return r;
+
+	if (const auto r = check_long_enough())
+		return r;
+
+	if (const auto r = check_longer())
 		return r;
 
 	return 0;
