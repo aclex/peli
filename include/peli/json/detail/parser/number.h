@@ -76,7 +76,9 @@ namespace peli
 
 						typename std::basic_streambuf<Ch>::pos_type curr_pos = rdbuf->pubseekoff(0, std::ios_base::cur, std::ios_base::in);
 
-						auto [conv_result, chars_parsed] { peek_and_try_convert(rdbuf, buf) };
+						auto peek_result { peek_and_try_convert(rdbuf, buf) };
+						auto conv_result { std::move(peek_result.first) };
+						auto chars_parsed { peek_result.second };
 
 						if (conv_result.status != floaxie::conversion_status::success)
 						{
@@ -89,7 +91,9 @@ namespace peli
 
 							std::copy(begin(buf), end(buf) - 1, begin(big_buf));
 
-							const auto& [big_conv_result, big_chars_parsed] { peek_and_try_convert<Ch, s_big_buf_size, s_buf_size - 1>(rdbuf, big_buf) };
+							const auto& big_peek_result { peek_and_try_convert<Ch, s_big_buf_size, s_buf_size - 1>(rdbuf, big_buf) };
+							const auto& big_conv_result { big_peek_result.first };
+							const auto big_chars_parsed { big_peek_result.second };
 
 							if (big_conv_result.status != floaxie::conversion_status::success)
 							{
