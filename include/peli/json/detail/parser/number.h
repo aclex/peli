@@ -49,9 +49,7 @@ namespace peli
 				template<> class parser<peli::json::number>
 				{
 					static constexpr const std::size_t s_buf_size = 128;
-					static constexpr const std::size_t s_big_buf_size = 1024 * 1024;
 					template<typename Ch> using buffer_type = std::array<Ch, s_buf_size>;
-					template<typename Ch> using big_buffer_type = std::array<Ch, s_big_buf_size>;
 
 					template<typename Ch, std::size_t N, std::size_t Offset = 0>
 					static std::pair<floaxie::value_and_status<double>, typename std::basic_streambuf<Ch>::off_type>
@@ -81,33 +79,10 @@ namespace peli
 						auto chars_parsed = peek_result.second;
 
 						if (conv_result.status != floaxie::conversion_status::success)
-						{
 							throw parse_error("Number representation parsing failed.");
-						}
 
 						if (static_cast<std::size_t>(chars_parsed) >= s_buf_size - 1)
-						{
-							big_buffer_type<Ch> big_buf;
-
-							std::copy(begin(buf), end(buf) - 1, begin(big_buf));
-
-							const auto& big_peek_result = peek_and_try_convert<Ch, s_big_buf_size, s_buf_size - 1>(rdbuf, big_buf);
-							const auto& big_conv_result = big_peek_result.first;
-							const auto big_chars_parsed = big_peek_result.second;
-
-							if (big_conv_result.status != floaxie::conversion_status::success)
-							{
-								throw parse_error("Number representation parsing failed.");
-							}
-
-							if (static_cast<std::size_t>(big_chars_parsed) >= s_big_buf_size - 1)
-							{
-								throw parse_error("Number representation is too long to be parsed.");
-							}
-
-							chars_parsed = big_chars_parsed;
-							conv_result = big_conv_result;
-						}
+							throw parse_error("Number representation is too long to be parsed.");
 
 						rdbuf->pubseekpos(curr_pos + chars_parsed, std::ios_base::in);
 
