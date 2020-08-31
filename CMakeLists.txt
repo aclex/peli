@@ -69,9 +69,6 @@ install(DIRECTORY
 	${PROJECT_SOURCE_DIR}/dep/floaxie/include/floaxie
 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-add_uninstall_target()
-
-
 if (BUILD_EXAMPLES)
 	add_subdirectory(example)
 endif (BUILD_EXAMPLES)
