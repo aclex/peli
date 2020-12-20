@@ -70,7 +70,7 @@ namespace peli
 					template<typename Ch>
 					static peli::json::number parse(std::basic_streambuf<Ch>* rdbuf)
 					{
-						static buffer_type<Ch> buf;
+						buffer_type<Ch> buf;
 
 						typename std::basic_streambuf<Ch>::pos_type curr_pos = rdbuf->pubseekoff(0, std::ios_base::cur, std::ios_base::in);
 
