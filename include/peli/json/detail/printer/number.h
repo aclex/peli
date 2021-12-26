@@ -27,6 +27,8 @@
 
 #include "peli/json/detail/printer/stream_routines.h"
 
+#include <floaxie/ftoa.h>
+
 namespace peli
 {
 	namespace json
@@ -41,16 +43,18 @@ namespace peli
 				template<> struct head<json::number>
 				{
 				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os, json::number n)
+					template<class Visitor> static void print(Visitor& v, const json::number n)
 					{
-						put_structure_space(os);
+						put_structure_space(v);
 
-						const auto default_precision = os.precision();
-						os.precision(std::numeric_limits<json::number>::digits10 - 2);
+						v.push_precision(std::numeric_limits<json::number>::digits10 - 2);
 
-						os << n;
+						typename Visitor::char_type buf[floaxie::max_buffer_size<double>()];
+						const auto written_size { floaxie::ftoa(static_cast<double>(n), buf) };
 
-						os.precision(default_precision);
+						v.putn(buf, written_size);
+
+						v.pop_precision();
 					}
 				};
 			}

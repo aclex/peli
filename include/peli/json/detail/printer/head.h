@@ -49,9 +49,9 @@ namespace peli
 					 * Fails to compiled, if called for anything other than
 					 * [JSON](https://json.org) type.
 					 *
-					 * \tparam Ch character type of the output stream.
+					 * \tparam Visitor visitor type to print with.
 					 */
-					template<typename Ch> static void print(std::basic_ostream<Ch>&, const T&)
+					template<class Visitor> static void print(Visitor&, const T&)
 					{
 						static_assert(fake_dependency<T>::value, "Type is not supported for printing");
 					}

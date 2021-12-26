@@ -34,72 +34,42 @@ namespace peli
 		{
 			namespace printer
 			{
-				/** \brief Checks if pretty printing is enabled. */
-				template<typename Ch> inline bool is_pretty_printing(std::basic_ostream<Ch>& os)
-				{
-					return flag::get(os.iword(flag_storage_index()), flag::pretty);
-				}
-
-				/** \brief Checks if period is needed according to the local document structure. */
-				template<typename Ch> inline bool needs_structure_period(std::basic_ostream<Ch>& os)
-				{
-					return flag::get(os.iword(flag_storage_index()), flag::structure_newline);
-				}
-
-				/** \brief Sets the flag, that period is needed in this document structure context.
-				 *
-				 * Used to pass document structure metainformation between entity printers.
-				 *
-				 * \see `needs_structure_period`
-				 */
-				template<typename Ch> inline void set_needs_structure_period(std::basic_ostream<Ch>& os, bool value)
-				{
-					value ? flag::set(os.iword(flag_storage_index()), flag::structure_newline) :
-						flag::unset(os.iword(flag_storage_index()), flag::structure_newline);
-				}
-
-				/** \brief Returns current tab level. */
-				template<typename Ch> inline long& tab_level(std::basic_ostream<Ch>& os)
-				{
-					return os.iword(tab_level_storage_index());
-				}
-
 				/** \brief Puts space, if pretty-printing. */
-				template<typename Ch> inline void put_space(std::basic_ostream<Ch>& os)
+				template<class Visitor> inline void put_space(Visitor& v)
 				{
-					if (is_pretty_printing(os))
-						os.rdbuf()->sputc(special_chars::space);
+					if (v.pretty())
+						v.putc(special_chars::space);
 				}
 
 				/** \brief Puts tab indentation, if pretty-printing. */
-				template<typename Ch> inline void put_tab_spacing(std::basic_ostream<Ch>& os)
+				template<class Visitor> inline void put_tab_spacing(Visitor& v)
 				{
-					if (is_pretty_printing(os))
+					if (v.pretty())
 					{
-						const size_t tl = tab_level(os);
+						const size_t tl = v.tab_level();
 						for (size_t i = 0; i < tl; ++i)
-							os.rdbuf()->sputc(special_chars::tab);
+							v.putc(special_chars::tab);
 					}
 				}
 
 				/** \brief Puts tab new line, if pretty-printing. */
-				template<typename Ch> inline void put_newline(std::basic_ostream<Ch>& os)
+				template<class Visitor> inline void put_newline(Visitor& v)
 				{
-					if (is_pretty_printing(os))
-						os.rdbuf()->sputc(special_chars::lf);
+					if (v.pretty())
+						v.putc(special_chars::lf);
 				}
 
 				/** \brief Puts tab new line, if local document structure context
 				 * requires and if pretty-printing.
 				 *
 				 */
-				template<typename Ch> inline void put_structure_newline(std::basic_ostream<Ch>& os)
+				template<class Visitor> inline void put_structure_newline(Visitor& v)
 				{
-					if (needs_structure_period(os))
+					if (v.need_structure_period())
 					{
-						put_newline(os);
-						put_tab_spacing(os);
-						set_needs_structure_period(os, false);
+						put_newline(v);
+						put_tab_spacing(v);
+						v.set_need_structure_period(false);
 					}
 				}
 
@@ -107,11 +77,11 @@ namespace peli
 				 * requires and if pretty-printing.
 				 *
 				 */
-				template<typename Ch> inline void put_structure_space(std::basic_ostream<Ch>& os)
+				template<class Visitor> inline void put_structure_space(Visitor& v)
 				{
-					if (needs_structure_period(os))
+					if (v.need_structure_period())
 					{
-						put_space(os);
+						put_space(v);
 					}
 				}
 			}

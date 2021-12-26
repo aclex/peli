@@ -37,13 +37,6 @@ namespace peli
 					return i;
 				}
 
-				/** \brief Returns index for tab level storage in stream register. */
-				inline int tab_level_storage_index()
-				{
-					static int i { std::ios_base::xalloc() };
-					return i;
-				}
-
 				/** \brief Flags used in printing. */
 				namespace flag
 				{

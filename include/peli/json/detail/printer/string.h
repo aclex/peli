@@ -40,27 +40,22 @@ namespace peli
 				template<typename Ch> class head<std::basic_string<Ch>>
 				{
 				public:
-					static void print(std::basic_ostream<Ch>& os, const std::basic_string<Ch>& str)
+					template<class Visitor> static void print(Visitor& v, const std::basic_string<typename Visitor::char_type>& str)
 					{
 						using namespace special_chars;
 
-						put_structure_space(os);
+						put_structure_space(v);
 
-						os.rdbuf()->sputc(quote);
+						v.putc(quote);
 
 						for (Ch cs : str)
-							stream_char(os, cs);
+							stream_char(v, cs);
 
-						os.rdbuf()->sputc(quote);
-					}
-
-					template<typename StreamCh> static void print(std::basic_ostream<StreamCh>&, const std::basic_string<Ch>&)
-					{
-						throw std::runtime_error("Character types mismatch, please use encoding conversion.");
+						v.putc(quote);
 					}
 
 				private:
-					static void stream_char(std::basic_ostream<Ch>& os, Ch c)
+					template<class Visitor> static void stream_char(Visitor& v, const typename Visitor::char_type c)
 					{
 						using namespace special_chars;
 
@@ -69,34 +64,34 @@ namespace peli
 						// special characters
 						case quote:
 						case backslash:
-							os.rdbuf()->sputc(backslash);
-							os.rdbuf()->sputc(c);
+							v.putc(backslash);
+							v.putc(c);
 							break;
 
 						// control characters with predefined verbal escape sequences
 						case backspace:
-							os.rdbuf()->sputc(backslash);
-							os.rdbuf()->sputc(b);
+							v.putc(backslash);
+							v.putc(b);
 							break;
 
 						case tab:
-							os.rdbuf()->sputc(backslash);
-							os.rdbuf()->sputc(t);
+							v.putc(backslash);
+							v.putc(t);
 							break;
 
 						case lf:
-							os.rdbuf()->sputc(backslash);
-							os.rdbuf()->sputc(n);
+							v.putc(backslash);
+							v.putc(n);
 							break;
 
 						case ff:
-							os.rdbuf()->sputc(backslash);
-							os.rdbuf()->sputc(f);
+							v.putc(backslash);
+							v.putc(f);
 							break;
 
 						case cr:
-							os.rdbuf()->sputc(backslash);
-							os.rdbuf()->sputc(r);
+							v.putc(backslash);
+							v.putc(r);
 							break;
 
 						// other control characters of the range 0x00...0x1F
@@ -128,16 +123,16 @@ namespace peli
 						case 0x1e:
 						case 0x1f:
 						{
-							os.rdbuf()->sputc(backslash);
-							os.rdbuf()->sputc(u);
+							v.putc(backslash);
+							v.putc(u);
 							auto pnt = hex(c);
-							os.rdbuf()->sputn(pnt.data(), pnt.size());
+							v.putn(pnt.data(), pnt.size());
 							break;
 						}
 
 						// normal characters
 						default:
-							os.rdbuf()->sputc(c);
+							v.putc(c);
 							break;
 						}
 					}

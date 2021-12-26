@@ -41,37 +41,37 @@ namespace peli
 				 */
 				template<typename Ch> struct head<json::basic_array<Ch>>
 				{
-					static void print(std::basic_ostream<Ch>& os, const peli::json::basic_array<Ch>& arr)
+					template<class Visitor> static void print(Visitor& v, const peli::json::basic_array<typename Visitor::char_type>& arr)
 					{
 						using namespace special_chars;
 
-						put_structure_newline(os);
+						put_structure_newline(v);
 
-						os.rdbuf()->sputc(left_square);
+						v.putc(left_square);
 
 						if (!arr.empty())
 						{
-							put_newline(os);
+							put_newline(v);
 						}
 
-						++(tab_level(os));
+						v.increase_tab_level();
 
 						for (auto it = arr.cbegin(); it != arr.cend(); ++it)
 						{
-							put_tab_spacing(os);
-							os << *it;
+							put_tab_spacing(v);
+							peli::visit(v, *it);
 
 							if (it != --arr.cend())
-								os.rdbuf()->sputc(comma);
+								v.putc(comma);
 
-							put_newline(os);
+							put_newline(v);
 						}
 
-						--(tab_level(os));
+						v.decrease_tab_level();
 
-						put_tab_spacing(os);
+						put_tab_spacing(v);
 
-						os.rdbuf()->sputc(right_square);
+						v.putc(right_square);
 					}
 				};
 			}

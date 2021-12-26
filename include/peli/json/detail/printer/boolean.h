@@ -39,25 +39,27 @@ namespace peli
 				template<> struct head<bool>
 				{
 				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os, bool b)
+					template<class Visitor> static void print(Visitor& v, bool b)
 					{
 						using namespace special_chars;
 
-						put_structure_space(os);
+						using char_type = typename Visitor::char_type;
 
-						static constexpr std::array<Ch, 4> true_str {{ t, r, u, e }};
-						static constexpr std::array<Ch, 5> false_str {{ f, a, l, s, e }};
+						put_structure_space(v);
+
+						static constexpr std::array<char_type, 4> true_str {{ t, r, u, e }};
+						static constexpr std::array<char_type, 5> false_str {{ f, a, l, s, e }};
 
 						if (b)
-							put(os.rdbuf(), true_str);
+							put(v, true_str);
 						else
-							put(os.rdbuf(), false_str);
+							put(v, false_str);
 					}
 
 				private:
-					template<typename Ch, std::size_t N> static void put(std::basic_streambuf<Ch>* rdbuf, const std::array<Ch, N>& str)
+					template<class Visitor, std::size_t N> static void put(Visitor& v, const std::array<typename Visitor::char_type, N>& str)
 					{
-						rdbuf->sputn(str.data(), str.size());
+						v.putn(str.data(), str.size());
 					}
 				};
 			}

@@ -42,15 +42,15 @@ namespace peli
 				template<> struct head<void>
 				{
 				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os)
+					template<class Visitor> static void print(Visitor& v)
 					{
 						using namespace special_chars;
 
-						put_structure_space(os);
+						put_structure_space(v);
 
-						static std::array<Ch, 4> null_str {{ n, u, l, l }};
+						static std::array<typename Visitor::char_type, 4> null_str {{ n, u, l, l }};
 
-						os.rdbuf()->sputn(null_str.data(), null_str.size());
+						v.putn(null_str.data(), null_str.size());
 					}
 				};
 
@@ -58,9 +58,9 @@ namespace peli
 				template<> class head<std::monostate> : public head<void>
 				{
 				public:
-					template<typename Ch> static void print(std::basic_ostream<Ch>& os, const std::monostate&)
+					template<class Visitor> static void print(Visitor& v, const std::monostate&)
 					{
-						head<void>::print(os);
+						head<void>::print(v);
 					}
 				};
 #endif

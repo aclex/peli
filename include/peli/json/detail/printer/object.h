@@ -42,45 +42,47 @@ namespace peli
 				 */
 				template<typename Ch> struct head<json::basic_object<Ch>>
 				{
-					template<typename StreamCh> static void print(std::basic_ostream<StreamCh>& os, const json::basic_object<Ch>& obj)
+					template<class Visitor> static void print(Visitor& v, const json::basic_object<typename Visitor::char_type>& obj)
 					{
 						using namespace special_chars;
 
-						put_structure_newline(os);
+						using char_type = typename Visitor::char_type;
 
-						os.rdbuf()->sputc(left_curly);
+						put_structure_newline(v);
+
+						v.putc(left_curly);
 
 						if (!obj.empty())
-							put_newline(os);
+							put_newline(v);
 						else
-							put_space(os);
+							put_space(v);
 
-						++(tab_level(os));
+						v.increase_tab_level();
 
 						for (auto it = obj.cbegin(); it != obj.cend(); ++it)
 						{
-							put_tab_spacing(os);
-							printer::head<std::basic_string<Ch>>::print(os, it->first);
+							put_tab_spacing(v);
+							printer::head<std::basic_string<char_type>>::print(v, it->first);
 
-							put_space(os);
+							put_space(v);
 
-							os.rdbuf()->sputc(colon);
+							v.putc(colon);
 
-							set_needs_structure_period(os, true);
-							os << it->second;
-							set_needs_structure_period(os, false);
+							v.set_need_structure_period(true);
+							peli::visit(v, it->second);
+							v.set_need_structure_period(false);
 
 							if (it != --obj.cend())
-								os.rdbuf()->sputc(comma);
+								v.putc(comma);
 
-							put_newline(os);
+							put_newline(v);
 						}
 
-						--(tab_level(os));
+						v.decrease_tab_level();
 
-						put_tab_spacing(os);
+						put_tab_spacing(v);
 
-						os.rdbuf()->sputc(right_curly);
+						v.putc(right_curly);
 					}
 				};
 			}
