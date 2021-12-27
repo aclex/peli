@@ -47,61 +47,62 @@ namespace peli
 				template<typename Ch> class parser<peli::json::basic_object<Ch>>
 				{
 				public:
-					static typename peli::json::basic_object<Ch> parse(std::basic_streambuf<Ch>* rdbuf)
+					template<class InputBuffer> static typename peli::json::basic_object<typename InputBuffer::char_type> parse(InputBuffer& buf)
 					{
-						peli::json::basic_object<Ch> obj;
+						using char_type = typename InputBuffer::char_type;
+						peli::json::basic_object<char_type> obj;
 
-						typename std::basic_streambuf<Ch>::int_type t = rdbuf->sgetc();
+						auto t { buf.getc() };
 
 						if (t != special_chars::left_curly)
 							throw parse_error("Left curly bracket is expected.");
 
-						rdbuf->sbumpc();
+						buf.bumpc();
 
-						skip_whitespace(rdbuf);
+						skip_whitespace(buf);
 
-						t = rdbuf->sgetc();
+						t = buf.getc();
 						if (t != special_chars::right_curly)
 						{
 							if (t != special_chars::quote)
 								throw parse_error("Quotation mark is expected.");
 
-							while (t != std::basic_streambuf<Ch>::traits_type::eof())
+							while (t != InputBuffer::eof())
 							{
-								auto&& id = parser<std::basic_string<Ch>>::parse(rdbuf);
+								auto&& id { parser<std::basic_string<char_type>>::parse(buf) };
 
-								skip_whitespace(rdbuf);
+								skip_whitespace(buf);
 
-								t = rdbuf->sgetc();
+								t = buf.getc();
 								if (t != special_chars::colon)
 									throw parse_error("Colon is expected.");
 
-								rdbuf->sbumpc();
+								buf.bumpc();
 
-								skip_whitespace(rdbuf);
+								skip_whitespace(buf);
 
-								obj.emplace(std::move(id), tokenizer::tok(rdbuf));
+								obj.emplace(std::move(id), tokenizer::tok(buf));
 
-								skip_whitespace(rdbuf);
+								skip_whitespace(buf);
 
-								t = rdbuf->sgetc();
+								t = buf.getc();
 								if (t == special_chars::right_curly)
 								{
-									rdbuf->sbumpc();
+									buf.bumpc();
 									break;
 								}
 
 								if (t != special_chars::comma)
 									throw parse_error("Comma or right curly bracket is expected.");
 
-								rdbuf->sbumpc();
+								buf.bumpc();
 
-								skip_whitespace(rdbuf);
+								skip_whitespace(buf);
 							}
 						}
 						else
 						{
-							rdbuf->sbumpc();
+							buf.bumpc();
 						}
 
 						return obj;

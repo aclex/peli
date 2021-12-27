@@ -48,6 +48,11 @@ namespace peli
 						}
 					}
 
+					template<typename Ch> inline bool is_newline(Ch c)
+					{
+						return c == special_chars::lf;
+					}
+
 					template<typename Ch> inline bool is_value_delimiter(Ch c)
 					{
 						if (is_whitespace(c))
@@ -65,12 +70,15 @@ namespace peli
 						}
 					}
 
-				template<typename Ch> void skip_whitespace(std::basic_streambuf<Ch>* rdbuf)
+				template<class InputBuffer> void skip_whitespace(InputBuffer& buf)
 				{
-					typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+					auto c { buf.getc() };
 					while(is_whitespace(c))
 					{
-						c = rdbuf->snextc();
+						if (is_newline(c))
+							buf.new_line();
+
+						c = buf.nextc();
 					}
 				}
 			}

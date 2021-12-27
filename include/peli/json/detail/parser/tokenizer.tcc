@@ -30,35 +30,37 @@
 
 #include "peli/json/detail/parser/stream_routines.h"
 
-template<typename Ch> peli::json::basic_value<Ch> peli::json::detail::parser::tokenizer::tok(std::basic_streambuf<Ch>* rdbuf)
+template<class InputBuffer> peli::json::basic_value<typename InputBuffer::char_type> peli::json::detail::parser::tokenizer::tok(InputBuffer& buf)
 {
 	using namespace peli::json;
 
 	using namespace peli::json::detail;
 	using namespace peli::json::detail::parser;
 
-	skip_whitespace(rdbuf);
+	using char_type = typename InputBuffer::char_type;
 
-	typename std::basic_streambuf<Ch>::int_type next_char = rdbuf->sgetc();
+	skip_whitespace(buf);
+
+	const auto next_char { buf.getc() };
 
 	switch (next_char)
 	{
 	case special_chars::left_curly:
-		return basic_value<Ch>(parser<basic_object<Ch>>::parse(rdbuf));
+		return basic_value<char_type>(parser<basic_object<char_type>>::parse(buf));
 
 	case special_chars::left_square:
-		return basic_value<Ch>(parser<basic_array<Ch>>::parse(rdbuf));
+		return basic_value<char_type>(parser<basic_array<char_type>>::parse(buf));
 
 	case special_chars::quote:
-		return basic_value<Ch>(parser<std::basic_string<Ch>>::parse(rdbuf));
+		return basic_value<char_type>(parser<std::basic_string<char_type>>::parse(buf));
 
 	case special_chars::n:
-		parser<void>::parse(rdbuf);
-		return basic_value<Ch>();
+		parser<void>::parse(buf);
+		return basic_value<char_type>();
 
 	case special_chars::t:
 	case special_chars::f:
-		return basic_value<Ch>(parser<bool>::parse(rdbuf));
+		return basic_value<char_type>(parser<bool>::parse(buf));
 
 	case special_chars::minus:
 	case special_chars::d0:
@@ -71,20 +73,9 @@ template<typename Ch> peli::json::basic_value<Ch> peli::json::detail::parser::to
 	case special_chars::d7:
 	case special_chars::d8:
 	case special_chars::d9:
-		return basic_value<Ch>(parser<number>::parse(rdbuf));
+		return basic_value<char_type>(parser<number>::parse(buf));
 
 	default:
-		return basic_value<Ch>();
+		return basic_value<char_type>();
 	}
-}
-
-
-template<typename Ch, typename Alloc> peli::json::basic_value<Ch> peli::json::detail::parser::tokenizer::gentle_stream(std::basic_istream<Ch, Alloc>& is)
-{
-	if (!typename std::basic_istream<Ch, Alloc>::sentry(is, true))
-	{
-		return peli::json::basic_value<Ch> { };
-	}
-
-	return peli::json::detail::parser::tokenizer::tok(is.rdbuf());
 }

@@ -45,44 +45,46 @@ namespace peli
 				template<typename Ch> class parser<peli::json::basic_array<Ch>>
 				{
 				public:
-					static typename peli::json::basic_array<Ch> parse(std::basic_streambuf<Ch>* rdbuf)
+					template<class InputBuffer> static peli::json::basic_array<typename InputBuffer::char_type> parse(InputBuffer& buf)
 					{
-						peli::json::basic_array<Ch> arr;
+						using char_type = typename InputBuffer::char_type;
 
-						typename std::basic_streambuf<Ch>::int_type t = rdbuf->sgetc();
+						peli::json::basic_array<char_type> arr;
+
+						auto t = buf.getc();
 						if (t != special_chars::left_square)
 							throw parse_error("Left square bracket is expected.");
 
-						rdbuf->sbumpc();
+						buf.bumpc();
 
-						skip_whitespace(rdbuf);
+						skip_whitespace(buf);
 
-						t = rdbuf->sgetc();
+						t = buf.getc();
 						if (t == special_chars::right_square)
 						{
-							rdbuf->sbumpc();
+							buf.bumpc();
 							return arr;
 						}
 
-						while (t != std::basic_streambuf<Ch>::traits_type::eof())
+						while (t != std::basic_streambuf<char_type>::traits_type::eof())
 						{
-							arr.emplace_back(tokenizer::tok(rdbuf));
+							arr.emplace_back(tokenizer::tok(buf));
 
-							skip_whitespace(rdbuf);
+							skip_whitespace(buf);
 
-							t = rdbuf->sgetc();
+							t = buf.getc();
 							if (t == special_chars::right_square)
 							{
-								rdbuf->sbumpc();
+								buf.bumpc();
 								break;
 							}
 
 							if (t != special_chars::comma)
 								throw parse_error("Right square bracket or comma is expected.");
 
-							rdbuf->sbumpc();
+							buf.bumpc();
 
-							skip_whitespace(rdbuf);
+							skip_whitespace(buf);
 						}
 
 						return arr;

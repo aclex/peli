@@ -49,42 +49,44 @@ namespace peli
 				template<typename Ch> class parser<std::basic_string<Ch>>
 				{
 				public:
-					static typename std::basic_string<Ch> parse(std::basic_streambuf<Ch>* rdbuf)
+					template<class InputBuffer> static std::basic_string<typename InputBuffer::char_type> parse(InputBuffer& buf)
 					{
-						std::basic_string<Ch> ret;
+						using char_type = typename InputBuffer::char_type;
 
-						stream_string(rdbuf, ret);
+						std::basic_string<char_type> ret;
+
+						stream_string(buf, ret);
 
 						return ret;
 					}
 
 				private:
-					static inline void stream_string(std::basic_streambuf<Ch>* rdbuf, std::basic_string<Ch>& ret)
+					template<class InputBuffer> static inline void stream_string(InputBuffer& buf, std::basic_string<typename InputBuffer::char_type>& ret)
 					{
-						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+						auto c { buf.getc() };
 
 						if (c != special_chars::quote)
 							throw parse_error("No starting quotation mark found while parsing a string.");
 
-						c = rdbuf->snextc();
+						c = buf.nextc();
 
-						while(c != std::basic_streambuf<Ch>::traits_type::eof())
+						while(c != InputBuffer::eof())
 						{
 							switch (c)
 							{
 							case special_chars::quote:
-								rdbuf->sbumpc();
+								buf.bumpc();
 								return;
 
 							case special_chars::backslash:
-								rdbuf->sbumpc();
-								stream_char(rdbuf, ret);
-								c = rdbuf->sgetc();
+								buf.bumpc();
+								stream_char(buf, ret);
+								c = buf.getc();
 								break;
 
 							default:
 								ret += c;
-								c = rdbuf->snextc();
+								c = buf.nextc();
 								break;
 							}
 						}
@@ -92,47 +94,47 @@ namespace peli
 						throw parse_error("No ending quotation mark found while parsing a string.");
 					}
 
-					static inline void stream_char(std::basic_streambuf<Ch>* rdbuf, std::basic_string<Ch>& ret)
+					template<class InputBuffer> static inline void stream_char(InputBuffer& buf, std::basic_string<typename InputBuffer::char_type>& ret)
 					{
-						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+						auto c { buf.getc() };
 
 						switch (c)
 						{
 						case special_chars::quote:
 						case special_chars::backslash:
 						case special_chars::slash:
-							rdbuf->sbumpc();
+							buf.bumpc();
 							ret += c;
 							break;
 
 						case special_chars::b:
-							rdbuf->sbumpc();
+							buf.bumpc();
 							ret += 0x08;
 							break;
 
 						case special_chars::f:
-							rdbuf->sbumpc();
+							buf.bumpc();
 							ret += 0x0c;
 							break;
 
 						case special_chars::n:
-							rdbuf->sbumpc();
+							buf.bumpc();
 							ret += 0x0a;
 							break;
 
 						case special_chars::r:
-							rdbuf->sbumpc();
+							buf.bumpc();
 							ret += 0x0d;
 							break;
 
 						case special_chars::t:
-							rdbuf->sbumpc();
+							buf.bumpc();
 							ret += 0x09;
 							break;
 
 						case special_chars::u:
-							rdbuf->sbumpc();
-							stream_unicode_sequence(rdbuf, ret);
+							buf.bumpc();
+							stream_unicode_sequence(buf, ret);
 							break;
 
 						default:
@@ -140,25 +142,25 @@ namespace peli
 						}
 					}
 
-					static void stream_unicode_sequence(std::basic_streambuf<Ch>* rdbuf, std::basic_string<Ch>& ret)
+					template<class InputBuffer> static void stream_unicode_sequence(InputBuffer& buf, std::basic_string<typename InputBuffer::char_type>& ret)
 					{
-						auto cp = extract_codepoint(rdbuf);
+						const auto cp { extract_codepoint(buf) };
 
 						if (utf::is_lead_surrogate(cp))
 						{
-							typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+							auto c { buf.getc() };
 
 							if (c != special_chars::backslash)
 								throw parse_error("Incorrect surrogate pair found.");
 
-							c = rdbuf->snextc();
+							c = buf.nextc();
 
 							if (c != special_chars::u)
 								throw parse_error("Incorrect surrogate pair found.");
 
-							rdbuf->sbumpc();
+							buf.bumpc();
 
-							auto trail_cp = extract_codepoint(rdbuf);
+							const auto trail_cp { extract_codepoint(buf) };
 							ret += utf::convert<Ch>(cp, trail_cp);
 						}
 						else
@@ -167,12 +169,12 @@ namespace peli
 						}
 					}
 
-					static inline std::uint_fast16_t extract_codepoint(std::basic_streambuf<Ch>* rdbuf)
+					template<class InputBuffer> static inline std::uint_fast16_t extract_codepoint(InputBuffer& buf)
 					{
-						std::uint_fast16_t ret = s_ch_to_hex[rdbuf->sbumpc()] << 12;
-						ret += s_ch_to_hex[rdbuf->sbumpc()] << 8;
-						ret += s_ch_to_hex[rdbuf->sbumpc()] << 4;
-						ret += s_ch_to_hex[rdbuf->sbumpc()];
+						auto ret { static_cast<std::uint_fast16_t>(s_ch_to_hex[buf.bumpc()] << 12) };
+						ret += s_ch_to_hex[buf.bumpc()] << 8;
+						ret += s_ch_to_hex[buf.bumpc()] << 4;
+						ret += s_ch_to_hex[buf.bumpc()];
 
 						return ret;
 					}

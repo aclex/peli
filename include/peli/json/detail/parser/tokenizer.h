@@ -21,7 +21,6 @@
 #define PELI_DETAIL_PARSER_TOKENIZER_H
 
 #include <istream>
-#include <streambuf>
 
 namespace peli
 {
@@ -46,13 +45,7 @@ namespace peli
 					 * and parsed [JSON](https://json.org) subtree.
 					 *
 					 */
-					template<typename Ch> static json::basic_value<Ch> tok(std::basic_streambuf<Ch>* rdbuf);
-
-					/** \brief Interface function receiving stream as its input.
-					 *
-					 * Does additional stream-related checks and redirects to `tok`.
-					 */
-					template<typename Ch, typename Alloc> static json::basic_value<Ch> gentle_stream(std::basic_istream<Ch, Alloc>& is);
+					template<class InputBuffer> static json::basic_value<typename InputBuffer::char_type> tok(InputBuffer& buf);
 				};
 			}
 		}

@@ -40,54 +40,54 @@ namespace peli
 				template<> class parser<bool>
 				{
 				public:
-					template<typename Ch> static bool parse(std::basic_streambuf<Ch>* rdbuf)
+					template<class InputBuffer> static bool parse(InputBuffer& buf)
 					{
 						bool ret = false;
 
-						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+						auto c { buf.getc() };
 						switch (c)
 						{
 						case special_chars::t:
-							c = rdbuf->snextc();
+							c = buf.nextc();
 							if (c != special_chars::r)
 								throw parse_error("Failed to parse 'true' boolean token.");
 
-							c = rdbuf->snextc();
+							c = buf.nextc();
 
 							if (c != special_chars::u)
 								throw parse_error("Failed to parse 'true' boolean token.");
 
-							c = rdbuf->snextc();
+							c = buf.nextc();
 
 							if (c != special_chars::e)
 								throw parse_error("Failed to parse 'true' boolean token.");
 
-							rdbuf->sbumpc();
+							buf.bumpc();
 
 							ret = true;
 							break;
 
 						case special_chars::f:
-							c = rdbuf->snextc();
+							c = buf.nextc();
 							if (c != special_chars::a)
 								throw parse_error("Failed to parse 'false' boolean token.");
 
-							c = rdbuf->snextc();
+							c = buf.nextc();
 
 							if (c != special_chars::l)
 								throw parse_error("Failed to parse 'false' boolean token.");
 
-							c = rdbuf->snextc();
+							c = buf.nextc();
 
 							if (c != special_chars::s)
 								throw parse_error("Failed to parse 'false' boolean token.");
 
-							c = rdbuf->snextc();
+							c = buf.nextc();
 
 							if (c != special_chars::e)
 								throw parse_error("Failed to parse 'false' boolean token.");
 
-							rdbuf->sbumpc();
+							buf.bumpc();
 
 							ret = false;
 							break;

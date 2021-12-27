@@ -51,32 +51,34 @@ namespace peli
 					static constexpr const std::size_t s_buf_size = 128;
 					template<typename Ch> using buffer_type = std::array<Ch, s_buf_size>;
 
-					template<typename Ch, std::size_t N, std::size_t Offset = 0>
-					static std::pair<floaxie::value_and_status<double>, typename std::basic_streambuf<Ch>::off_type>
-					peek_and_try_convert(std::basic_streambuf<Ch>* rdbuf, std::array<Ch, N>& buf)
+					template<class InputBuffer, std::size_t N, std::size_t Offset = 0>
+					static std::pair<floaxie::value_and_status<double>, std::size_t>
+					peek_and_try_convert(InputBuffer& buf, std::array<typename InputBuffer::char_type, N>& num_buf)
 					{
-						auto chars_read = rdbuf->sgetn(buf.data() + Offset, N - 1 - Offset);
-						buf[Offset + chars_read] = 0;
+						using char_type = typename InputBuffer::char_type;
 
-						Ch* rest;
+						const auto chars_read { buf.getn(num_buf.data() + Offset, N - 1 - Offset) };
+						num_buf[Offset + chars_read] = 0;
 
-						const auto& conv_result = floaxie::atof<double>(buf.data(), &rest);
-						typename std::basic_streambuf<Ch>::off_type chars_parsed = rest - buf.data();
+						char_type* rest;
+
+						const auto& conv_result { floaxie::atof<double>(num_buf.data(), &rest) };
+						const auto chars_parsed { rest - num_buf.data() };
 
 						return { conv_result, chars_parsed };
 					}
 
 				public:
-					template<typename Ch>
-					static peli::json::number parse(std::basic_streambuf<Ch>* rdbuf)
+					template<class InputBuffer>
+					static peli::json::number parse(InputBuffer& buf)
 					{
-						buffer_type<Ch> buf;
+						buffer_type<typename InputBuffer::char_type> num_buf;
 
-						typename std::basic_streambuf<Ch>::pos_type curr_pos = rdbuf->pubseekoff(0, std::ios_base::cur, std::ios_base::in);
+						const auto curr_pos { buf.pos() };
 
-						auto peek_result = peek_and_try_convert(rdbuf, buf);
-						auto conv_result = std::move(peek_result.first);
-						auto chars_parsed = peek_result.second;
+						const auto& peek_result { peek_and_try_convert(buf, num_buf) };
+						const auto& conv_result { peek_result.first };
+						const auto chars_parsed { peek_result.second };
 
 						if (conv_result.status != floaxie::conversion_status::success)
 							throw parse_error("Number representation parsing failed.");
@@ -84,7 +86,7 @@ namespace peli
 						if (static_cast<std::size_t>(chars_parsed) >= s_buf_size - 1)
 							throw parse_error("Number representation is too long to be parsed.");
 
-						rdbuf->pubseekpos(curr_pos + chars_parsed, std::ios_base::in);
+						buf.set_pos(curr_pos + chars_parsed);
 
 						return conv_result.value;
 					}

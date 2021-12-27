@@ -45,28 +45,28 @@ namespace peli
 				template<> class parser<void>
 				{
 				public:
-					template<typename Ch> static void parse(std::basic_streambuf<Ch>* rdbuf)
+					template<class InputBuffer> static void parse(InputBuffer& buf)
 					{
-						typename std::basic_streambuf<Ch>::int_type c = rdbuf->sgetc();
+						auto c { buf.getc() };
 						if (c != special_chars::n)
 							throw parse_error("Failed to parse null token.");
 
-						c = rdbuf->snextc();
+						c = buf.nextc();
 
 						if (c != special_chars::u)
 							throw parse_error("Failed to parse null token.");
 
-						c = rdbuf->snextc();
+						c = buf.nextc();
 
 						if (c != special_chars::l)
 							throw parse_error("Failed to parse null token.");
 
-						c = rdbuf->snextc();
+						c = buf.nextc();
 
 						if (c != special_chars::l)
 							throw parse_error("Failed to parse null token.");
 
-						rdbuf->sbumpc();
+						buf.bumpc();
 					}
 				};
 			}
