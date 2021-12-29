@@ -68,6 +68,18 @@ namespace peli
 			{
 				return peli::is_empty(*this);
 			}
+
+			/** \brief Parses null-terminated string.
+			 *
+			 * \param str null-terminated string to parse.
+			 */
+			static basic_value parse(const Ch* const str);
+
+			/** \brief Parses std::basic_string<>.
+			 *
+			 * \param str string to parse.
+			 */
+			static basic_value parse(const std::basic_string<Ch>& str);
 		};
 
 		/** \brief `basic_value` specialization for `char`. */
