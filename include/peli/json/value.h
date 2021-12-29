@@ -97,6 +97,8 @@ namespace peli
 		{
 			return ValueType(T());
 		}
+
+		template<typename Ch> std::basic_string<Ch> to_string(const basic_value<Ch>& v, const bool pretty = false);
 	}
 }
 

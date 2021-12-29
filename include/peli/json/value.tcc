@@ -19,7 +19,7 @@ namespace peli
 		template<typename Ch>
 		inline std::basic_ostream<Ch>& operator<<(std::basic_ostream<Ch>& os, const basic_value<Ch>& v)
 		{
-			peli::json::detail::printer::visitor<Ch> print_visitor(os);
+			peli::json::detail::printer::stream_visitor<Ch> print_visitor(os);
 
 			peli::visit(print_visitor, v);
 
@@ -38,6 +38,18 @@ namespace peli
 		{
 			peli::json::detail::parser::string_buffer<Ch> buf { str };
 			return peli::json::detail::parser::tokenizer::tok(buf);
+		}
+
+		template<typename Ch>
+		std::basic_string<Ch> to_string(const basic_value<Ch>& v, const bool pretty)
+		{
+			std::basic_string<Ch> result;
+
+			peli::json::detail::printer::string_visitor<Ch> print_visitor(result, pretty);
+
+			peli::visit(print_visitor, v);
+
+			return result;
 		}
 	}
 }

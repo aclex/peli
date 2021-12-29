@@ -47,14 +47,10 @@ namespace peli
 					{
 						put_structure_space(v);
 
-						v.push_precision(std::numeric_limits<json::number>::digits10 - 2);
-
 						typename Visitor::char_type buf[floaxie::max_buffer_size<double>()];
 						const auto written_size { floaxie::ftoa(static_cast<double>(n), buf) };
 
 						v.putn(buf, written_size);
-
-						v.pop_precision();
 					}
 				};
 			}

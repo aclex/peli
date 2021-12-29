@@ -21,35 +21,19 @@ namespace peli
 			{
 				/** \brief Printing visitor.
 				 *
-				 * Memorizes a reference to stream and prints values
-				 * while visiting them.
+				 * Holds the necessary properties while printing values,
+				 * i.e. provides printing context.
 				 *
 				 */
-				template<typename Ch> class visitor
+				template<class Derived> class visitor
 				{
 				public:
-					using char_type = Ch;
-
-					/** \brief Binds the visitor to stream. */
-					visitor(std::basic_ostream<Ch>& os) :
-						m_os(os),
+					visitor(const bool pretty) :
 						m_tab_level(),
-						m_precision(os.precision()),
 						m_structure_period(),
-						m_pretty(flag::get(os.iword(flag_storage_index()), flag::pretty))
+						m_pretty(pretty)
 					{
 
-					}
-
-					void push_precision(const std::size_t p) noexcept
-					{
-						m_precision = m_os.precision();
-						m_os.precision(p);
-					}
-
-					void pop_precision() noexcept
-					{
-						m_os.precision(m_precision);
 					}
 
 					bool pretty() const noexcept
@@ -82,34 +66,92 @@ namespace peli
 						m_structure_period = v;
 					}
 
-					void putc(const Ch c)
-					{
-						m_os.rdbuf()->sputc(c);
-					}
-
-					std::size_t putn(const Ch* s, const std::size_t size)
-					{
-						return static_cast<std::size_t>(m_os.rdbuf()->sputn(s, size));
-					}
-
 					/** \brief Prints [JSON](https://json.org) representation of the value. */
 					template<typename Arg> void operator()(Arg a)
 					{
-						printer::head<Arg>::print(*this, a);
+						printer::head<Arg>::print(*static_cast<Derived*>(this), a);
 					}
 
 					/** \brief Prints [JSON](https://json.org) representation of null entity. */
 					void operator()()
 					{
-						printer::head<void>::print(*this);
+						printer::head<void>::print(*static_cast<Derived*>(this));
 					}
 
 				private:
-					std::basic_ostream<Ch>& m_os;
 					std::size_t m_tab_level;
-					std::size_t m_precision;
 					bool m_structure_period;
 					const bool m_pretty;
+				};
+
+				/** \brief Printing visitor for `std::basic_streambuf<>`.
+				 *
+				 * Memorizes a reference to stream and prints values
+				 * while visiting them.
+				 *
+				 */
+				template<typename Ch> class stream_visitor : public visitor<stream_visitor<Ch>>
+				{
+				public:
+					using char_type = Ch;
+
+					/** \brief Binds the visitor to stream. */
+					stream_visitor(std::basic_ostream<Ch>& os) :
+						visitor<stream_visitor>(flag::get(os.iword(flag_storage_index()), flag::pretty)),
+						m_os(os)
+					{
+
+					}
+
+					void putc(const Ch c)
+					{
+						m_os.rdbuf()->sputc(c);
+					}
+
+					std::streamsize putn(const Ch* s, const std::size_t size)
+					{
+						return m_os.rdbuf()->sputn(s, size);
+					}
+
+					using visitor<stream_visitor<Ch>>::operator();
+
+				private:
+					std::basic_ostream<Ch>& m_os;
+				};
+
+				/** \brief Printing visitor for `std::basic_string<>`.
+				 *
+				 * Memorizes a reference to string and prints values
+				 * while visiting them.
+				 *
+				 */
+				template<typename Ch> class string_visitor : public visitor<string_visitor<Ch>>
+				{
+				public:
+					using char_type = Ch;
+
+					/** \brief Binds the visitor to stream. */
+					string_visitor(std::basic_string<Ch>& str, const bool pretty) :
+						visitor<string_visitor>(pretty),
+						m_str(str)
+					{
+
+					}
+
+					void putc(const Ch c)
+					{
+						m_str += c;
+					}
+
+					void putn(const Ch* s, const std::size_t size)
+					{
+						std::copy(s, s + size, std::back_inserter(m_str));
+					}
+
+					using visitor<string_visitor<Ch>>::operator();
+
+				private:
+					std::basic_string<Ch>& m_str;
 				};
 			}
 		}

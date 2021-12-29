@@ -36,6 +36,7 @@ new_test(value_ostream.cpp peli)
 new_test(value_ostream_manip.cpp peli)
 new_test(value_char_input.cpp peli)
 new_test(value_string_input.cpp peli)
+new_test(value_string_output.cpp peli)
 
 new_test(json_parser_object.cpp peli)
 new_test(json_parser_array.cpp peli)
