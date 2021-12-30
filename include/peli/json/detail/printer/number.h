@@ -27,7 +27,9 @@
 
 #include "peli/json/detail/printer/stream_routines.h"
 
+#ifdef USE_FLOAXIE
 #include <floaxie/ftoa.h>
+#endif
 
 namespace peli
 {
@@ -47,12 +49,35 @@ namespace peli
 					{
 						put_structure_space(v);
 
-						typename Visitor::char_type buf[floaxie::max_buffer_size<double>()];
+						using char_type = typename Visitor::char_type;
+
+#ifdef USE_FLOAXIE
+						char_type buf[floaxie::max_buffer_size<double>()];
 						const auto written_size { floaxie::ftoa(static_cast<double>(n), buf) };
 
 						v.putn(buf, written_size);
+#else
+						const auto& result { to_string<char_type>(n) };
+						v.putn(result.data(), result.size());
+#endif
 					}
+				private:
+#ifndef USE_FLOAXIE
+					template<typename Ch> static std::basic_string<Ch> to_string(const json::number n);
+#endif
 				};
+
+#ifndef USE_FLOAXIE
+				template<> std::basic_string<char> head<json::number>::to_string(const json::number n)
+				{
+					return std::to_string(n);
+				}
+
+				template<> std::basic_string<wchar_t> head<json::number>::to_string(const json::number n)
+				{
+					return std::to_wstring(n);
+				}
+#endif
 			}
 		}
 	}

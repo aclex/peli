@@ -30,8 +30,13 @@ using namespace peli;
 
 bool check_zero()
 {
+#ifdef USE_FLOAXIE
 	const string str1 = "[0]";
 	const wstring str2 = L"[0]";
+#else
+	const string str1 = "[0.000000]";
+	const wstring str2 = L"[0.000000]";
+#endif
 
 	ostringstream os1;
 	wostringstream os2;
@@ -44,6 +49,7 @@ bool check_zero()
 	os1 << v1;
 	os2 << v2;
 
+	const auto& s{os1.str()};
 	if (os1.str() != str1)
 		return false;
 
@@ -55,8 +61,13 @@ bool check_zero()
 
 bool check_integer()
 {
+#ifdef USE_FLOAXIE
 	const string str1 = "[-123456,123456]";
 	const wstring str2 = L"[-123456,123456]";
+#else
+	const string str1 = "[-123456.000000,123456.000000]";
+	const wstring str2 = L"[-123456.000000,123456.000000]";
+#endif
 
 	ostringstream os1;
 	wostringstream os2;
@@ -69,6 +80,7 @@ bool check_integer()
 	os1 << v1;
 	os2 << v2;
 
+	const auto& s{os1.str()};
 	if (os1.str() != str1)
 		return false;
 	if (os2.str() != str2)
@@ -79,8 +91,13 @@ bool check_integer()
 
 bool check_decimal_fraction()
 {
+#ifdef USE_FLOAXIE
 	const string str1 = "[3.4375,-3.4375,0.04,-0.04]";
 	const wstring str2 = L"[3.4375,-3.4375,0.04,-0.04]";
+#else
+	const string str1 = "[3.437500,-3.437500,0.040000,-0.040000]";
+	const wstring str2 = L"[3.437500,-3.437500,0.040000,-0.040000]";
+#endif
 
 	ostringstream os1;
 	wostringstream os2;
@@ -120,8 +137,13 @@ bool check_decimal_fraction()
 
 bool check_engineer_fraction()
 {
+#ifdef USE_FLOAXIE
 	const string str1 = "[3.4375,-3.4375,3.4375,-3.4375,0.04,-0.04]";
 	const wstring str2 = L"[3.4375,-3.4375,3.4375,-3.4375,0.04,-0.04]";
+#else
+	const string str1 = "[3.437500,-3.437500,3.437500,-3.437500,0.040000,-0.040000]";
+	const wstring str2 = L"[3.437500,-3.437500,3.437500,-3.437500,0.040000,-0.040000]";
+#endif
 
 	ostringstream os1;
 	wostringstream os2;

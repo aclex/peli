@@ -187,8 +187,10 @@ int check_engineer_fraction()
 
 int check_overflow()
 {
+#ifdef USE_FLOAXIE
 	if (!has_thrown_on<parse_error>("[45e+1459823]"))
 		return 9;
+#endif
 
 	return 0;
 }

@@ -21,9 +21,15 @@ add_subdirectory(dep)
 
 set(USE_INTERNAL_VARIANT FALSE CACHE STRING "Force using the internal `variant` implementation, rather than `std::variant`, even if it's available.")
 
+set(USE_FLOAXIE TRUE CACHE STRING "Enable or disable use of floaxie library for number conversion (enabled by default).")
+
 add_library(peli INTERFACE)
 target_include_directories(peli INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
-target_link_libraries(peli INTERFACE floaxie)
+
+if (USE_FLOAXIE)
+	target_compile_definitions(peli INTERFACE USE_FLOAXIE)
+	target_link_libraries(peli INTERFACE floaxie)
+endif ()
 
 if ("cxx_std_17" IN_LIST CMAKE_CXX_COMPILE_FEATURES AND NOT USE_INTERNAL_VARIANT)
 	target_compile_features(peli INTERFACE cxx_std_17)
