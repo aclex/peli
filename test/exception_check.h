@@ -26,19 +26,15 @@
 
 #include "peli/json/value.h"
 
-using namespace std;
-
-using namespace peli;
-
 namespace peli
 {
 	namespace test
 	{
-		template<class ExceptionType> bool has_thrown_on(const string& text)
+		template<class ExceptionType> bool has_thrown_on(const std::string& text)
 		{
 			bool thrown { };
 
-			istringstream is(text);
+			std::istringstream is(text);
 			json::value v;
 
 			try
@@ -53,9 +49,32 @@ namespace peli
 			return thrown;
 		}
 
-		bool has_null_return(const string& text)
+		template<class ExceptionType, typename Ch> bool has_thrown_on(const Ch* text)
 		{
-			istringstream is(text);
+			return has_thrown_on<ExceptionType>(std::basic_string<Ch>((text)));
+		}
+
+		template<class ExceptionType> bool has_thrown_on(const json::value& v)
+		{
+			bool thrown { };
+
+			std::ostringstream os;
+
+			try
+			{
+				os << v;
+			}
+			catch (const ExceptionType&)
+			{
+				thrown = true;
+			}
+
+			return thrown;
+		}
+
+		bool has_null_return(const std::string& text)
+		{
+			std::istringstream is(text);
 			json::value v;
 
 			is >> v;
