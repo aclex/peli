@@ -24,6 +24,8 @@
 
 #include "peli/json/value.h"
 
+#include "exception_check.h"
+
 using namespace std;
 
 using namespace peli;
@@ -57,6 +59,22 @@ bool check_zero()
 		return false;
 
 	return true;
+}
+
+bool check_nan()
+{
+	json::array ch { json::number {NAN} };
+	json::value v(ch);
+
+	return test::has_thrown_on<invalid_argument>(v);
+}
+
+bool check_inf()
+{
+	json::array ch { json::number {INFINITY} };
+	json::value v(ch);
+
+	return test::has_thrown_on<invalid_argument>(v);
 }
 
 bool check_integer()
@@ -198,6 +216,12 @@ int main(int, char**)
 
 	if (!check_engineer_fraction())
 		return 4;
+
+	if (!check_nan())
+		return 5;
+
+	if (!check_inf())
+		return 6;
 
 	return 0;
 }

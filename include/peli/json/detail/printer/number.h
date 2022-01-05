@@ -20,8 +20,8 @@
 #ifndef PELI_DETAIL_PRINTER_NUMBER_H
 #define PELI_DETAIL_PRINTER_NUMBER_H
 
-#include <ostream>
 #include <limits>
+#include <stdexcept>
 
 #include "peli/json/number.h"
 
@@ -47,6 +47,12 @@ namespace peli
 				public:
 					template<class Visitor> static void print(Visitor& v, const json::number n)
 					{
+						if (std::isnan(n))
+							throw std::invalid_argument("NaN can't be represented in JSON.");
+
+						if (std::isinf(n))
+							throw std::invalid_argument("Infinity can't be represented in JSON.");
+
 						put_structure_space(v);
 
 						using char_type = typename Visitor::char_type;
