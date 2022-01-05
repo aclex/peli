@@ -21,7 +21,6 @@
 #define PELI_DETAIL_PRINTER_STRING_H
 
 #include <array>
-#include <ostream>
 #include <string>
 
 #include "peli/json/detail/special_chars.h"

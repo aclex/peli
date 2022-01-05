@@ -21,7 +21,6 @@
 #define PELI_DETAIL_PRINTER_BOOLEAN_H
 
 #include <array>
-#include <ostream>
 
 #include "peli/json/detail/special_chars.h"
 

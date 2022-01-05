@@ -20,9 +20,6 @@
 #ifndef PELI_DETAIL_PARSER_STREAM_ROUTINES_H
 #define PELI_DETAIL_PARSER_STREAM_ROUTINES_H
 
-#include <istream>
-#include <string>
-
 #include "peli/json/detail/special_chars.h"
 
 namespace peli

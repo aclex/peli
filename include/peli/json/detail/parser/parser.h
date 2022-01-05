@@ -47,10 +47,10 @@ namespace peli
 					 * Fails to compiled, if called for anything other than
 					 * [JSON](https://json.org) type.
 					 *
-					 * \tparam Ch character type of the input stream.
+					 * \tparam InputBuffer input buffer adapter.
 					 */
-					template<typename Ch>
-					static JsonType parse(std::basic_streambuf<Ch>*)
+					template<class InputBuffer>
+					static JsonType parse(InputBuffer&)
 					{
 						static_assert(fake_dependency<JsonType>::value, "Type is not supported for parsing");
 					}

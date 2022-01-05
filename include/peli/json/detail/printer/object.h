@@ -20,8 +20,6 @@
 #ifndef PELI_DETAIL_PRINTER_OBJECT_H
 #define PELI_DETAIL_PRINTER_OBJECT_H
 
-#include <ostream>
-
 #include "peli/json/object.h"
 
 #include "peli/json/detail/printer/string.h"

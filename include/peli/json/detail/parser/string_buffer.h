@@ -20,7 +20,10 @@
 #ifndef PELI_DETAIL_PARSER_STRING_BUFFER_H
 #define PELI_DETAIL_PARSER_STRING_BUFFER_H
 
-#include <istream>
+#include <algorithm>
+#include <iterator>
+#include <string>
+#include <cstdint>
 
 #include <peli/except.h>
 

@@ -20,9 +20,6 @@
 #ifndef PELI_DETAIL_PRINTER_STREAM_ROUTINES_H
 #define PELI_DETAIL_PRINTER_STREAM_ROUTINES_H
 
-#include <ostream>
-#include <ios>
-
 #include "peli/json/detail/printer/util.h"
 #include "peli/json/detail/special_chars.h"
 

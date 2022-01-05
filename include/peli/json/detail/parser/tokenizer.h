@@ -20,8 +20,6 @@
 #ifndef PELI_DETAIL_PARSER_TOKENIZER_H
 #define PELI_DETAIL_PARSER_TOKENIZER_H
 
-#include <istream>
-
 namespace peli
 {
 	namespace json

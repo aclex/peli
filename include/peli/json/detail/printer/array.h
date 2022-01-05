@@ -20,8 +20,6 @@
 #ifndef PELI_DETAIL_PRINTER_ARRAY_H
 #define PELI_DETAIL_PRINTER_ARRAY_H
 
-#include <ostream>
-
 #include "peli/json/array.h"
 
 #include "peli/json/detail/printer/stream_routines.h"
