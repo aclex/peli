@@ -49,7 +49,6 @@ bool check_zero()
 	os1 << v1;
 	os2 << v2;
 
-	const auto& s{os1.str()};
 	if (os1.str() != str1)
 		return false;
 
@@ -96,7 +95,6 @@ bool check_integer()
 	os1 << v1;
 	os2 << v2;
 
-	const auto& s{os1.str()};
 	if (os1.str() != str1)
 		return false;
 	if (os2.str() != str2)
