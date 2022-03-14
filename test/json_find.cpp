@@ -282,6 +282,26 @@ bool check_m_tilda_n()
 	return true;
 }
 
+bool check_converting()
+{
+	auto v { json::value::parse(example) };
+
+	auto s { json::find_of<json::array>(v, "/foo"s) };
+
+	if (!s)
+		return false;
+
+	cout << "check_foo: " << json::value{*s} << endl;
+
+	const auto& obj{get<json::object>(v)};
+	auto* const expected{get_if<json::array>(&obj.at("foo"))};
+
+	if (s != expected)
+		return false;
+
+	return true;
+}
+
 int main(int, char**)
 {
 	if (!check_empty())
@@ -319,6 +339,9 @@ int main(int, char**)
 
 	if (!check_m_tilda_n())
 		return 12;
+
+	if (!check_converting())
+		return 13;
 
 	return 0;
 }
