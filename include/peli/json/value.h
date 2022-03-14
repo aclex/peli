@@ -37,7 +37,7 @@ namespace peli
 		 * In fact it's just a tiny shell around variant type used, and
 		 * this is to allow recursive inclusion of variants.
 		 *
-		 * \tparam Ch character type used.
+		 * \tparam Ch character type.
 		 */
 		template<typename Ch> class basic_value : public peli::variant_type
 		<
@@ -96,6 +96,16 @@ namespace peli
 			return ValueType(T());
 		}
 
+		/** \brief Prints the content of the specified value to string.
+		 *
+		 * \tparam Ch character type.
+		 * \param v value to print.
+		 * \param pretty flag to enable pretty printing.
+		 *
+		 * \return string containing textual content of the specified value.
+		 *
+		 * \sa peli::json::pretty()
+		 */
 		template<typename Ch> std::basic_string<Ch> to_string(const basic_value<Ch>& v, const bool pretty = false);
 	}
 }

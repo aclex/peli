@@ -36,7 +36,6 @@
 
 namespace peli::json
 {
-
 	/** \brief Finds a sub-element matching the [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901) within the specified value.
 	 *
 	 * \tparam Ch character type.
