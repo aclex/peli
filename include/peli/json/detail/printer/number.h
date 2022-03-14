@@ -20,6 +20,7 @@
 
 #include <limits>
 #include <stdexcept>
+#include <cmath>
 
 #include "peli/json/number.h"
 
