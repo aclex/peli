@@ -43,6 +43,10 @@ namespace peli
 		{
 			namespace parser
 			{
+#ifndef USE_FLOAXIE
+				template<typename Ch> double convert(const Ch* const s, Ch** rest);
+#endif
+
 				/** \brief `parser` specialization for [JSON](https://json.org) number.
 				 * \see `parser`
 				 */
@@ -82,10 +86,6 @@ namespace peli
 						return { result, chars_parsed };
 					}
 
-#ifndef USE_FLOAXIE
-					template<typename Ch> static double convert(const Ch* const s, Ch** rest);
-#endif
-
 				public:
 					template<class InputBuffer>
 					static peli::json::number parse(InputBuffer& buf)
@@ -105,12 +105,12 @@ namespace peli
 				};
 
 #ifndef USE_FLOAXIE
-				template<> double parser<peli::json::number>::convert(const char* const s, char** rest)
+				template<> double convert(const char* const s, char** rest)
 				{
 					return std::strtod(s, rest);
 				}
 
-				template<> double parser<peli::json::number>::convert(const wchar_t* const s, wchar_t** rest)
+				template<> double convert(const wchar_t* const s, wchar_t** rest)
 				{
 					return std::wcstod(s, rest);
 				}

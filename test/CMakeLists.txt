@@ -51,3 +51,5 @@ new_test(json_printer_null.cpp peli)
 new_test(json_printer_boolean.cpp peli)
 new_test(json_printer_number.cpp peli)
 new_test(json_printer_string.cpp peli)
+
+new_test(json_find.cpp peli)
