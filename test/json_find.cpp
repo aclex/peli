@@ -302,6 +302,26 @@ bool check_converting()
 	return true;
 }
 
+bool check_constant()
+{
+	const auto& v { json::value::parse(example) };
+
+	const auto s { json::find(v, "/foo"s) };
+
+	if (!s)
+		return false;
+
+	cout << "check_foo: " << *s << endl;
+
+	const auto& obj{get<json::object>(v)};
+	const auto& expected{obj.at("foo")};
+
+	if (s != &expected)
+		return false;
+
+	return true;
+}
+
 int main(int, char**)
 {
 	if (!check_empty())
@@ -341,6 +361,9 @@ int main(int, char**)
 		return 12;
 
 	if (!check_converting())
+		return 13;
+
+	if (!check_constant())
 		return 13;
 
 	return 0;
