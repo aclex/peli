@@ -57,6 +57,15 @@ namespace peli
 			return peli::json::detail::parser::tokenizer::tok(buf);
 		}
 
+#ifdef CXX_STD_17
+		template<typename Ch>
+		basic_value<Ch> basic_value<Ch>::parse(const std::basic_string_view<Ch> sv)
+		{
+			peli::json::detail::parser::string_view_buffer<Ch> buf { sv };
+			return peli::json::detail::parser::tokenizer::tok(buf);
+		}
+#endif
+
 		template<typename Ch>
 		std::basic_string<Ch> to_string(const basic_value<Ch>& v, const bool pretty)
 		{

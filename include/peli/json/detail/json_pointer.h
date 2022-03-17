@@ -18,6 +18,20 @@
 #ifndef PELI_JSON_DETAIL_JSON_POINTER_H
 #define PELI_JSON_DETAIL_JSON_POINTER_H
 
+#include <array>
+#include <variant>
+#include <cstddef>
+
+#include <peli/json/array.h>
+#include <peli/json/object.h>
+#include <peli/json/value.h>
+
+#ifdef USE_FLOAXIE
+#include <floaxie/atof.h>
+#else
+#include <peli/json/detail/parser/number.h>
+#endif
+
 namespace peli::json::detail
 {
 	template<typename Ch> void replace_escape_seq(std::basic_string<Ch>& s, const Ch* seq, const Ch* c)
@@ -29,12 +43,14 @@ namespace peli::json::detail
 		}
 	}
 
-	template<typename Value, typename Ch> Value* find(Value* curr, const std::basic_string<Ch>& ptr)
+	template<class Value, class String> Value* find(Value* curr, const String ptr)
 	{
 		if (ptr.empty())
 			return curr;
 
-		typename std::basic_string<Ch>::size_type ref_begin { 1 };
+		using Ch = typename String::value_type;
+
+		typename String::size_type ref_begin { 1 };
 
 		static constexpr std::array<Ch, 3> slash_coded { '~', '1', 0 };
 		static constexpr std::array<Ch, 2> slash { '/', 0 };

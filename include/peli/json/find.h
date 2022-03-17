@@ -18,19 +18,11 @@
 #ifndef PELI_JSON_FIND_H
 #define PELI_JSON_FIND_H
 
-#include <array>
 #include <string>
-#include <cstddef>
 
-#ifdef USE_FLOAXIE
-#include <floaxie/atof.h>
-#else
-#include <peli/json/detail/parser/number.h>
+#ifdef CXX_STD_17
+#include <string_view>
 #endif
-
-#include <peli/json/array.h>
-#include <peli/json/object.h>
-#include <peli/json/value.h>
 
 #include <peli/json/detail/json_pointer.h>
 
@@ -61,6 +53,35 @@ namespace peli::json
 	{
 		return detail::find(&v, ptr);
 	}
+
+#ifdef CXX_STD_17
+	/** \brief Finds a sub-element matching the [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901) within the specified value.
+	 *
+	 * \tparam Ch character type.
+	 * \param v reference value to evaluate the [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901).
+	 * \param ptr [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901) string (unlike mentioned in RFC and as any normal C/C++ string, it can't contain null characters).
+	 *
+	 * \return pointer to the found value, if there's one, null pointer otherwise.
+	 */
+	template<typename Ch> basic_value<Ch>* find(basic_value<Ch>& v, const std::basic_string_view<Ch> ptr)
+	{
+		return detail::find(&v, ptr);
+	}
+
+	/** \brief Finds a sub-element matching the [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901) within the specified const value.
+	 *
+	 * \tparam Ch character type.
+	 * \param v constant reference value to evaluate the [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901).
+	 * \param ptr [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901) string (unlike mentioned in RFC and as any normal C/C++ string, it can't contain null characters).
+	 *
+	 * \return constant pointer to the found value, if there's one, null pointer otherwise.
+	 */
+	template<typename Ch> const basic_value<Ch>* find(const basic_value<Ch>& v, const std::basic_string_view<Ch> ptr)
+	{
+		return detail::find(&v, ptr);
+	}
+
+#endif
 
 #ifndef INTERNAL_VARIANT
 	/** \brief Finds a sub-element matching the [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901) and the specified type within the value.

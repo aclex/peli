@@ -64,7 +64,7 @@ namespace peli
 							return arr;
 						}
 
-						while (t != std::basic_streambuf<char_type>::traits_type::eof())
+						while (t != InputBuffer::eof())
 						{
 							arr.emplace_back(tokenizer::tok(buf));
 

@@ -78,6 +78,14 @@ namespace peli
 			 * \param str string to parse.
 			 */
 			static basic_value parse(const std::basic_string<Ch>& str);
+
+#ifdef CXX_STD_17
+			/** \brief Parses std::basic_string_view<>.
+			 *
+			 * \param str string_view to parse.
+			 */
+			static basic_value parse(const std::basic_string_view<Ch> sv);
+#endif
 		};
 
 		/** \brief `basic_value` specialization for `char`. */

@@ -33,8 +33,9 @@ namespace peli::json::detail::parser
 	public:
 		using char_type = Ch;
 
-		char_buffer(const char_type* const p) noexcept :
+		char_buffer(const char_type* const p, const std::size_t size = std::basic_string<Ch>::npos) noexcept :
 			m_ptr(p),
+			m_size(size),
 			m_counter(),
 			m_line_no()
 		{
@@ -53,7 +54,12 @@ namespace peli::json::detail::parser
 
 		std::size_t getn(char_type* const s, const std::streamsize count) const
 		{
-			return std::distance(std::copy(m_ptr + m_counter, m_ptr + m_counter + count, s), s);
+			auto to { m_counter + count };
+
+			if (m_size != std::basic_string<Ch>::npos)
+				to = std::min(to, m_size);
+
+			return std::distance(std::copy(m_ptr + m_counter, m_ptr + to, s), s);
 		}
 
 		char_type getc() const noexcept
@@ -63,6 +69,9 @@ namespace peli::json::detail::parser
 
 		char_type nextc() noexcept
 		{
+			if (m_size != std::basic_string<Ch>::npos && m_counter >= m_size)
+				return eof();
+
 			const auto n{bumpc()};
 			if (n == eof())
 				return n;
@@ -72,6 +81,9 @@ namespace peli::json::detail::parser
 
 		char_type bumpc() noexcept
 		{
+			if (m_size != std::basic_string<Ch>::npos && m_counter >= m_size)
+				return eof();
+
 			return m_ptr[m_counter++];
 		}
 
@@ -92,6 +104,7 @@ namespace peli::json::detail::parser
 
 	private:
 		const char_type* const m_ptr;
+		std::size_t m_size;
 		std::size_t m_counter;
 		std::size_t m_line_no;
 	};
@@ -105,6 +118,18 @@ namespace peli::json::detail::parser
 
 		}
 	};
+
+#ifdef CXX_STD_17
+	template<typename Ch> class string_view_buffer : public char_buffer<Ch>
+	{
+	public:
+		explicit string_view_buffer(const std::basic_string_view<Ch> sv) :
+			char_buffer<Ch>(sv.data(), sv.size())
+		{
+
+		}
+	};
+#endif
 }
 
 #endif // PELI_DETAIL_PARSER_STRING_BUFFER_H

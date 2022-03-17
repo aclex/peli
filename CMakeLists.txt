@@ -31,8 +31,12 @@ if (USE_FLOAXIE)
 	target_link_libraries(peli INTERFACE floaxie)
 endif ()
 
-if ("cxx_std_17" IN_LIST CMAKE_CXX_COMPILE_FEATURES AND NOT USE_INTERNAL_VARIANT)
+if ("cxx_std_17" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
 	target_compile_features(peli INTERFACE cxx_std_17)
+	target_compile_definitions(peli INTERFACE CXX_STD_17)
+endif()
+
+if ("cxx_std_17" IN_LIST CMAKE_CXX_COMPILE_FEATURES AND NOT USE_INTERNAL_VARIANT)
 	message("Using C++17's `std::variant`")
 
 else()
