@@ -97,6 +97,20 @@ namespace peli::json
 	{
 		return std::get_if<T>(find(v, ptr));
 	}
+
+	/** \brief Finds a sub-element matching the [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901) and the specified type within the constant value.
+	 *
+	 * \tparam T expected type after conversion.
+	 * \tparam Ch character type.
+	 * \param v constant reference value to evaluate the [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901).
+	 * \param ptr [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901) string (unlike mentioned in RFC and as any normal C/C++ string, it can't contain null characters).
+	 *
+	 * \return constant pointer to the found value of the specified type, if there's one, null pointer otherwise.
+	 */
+	template<typename T, typename Ch> const T* find_of(const basic_value<Ch>& v, const std::basic_string<Ch>& ptr)
+	{
+		return std::get_if<T>(find(v, ptr));
+	}
 #endif
 }
 

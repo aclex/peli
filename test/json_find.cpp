@@ -302,6 +302,26 @@ bool check_converting()
 	return true;
 }
 
+bool check_constant_converting()
+{
+	const auto v { json::value::parse(example) };
+
+	const auto* s { json::find_of<json::array>(v, "/foo"s) };
+
+	if (!s)
+		return false;
+
+	cout << "check_constant_converting: " << json::value{*s} << endl;
+
+	const auto& obj{get<json::object>(v)};
+	auto* const expected{get_if<json::array>(&obj.at("foo"))};
+
+	if (s != expected)
+		return false;
+
+	return true;
+}
+
 bool check_constant()
 {
 	const auto& v { json::value::parse(example) };
@@ -385,12 +405,15 @@ int main(int, char**)
 	if (!check_converting())
 		return 13;
 
-	if (!check_constant())
+	if (!check_constant_converting())
 		return 14;
+
+	if (!check_constant())
+		return 15;
 
 #ifdef CXX_STD_17
 	if (!check_string_view())
-		return 15;
+		return 16;
 #endif
 
 	return 0;
