@@ -347,17 +347,17 @@ bool check_string_view()
 {
 	const auto& v { json::value::parse(example) };
 
-	const auto s { json::find(v, "/foo"sv) };
+	const auto s { json::find_of<json::array>(v, "/foo"sv) };
 
 	if (!s)
 		return false;
 
-	cout << "check_string_view: " << *s << endl;
+	cout << "check_string_view: " << json::value{*s} << endl;
 
 	const auto& obj{get<json::object>(v)};
-	const auto& expected{obj.at("foo")};
+	auto* const expected{get_if<json::array>(&obj.at("foo"))};
 
-	if (s != &expected)
+	if (s != expected)
 		return false;
 
 	return true;
