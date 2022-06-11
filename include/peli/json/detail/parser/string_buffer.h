@@ -113,7 +113,7 @@ namespace peli::json::detail::parser
 	{
 	public:
 		explicit string_buffer(const std::basic_string<Ch>& str) :
-			char_buffer<Ch>(str.data())
+			char_buffer<Ch>(str.data(), str.size())
 		{
 
 		}
