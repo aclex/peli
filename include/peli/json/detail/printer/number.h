@@ -73,12 +73,12 @@ namespace peli
 				};
 
 #ifndef USE_FLOAXIE
-				template<> std::basic_string<char> head<json::number>::to_string(const json::number n)
+				template<> inline std::basic_string<char> head<json::number>::to_string(const json::number n)
 				{
 					return std::to_string(n);
 				}
 
-				template<> std::basic_string<wchar_t> head<json::number>::to_string(const json::number n)
+				template<> inline std::basic_string<wchar_t> head<json::number>::to_string(const json::number n)
 				{
 					return std::to_wstring(n);
 				}

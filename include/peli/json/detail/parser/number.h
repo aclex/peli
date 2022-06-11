@@ -105,12 +105,12 @@ namespace peli
 				};
 
 #ifndef USE_FLOAXIE
-				template<> double convert(const char* const s, char** rest)
+				template<> inline double convert(const char* const s, char** rest)
 				{
 					return std::strtod(s, rest);
 				}
 
-				template<> double convert(const wchar_t* const s, wchar_t** rest)
+				template<> inline double convert(const wchar_t* const s, wchar_t** rest)
 				{
 					return std::wcstod(s, rest);
 				}
