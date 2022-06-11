@@ -59,7 +59,7 @@ namespace peli::json::detail::parser
 			if (m_size != std::basic_string<Ch>::npos)
 				to = std::min(to, m_size);
 
-			return std::distance(std::copy(m_ptr + m_counter, m_ptr + to, s), s);
+			return std::distance(s, std::copy(m_ptr + m_counter, m_ptr + to, s));
 		}
 
 		char_type getc() const noexcept
