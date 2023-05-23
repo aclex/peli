@@ -41,31 +41,34 @@ namespace peli
 					{
 						using namespace special_chars;
 
-						put_structure_newline(v);
+						if (!arr.empty())
+							put_structure_newline(v);
+						else
+							put_structure_space(v);
 
 						v.putc(left_square);
 
 						if (!arr.empty())
 						{
 							put_newline(v);
-						}
 
-						v.increase_tab_level();
+							v.increase_tab_level();
 
-						for (auto it = arr.cbegin(); it != arr.cend(); ++it)
-						{
+							for (auto it = arr.cbegin(); it != arr.cend(); ++it)
+							{
+								put_tab_spacing(v);
+								peli::visit(v, *it);
+
+								if (it != --arr.cend())
+									v.putc(comma);
+
+								put_newline(v);
+							}
+
+							v.decrease_tab_level();
+
 							put_tab_spacing(v);
-							peli::visit(v, *it);
-
-							if (it != --arr.cend())
-								v.putc(comma);
-
-							put_newline(v);
 						}
-
-						v.decrease_tab_level();
-
-						put_tab_spacing(v);
 
 						v.putc(right_square);
 					}
